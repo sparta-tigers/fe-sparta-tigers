@@ -1,29 +1,49 @@
-import { reactive } from 'vue'
+import { defineStore } from 'pinia'
+import { ref } from 'vue'
 import axios from '@/axios.js'
+import router from "@/router/router.js";
 
-export const useUserStore = () => {
-    const state = reactive({
-        user: null,
-        loading: false,
-        error: null,
-    })
+export const useUserStore = defineStore('user', () => {
+    const user = ref(null)
+    const loading = ref(false)
+    const error = ref(null)
 
     const getUser = async () => {
-        state.loading = true
-        state.error = null
+        loading.value = true
+        error.value = null
         try {
-            const response = await axios.get('/users/me')
-            state.user = response.data
+            const response = await axios.get('/users/me', {
+                withCredentials: true,
+            })
+            user.value = response.data
         } catch (err) {
-            state.error = err
+            error.value = err
             console.error(err)
         } finally {
-            state.loading = false
+            loading.value = false
         }
     }
 
-    return {
-        state,
-        getUser,
+    const logout = async () => {
+        loading.value = true
+        error.value = null
+        try {
+            await axios.post('/users/logout', null, { withCredentials: true })
+            user.value = null
+            localStorage.removeItem('jwt_token')
+            await router.push('/')
+        } catch (err) {
+            error.value = err
+            console.error('로그아웃 실패', err)
+        } finally {
+            loading.value = false
+        }
     }
-}
+    return {
+        user,
+        loading,
+        error,
+        getUser,
+        logout
+    }
+})

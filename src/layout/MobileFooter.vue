@@ -16,7 +16,6 @@ function goRoute(name) {
       <div class="footer-btn" @click="goRoute('alarm-main')">알림</div>
       <div class="footer-btn" @click="goRoute('record-main')">직관기록</div>
     </footer>
-
 </template>
 
 <style scoped>

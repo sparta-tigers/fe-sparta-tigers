@@ -2,9 +2,30 @@
 import mobileHeader from "@/layout/MobileHeader.vue";
 import mobileFooter from "@/layout/MobileFooter.vue";
 import "@/assets/css/mobile/mobile-layout.css"
-import { ref } from 'vue'
+import {computed, onMounted, ref} from 'vue'
+import { useRouter } from 'vue-router';
+import {useUserStore} from "@/store/useUserStore.js";
 
 const isMenuOpen = ref(false)
+const isToken = computed(() => !!store.user)
+const router = useRouter();
+
+const closeMenu = () => {
+  isMenuOpen.value = false;
+};
+
+const store = useUserStore()
+
+
+const goToMyPage = () => {
+  router.push('/mypage');
+};
+const goToLogin = () => {
+  router.push('/login');
+};
+const logout = async () => {
+  await store.logout()
+};
 </script>
 <template>
   <div class="mobile-layout-container">
@@ -16,9 +37,15 @@ const isMenuOpen = ref(false)
           <span>메뉴</span>
           <button class="close-btn" @click="isMenuOpen = false">✕</button>
         </div>
-        <div class="menu-item">마이페이지</div>
-        <div class="menu-item">옵션2</div>
-        <div class="menu-item">옵션3</div>
+        <div v-if="isToken">
+          <div class="menu-item" @click="goToMyPage(); closeMenu();">
+            마이페이지
+          </div>
+          <div class="menu-item" @click="logout(); closeMenu();">로그아웃</div>
+        </div>
+        <div v-else>
+          <div class="menu-item" @click="goToLogin(); closeMenu();">로그인</div>
+        </div>
       </div>
     </div>
 

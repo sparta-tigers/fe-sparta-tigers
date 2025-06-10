@@ -39,6 +39,8 @@ const title = computed(() => {
     case 'stadium-main': return '구장정보'
     case 'alarm-main': return '알림'
     case 'record-main': return '직관기록'
+    case 'login': return '로그인'
+    case 'mypage': return '마이페이지'
   }
 })
 
