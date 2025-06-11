@@ -9,6 +9,7 @@ import Login from "@/page/mobile/user/Login.vue";
 import OAuth2Redirect from "@/page/mobile/util/OAuth2Redirect.vue";
 import MyPage from "@/page/mobile/user/MyPage.vue";
 import Channel from "@/page/mobile/user/Channel.vue";
+import Teams from "@/page/mobile/alarm/Teams.vue";
 
 
 const routes = [
@@ -24,7 +25,8 @@ const routes = [
             {
                 path: '',
                 name: 'liveboard-main',
-                component: liveMain
+                component: liveMain,
+                meta: { title: '라이브보드' }
             }
         ]
     },
@@ -35,7 +37,9 @@ const routes = [
             {
                 path: '',
                 name: 'record-main',
-                component: recordMain
+                component: recordMain,
+                meta: { title: '기록' }
+
             }
         ]
     },
@@ -46,7 +50,8 @@ const routes = [
             {
                 path: '',
                 name: 'exchange-main',
-                component: exchangeMain
+                component: exchangeMain,
+                meta: { title: '교환' }
             }
         ]
     },
@@ -57,7 +62,8 @@ const routes = [
             {
                 path: '',
                 name: 'alarm-main',
-                component: alarmMain
+                component: alarmMain,
+                meta: { title: '알람' }
             }
         ]
     },
@@ -68,7 +74,8 @@ const routes = [
             {
                 path: '',
                 name: 'stadium-main',
-                component: stadiumInfoMain
+                component: stadiumInfoMain,
+                meta: { title: '경기장' }
             }
         ]
     },
@@ -79,7 +86,8 @@ const routes = [
             {
                 path: '',
                 name: 'login',
-                component: Login
+                component: Login,
+                meta: { title: '로그인' }
             }
         ]
     },
@@ -91,12 +99,25 @@ const routes = [
                 path: '',
                 name: 'mypage',
                 component: MyPage,
-                meta: { requiresAuth: true }
+                meta: { requiresAuth: true, title: '마이페이지' }
+
             }
 
         ]
     },
+    {
+        path: '/alarm',
+        component: MainPage,
+        children: [
+            {
+                path: 'teams',
+                name: 'Teams',
+                component: Teams,
+                meta: { requiresAuth: true, title: '알람' }
+            }
 
+        ]
+    },
     {
         path : "/oauth2/redirect",
         name: "OauthRedirect",

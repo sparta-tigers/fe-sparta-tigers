@@ -33,15 +33,8 @@ import { computed } from 'vue'
 const route = useRoute()
 
 const title = computed(() => {
-  switch(route.name) {
-    case 'liveboard-main': return '라이브보드'
-    case 'exchange-main': return '교환'
-    case 'stadium-main': return '구장정보'
-    case 'alarm-main': return '알림'
-    case 'record-main': return '직관기록'
-    case 'login': return '로그인'
-    case 'mypage': return '마이페이지'
-  }
+  return route.meta.title || '기본 타이틀'
 })
+
 
 </script>
