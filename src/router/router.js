@@ -10,6 +10,7 @@ import OAuth2Redirect from "@/page/mobile/util/OAuth2Redirect.vue";
 import MyPage from "@/page/mobile/user/MyPage.vue";
 import Channel from "@/page/mobile/user/Channel.vue";
 import Teams from "@/page/mobile/alarm/Teams.vue";
+import Schedule from "@/page/mobile/alarm/Schedule.vue";
 
 
 const routes = [
@@ -64,9 +65,22 @@ const routes = [
                 name: 'alarm-main',
                 component: alarmMain,
                 meta: { title: '알람' }
+            },
+            {
+                path: 'teams',
+                name: 'Teams',
+                component: Teams,
+                meta: { requiresAuth: true, title: '알람' },
+            },
+            {
+                path: 'teams/:teamId/schedule',
+                name: 'TeamSchedule',
+                component: Schedule,
+                meta: { requiresAuth: true, title: '알람' }
             }
         ]
     },
+
     {
         path: '/stadiuminfo',
         component: MainPage,
@@ -105,19 +119,7 @@ const routes = [
 
         ]
     },
-    {
-        path: '/alarm',
-        component: MainPage,
-        children: [
-            {
-                path: 'teams',
-                name: 'Teams',
-                component: Teams,
-                meta: { requiresAuth: true, title: '알람' }
-            }
 
-        ]
-    },
     {
         path : "/oauth2/redirect",
         name: "OauthRedirect",
