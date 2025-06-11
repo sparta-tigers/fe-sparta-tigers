@@ -1,13 +1,15 @@
-<script setup>
-
-</script>
-
 <template>
-<div>
-  보드메인
-</div>
+  <DatePicker />
+  라이브 보드 페이지
 </template>
 
-<style scoped>
+<script>
+import DatePicker from '@/components/live-board/DatePicker.vue'
 
-</style>
+export default {
+  name: 'LiveBoardMain',
+  components: {
+    DatePicker
+  }
+}
+</script>
