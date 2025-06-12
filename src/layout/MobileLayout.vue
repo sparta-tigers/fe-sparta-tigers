@@ -2,8 +2,8 @@
 import mobileHeader from "@/layout/MobileHeader.vue";
 import mobileFooter from "@/layout/MobileFooter.vue";
 import "@/assets/css/mobile/mobile-layout.css"
-import {computed, onMounted, ref} from 'vue'
-import { useRouter } from 'vue-router';
+import {computed, ref} from 'vue'
+import {useRouter} from 'vue-router';
 import {useUserStore} from "@/store/useUserStore.js";
 
 const isMenuOpen = ref(false)
@@ -29,7 +29,7 @@ const logout = async () => {
 </script>
 <template>
   <div class="mobile-layout-container">
-    <mobile-header @toggleMenu="isMenuOpen = !isMenuOpen" />
+    <mobile-header @toggleMenu="isMenuOpen = !isMenuOpen"/>
 
     <div v-if="isMenuOpen" class="menu-overlay" @click.self="isMenuOpen = false">
       <div class="slide-menu">
@@ -50,9 +50,9 @@ const logout = async () => {
     </div>
 
     <main class="content">
-      <router-view />
+      <router-view/>
     </main>
-    <mobile-footer />
+    <mobile-footer/>
   </div>
 </template>
 
@@ -61,7 +61,15 @@ const logout = async () => {
   position: relative; /* 기준점 */
   width: 100%;
   height: 100vh;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto; /* 세로 스크롤 허용 */
+  overflow-x: hidden; /* 가로 스크롤 숨김 */
 }
 
 /* 메뉴 오버레이 */
@@ -71,7 +79,7 @@ const logout = async () => {
   right: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,0.3);
+  background-color: rgba(0, 0, 0, 0.3);
   z-index: 100;
   display: flex;
   justify-content: flex-end;
@@ -116,6 +124,7 @@ const logout = async () => {
   padding: 14px;
   border-bottom: 1px solid #eee;
 }
+
 .menu-item:hover {
   cursor: pointer;
   background: #f2f2f2;
