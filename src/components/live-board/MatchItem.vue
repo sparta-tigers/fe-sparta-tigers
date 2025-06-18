@@ -1,89 +1,104 @@
 <script setup>
-import hhLogo from '@/assets/images/hh-logo.png'
-import htLogo from '@/assets/images/ht-logo.png'
-import ktLogo from '@/assets/images/kt-logo.png'
-import lgLogo from '@/assets/images/lg-logo.png'
-import ltLogo from '@/assets/images/lt-logo.png'
-import ncLogo from '@/assets/images/nc-logo.png'
-import obLogo from '@/assets/images/ob-logo.png'
-import skLogo from '@/assets/images/sk-logo.png'
-import ssLogo from '@/assets/images/ss-logo.png'
-import woLogo from '@/assets/images/wo-logo.png'
+import hhLogo from "@/assets/images/hh-logo.png";
+import htLogo from "@/assets/images/ht-logo.png";
+import ktLogo from "@/assets/images/kt-logo.png";
+import lgLogo from "@/assets/images/lg-logo.png";
+import ltLogo from "@/assets/images/lt-logo.png";
+import ncLogo from "@/assets/images/nc-logo.png";
+import obLogo from "@/assets/images/ob-logo.png";
+import skLogo from "@/assets/images/sk-logo.png";
+import ssLogo from "@/assets/images/ss-logo.png";
+import woLogo from "@/assets/images/wo-logo.png";
 
-import {computed} from "vue";
+import { computed } from "vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const props = defineProps({
   match: {
     type: Object,
-    required: true
-  }
-})
+    required: true,
+  },
+});
 
 // 시간 포맷팅 함수
 const formatTime = (dateTimeString) => {
-  const date = new Date(dateTimeString)
-  return date.toLocaleTimeString('ko-KR', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false
-  })
-}
+  const date = new Date(dateTimeString);
+  return date.toLocaleTimeString("ko-KR", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+};
 
 // 경기 상태 텍스트
 const getMatchStatusText = (result) => {
   switch (result) {
-    case 'CANCEL':
-      return '경기 취소'
-    case 'SCHEDULED':
-      return '경기 전'
-    case 'LIVE':
-      return '진행 중'
-    case 'FINISHED':
-      return '경기 종료'
+    case "CANCEL":
+      return "경기 취소";
+    case "SCHEDULED":
+      return "경기 전";
+    case "LIVE":
+      return "진행 중";
+    case "FINISHED":
+      return "경기 종료";
     default:
-      return '경기 전'
+      return "경기 전";
   }
-}
+};
 
 // 팀 로고 이미지 매핑
 const getTeamLogo = (teamCode) => {
   const logoMap = {
-    'HH': hhLogo,
-    'HT': htLogo,
-    'KT': ktLogo,
-    'LG': lgLogo,
-    'LT': ltLogo,
-    'NC': ncLogo,
-    'OB': obLogo,
-    'SK': skLogo,
-    'SS': ssLogo,
-    'WO': woLogo,
-  }
+    HH: hhLogo,
+    HT: htLogo,
+    KT: ktLogo,
+    LG: lgLogo,
+    LT: ltLogo,
+    NC: ncLogo,
+    OB: obLogo,
+    SK: skLogo,
+    SS: ssLogo,
+    WO: woLogo,
+  };
 
   return logoMap[teamCode];
-}
+};
 
-const homeTeamLogo = computed(() => getTeamLogo(props.match.home_team_code))
-const awayTeamLogo = computed(() => getTeamLogo(props.match.away_team_code))
+const homeTeamLogo = computed(() => getTeamLogo(props.match.home_team_code));
+const awayTeamLogo = computed(() => getTeamLogo(props.match.away_team_code));
 
+const navigateToLiveBoardRoom = () => {
+  router.push(`/liveboard/match/room/${props.match.match_id}`);
+};
 </script>
 
 <template>
-  <li class="match-item">
+  <li class="match-item" @click="navigateToLiveBoardRoom">
     <div class="logo-wrapper home">
-      <img :alt="match.home_team_name + '로고'" :src="homeTeamLogo" class="team-logo"/>
+      <img
+        :alt="match.home_team_name + '로고'"
+        :src="homeTeamLogo"
+        class="team-logo"
+      />
     </div>
 
     <div class="match-summary">
-      <div class="position"> {{ match.position }}</div>
+      <div class="position">{{ match.position }}</div>
       <div class="match-time">{{ formatTime(match.match_time) }}</div>
-      <div class="match-result"><span class="text">{{ match.match_result }}</span></div>
+      <div class="match-result">
+        <span class="text">{{ match.match_result }}</span>
+      </div>
     </div>
 
     <div class="logo-wrapper away">
-      <img :alt="match.away_team_name + '로고'" :src="awayTeamLogo" class="team-logo"/>
+      <img
+        :alt="match.away_team_name + '로고'"
+        :src="awayTeamLogo"
+        class="team-logo"
+      />
     </div>
-
   </li>
 </template>
 
@@ -160,7 +175,7 @@ const awayTeamLogo = computed(() => getTeamLogo(props.match.away_team_code))
 }
 
 .match-result {
-  background-color: #DEAA79;
+  background-color: #deaa79;
   text-align: center;
   padding: 4px 8px;
   border-radius: 8px;
@@ -172,5 +187,4 @@ const awayTeamLogo = computed(() => getTeamLogo(props.match.away_team_code))
   font-weight: 500;
   font-family: "KBO Dia Gothic-Medium", Helvetica;
 }
-
 </style>
