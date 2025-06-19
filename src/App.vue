@@ -6,6 +6,9 @@
 <script setup>
 import MainFooter from './layout/MainFooter.vue'
 import { ref, onMounted, onUnmounted } from 'vue'
+import {useAlarmStore} from "@/store/useAlarmStore.js";
+import {useUserStore} from "@/store/useUserStore.js";
+const userStore = useUserStore()
 
 const isMobile = ref(false)
 
@@ -20,4 +23,15 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('resize', checkMobile)
 })
+onMounted(async () => {
+})
+
+const alarmStore = useAlarmStore()
+
+onMounted(async () => {
+  alarmStore.connectSSE();
+  await userStore.getUser()
+
+})
+
 </script>
