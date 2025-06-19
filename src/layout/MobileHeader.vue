@@ -2,7 +2,16 @@
   <header class="header">
     <div class="title">{{ title }}</div>
     <button class="menu-btn" @click="$emit('toggleMenu')">≡</button>
+
+    <div>
+      🔔 알림 연결 상태:
+      <span :class="alarmStore.sseConnected ? 'connected' : 'disconnected'">
+      {{ alarmStore.sseConnected ? '연결됨' : '끊어짐' }}
+    </span>
+    </div>
+
   </header>
+
 </template>
 
 <style scoped>
@@ -29,6 +38,10 @@
 <script setup>
 import { useRoute } from 'vue-router'
 import { computed } from 'vue'
+import { useAlarmStore } from '@/store/useAlarmStore.js'
+import {storeToRefs} from "pinia";
+
+const alarmStore = useAlarmStore()
 
 const route = useRoute()
 

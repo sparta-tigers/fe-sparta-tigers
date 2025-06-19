@@ -11,6 +11,8 @@ import MyPage from "@/page/mobile/user/MyPage.vue";
 import Channel from "@/page/mobile/user/Channel.vue";
 import Teams from "@/page/mobile/alarm/Teams.vue";
 import Schedule from "@/page/mobile/alarm/Schedule.vue";
+import Reservation from "@/page/mobile/alarm/MatchReservation.vue";
+import MatchReservation from "@/page/mobile/alarm/MatchReservation.vue";
 
 
 const routes = [
@@ -76,6 +78,12 @@ const routes = [
                 path: 'teams/:teamId/schedule',
                 name: 'TeamSchedule',
                 component: Schedule,
+                meta: { requiresAuth: true, title: '알람' }
+            },
+            {
+                path: 'teams/:teamId/reservation/:matchId',
+                name: 'MatchReservation',
+                component: MatchReservation,
                 meta: { requiresAuth: true, title: '알람' }
             }
         ]
