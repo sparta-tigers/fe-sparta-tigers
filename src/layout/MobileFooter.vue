@@ -1,21 +1,20 @@
 <script setup>
-import { useRouter } from 'vue-router'
-const router = useRouter()
+import { useRouter } from "vue-router";
+const router = useRouter();
 
 function goRoute(name) {
-  router.push({ name })
+  router.push({ name });
 }
 </script>
 
-
 <template>
-    <footer class="mobile-footer">
-      <div class="footer-btn" @click="goRoute('liveboard-main')">라이브보드</div>
-      <div class="footer-btn" @click="goRoute('exchange-main')">교환</div>
-      <div class="footer-btn" @click="goRoute('stadium-main')">구장정보</div>
-      <div class="footer-btn" @click="goRoute('alarm-main')">알림</div>
-      <div class="footer-btn" @click="goRoute('record-main')">직관기록</div>
-    </footer>
+  <footer class="mobile-footer">
+    <div class="footer-btn" @click="goRoute('liveboard-match')">라이브보드</div>
+    <div class="footer-btn" @click="goRoute('exchange-main')">교환</div>
+    <div class="footer-btn" @click="goRoute('stadium-main')">구장정보</div>
+    <div class="footer-btn" @click="goRoute('alarm-main')">알림</div>
+    <div class="footer-btn" @click="goRoute('record-main')">직관기록</div>
+  </footer>
 </template>
 
 <style scoped>
