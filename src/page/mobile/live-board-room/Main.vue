@@ -105,13 +105,84 @@
 
 <script setup>
 import { ref } from "vue";
+import { useRoute } from "vue-router";
 import ChatMessage from "@/components/shard/ChatMessage.vue";
+import { Client } from "@stomp/stompjs";
+import SockJS from "sockjs-client";
+
+const route = useRoute();
+const roomId = route.params.roomId;
+
+console.log("현재 룸 ID:", roomId);
 
 const isLiveBoardTextVisible = ref(false);
 
 const toggleLiveBoardText = () => {
   isLiveBoardTextVisible.value = !isLiveBoardTextVisible.value;
 };
+
+// TODO BaseURL 환경 별로 분리 필요
+// 웹소켓 연결
+const connectWebSocket = () => {
+  const client = new Client({
+    brokerURL: "ws://localhost:8080/ws",
+    connectHeaders: {},
+    webSocketFactory: () => new SockJS("http://localhost:8080/ws"),
+    debug: function (str) {
+      console.log("STOMP: " + str);
+    },
+  });
+
+  client.onConnect = function (frame) {
+    console.log("웹소켓 연결 성공:", frame);
+
+    // 채팅방 구독, 현재는 유저 수도 여기서 다 들어 오는듯?
+    // TODO 채팅방 메세지가 전부 이리로 들어와서 진행 불가능
+    client.subscribe(
+      `/server/liveboard/room/ROOM_${roomId}`,
+      function (message) {
+        // 여기서 채팅 메시지를 처리
+        console.log("메시지 원본:", message);
+        console.log("메시지 헤더:", message.headers);
+        const data = JSON.parse(message.body);
+        console.log("메시지 바디:", data);
+      }
+    );
+    sendEnterMessage(client);
+  };
+
+  client.onStompError = function (frame) {
+    console.error("STOMP 에러:", frame.headers["message"]);
+    console.error("상세 내용:", frame.body);
+  };
+
+  client.onWebSocketError = function (event) {
+    console.error("웹소켓 에러:", event);
+  };
+
+  client.onWebSocketClose = function (event) {
+    console.log("웹소켓 연결 종료:", event);
+  };
+
+  // 연결 활성화
+  client.activate();
+};
+
+const sendEnterMessage = (client) => {
+  const message = {
+    roomId: `ROOM_${roomId}`,
+    content: "입장",
+  };
+
+  client.publish({
+    destination: `/client/liveboard/enter`,
+    body: JSON.stringify(message),
+  });
+
+  console.log("입장 메세지 전송:", message);
+};
+
+connectWebSocket();
 
 const chatMessages = ref([
   {
