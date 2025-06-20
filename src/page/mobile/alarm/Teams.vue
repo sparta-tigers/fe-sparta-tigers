@@ -13,10 +13,19 @@ onMounted(() => {
   <div v-if="alarmStore.teams.length" class="team-list-wrapper">
     <h3>전체 팀 목록</h3>
     <ul class="team-list">
-      <li v-for="team in alarmStore.teams" :key="team.id" class="team-item">
-        {{ team.teamName }}
-      </li>
+      <router-link
+          v-for="team in alarmStore.teams"
+          :key="team.id"
+          :to="`/alarm/teams/${team.id}/schedule`"
+          custom
+          v-slot="{ navigate }"
+      >
+        <li class="team-item" @click="navigate" style="cursor: pointer;">
+          {{ team.teamName }}
+        </li>
+      </router-link>
     </ul>
+
   </div>
 </template>
 
