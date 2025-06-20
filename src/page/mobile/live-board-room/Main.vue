@@ -127,11 +127,20 @@
 </style>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import ChatMessage from "@/components/shard/ChatMessage.vue";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
+import { useUserStore } from "@/store/useUserStore.js";
+
+const store = useUserStore();
+
+const fetchUser = async () => {
+  await store.getUser();
+};
+
+onMounted(fetchUser);
 
 const route = useRoute();
 const roomId = route.params.roomId;
@@ -164,19 +173,15 @@ const connectWebSocket = () => {
         // 여기서 채팅 메시지를 처리
         const data = JSON.parse(message.body);
 
-        if (data.messageType === "ENTER") {
-        } else if (data.messageType === "EXIT") {
-        } else if (data.messageType === "CHAT") {
-          // roomId, senderId, senderNickName, content
-          console.log("채팅 메시지 처리:", data);
-          const isMyMessage = true; // TODO 인증 붙인 후
-
+        if (data.messageType === "CHAT") {
           chatMessages.value.push({
             content: data.content,
             sentAt: data.sentAt,
             senderNickName: data.senderNickName,
-            isMyMessage: isMyMessage,
+            isMyMessage: store.user.data.id === data.senderId,
           });
+
+          console.log("채팅 메시지 추가 후:", chatMessages.value);
 
           // 채팅 메시지 추가 후 스크롤 맨 아래로 이동
           setTimeout(() => {
@@ -242,12 +247,18 @@ const sendMessage = () => {
     return;
   }
 
+  if (!store.user) {
+    alert("로그인 후 이용해주세요.");
+    return;
+  }
+
   if (message.value.trim()) {
     client.publish({
       destination: `/client/liveboard/message`,
       body: JSON.stringify({
         roomId: `ROOM_${roomId}`,
         content: message.value,
+        senderNickName: "test",
         messageType: "CHAT",
       }),
     });
