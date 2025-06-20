@@ -25,3 +25,8 @@ axios.js 통신 커스텀 파일 프론트의 fatch 통신이라 생각하면 �
 localhost8080/api 이렇게 안쓰고 간단하게 쓸 수 있음
 
 그 밑 제이슨 들은 딸려오는 설정 파일 커스텀 가능함 (포트 변경 등)
+
+-----
+메모장: URL: http://localhost:5173/liveboard/match/room/394
+
+일단 시큐리티 문제였음
