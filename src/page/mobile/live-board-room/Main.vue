@@ -181,16 +181,12 @@ const connectWebSocket = () => {
             isMyMessage: store.user.id === data.senderId,
           });
 
-          console.log("채팅 메시지 추가 후:", chatMessages.value);
-
           // 채팅 메시지 추가 후 스크롤 맨 아래로 이동
           setTimeout(() => {
             if (chatMessageWrapper.value) {
-              // 방법 1: scrollTop 사용
               chatMessageWrapper.value.scrollTop =
                 chatMessageWrapper.value.scrollHeight;
 
-              // 방법 2: 마지막 메시지로 스크롤 (더 확실한 방법)
               const lastMessage = chatMessageWrapper.value.lastElementChild;
               if (lastMessage) {
                 lastMessage.scrollIntoView({
