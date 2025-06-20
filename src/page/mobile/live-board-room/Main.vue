@@ -178,7 +178,7 @@ const connectWebSocket = () => {
             content: data.content,
             sentAt: data.sentAt,
             senderNickName: data.senderNickName,
-            isMyMessage: store.user.data.id === data.senderId,
+            isMyMessage: store.user.id === data.senderId,
           });
 
           console.log("채팅 메시지 추가 후:", chatMessages.value);
