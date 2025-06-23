@@ -10,12 +10,25 @@
     </div>
 
     <!-- 채팅방은 항상 고정 -->
-    <div class="box chat-message-wrapper">
-      <ChatMessage
-        v-for="(msg, index) in chatMessages"
-        :key="index"
-        :message="msg"
-      />
+    <div class="box chat-container">
+      <div class="chat-message-wrapper" ref="chatMessageWrapper">
+        <ChatMessage
+          v-for="(msg, index) in chatMessages"
+          :key="index"
+          :message="msg"
+        />
+      </div>
+
+      <div class="chat-message-input-container">
+        <input
+          type="text"
+          v-model="message"
+          class="chat-message-input"
+          @keyup.enter="sendMessage"
+          placeholder="메시지를 입력하세요..."
+        />
+        <button @click="sendMessage">전송</button>
+      </div>
     </div>
 
     <!-- 문자 중계만 슬라이드 애니메이션 -->
@@ -31,36 +44,46 @@
 <style scoped>
 .live-board-room-wrapper {
   height: 100%;
-  border: 1px solid black;
   display: flex;
   flex-direction: column;
   position: relative;
 }
 
 .live-board-room-wrapper .box {
-  border: 1px solid black;
   flex: 1;
 }
 
-.live-board-room-wrapper .box:first-child {
-  flex: 1; /* 상단 박스 */
-}
-
-.live-board-room-wrapper .box:last-child {
-  flex: 1; /* 하단 박스 (채팅방) - 상단과 동일한 크기 */
-}
-
-.chat-message-wrapper {
-  padding: 0 10px;
+.live-board-room-wrapper .box.chat-container {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  height: 100%;
-  overflow-y: auto;
+  height: 100px; /* 채팅방 영역 크기 여기를 줘야만 반반이 되는데 일단 왜 되는지 모르겠음 더이상 수정하면 사고임 기준 높이가 생겨서 라고함 */
+}
 
-  &::-webkit-scrollbar {
-    display: none;
-  }
+.box.chat-container .chat-message-wrapper {
+  border: 1px solid black;
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* 스크롤바 숨기기 */
+.box.chat-container .chat-message-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
+.chat-message-input-container {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  padding: 10px;
+  border-top: 1px solid #f9f9f9;
+}
+
+.chat-message-input {
+  flex: 1;
 }
 
 .live-board-text {
@@ -104,75 +127,149 @@
 </style>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
+import { useRoute } from "vue-router";
 import ChatMessage from "@/components/shard/ChatMessage.vue";
+import { Client } from "@stomp/stompjs";
+import SockJS from "sockjs-client";
+import { useUserStore } from "@/store/useUserStore.js";
 
+const store = useUserStore();
+
+const fetchUser = async () => {
+  await store.getUser();
+};
+
+onMounted(fetchUser);
+
+const route = useRoute();
+const roomId = route.params.roomId;
 const isLiveBoardTextVisible = ref(false);
+const message = ref("");
+const chatMessageWrapper = ref(null);
 
 const toggleLiveBoardText = () => {
   isLiveBoardTextVisible.value = !isLiveBoardTextVisible.value;
 };
 
-const chatMessages = ref([
-  {
-    content: "안녕하세요! 경기 잘 보고 있어요",
-    timestamp: "10분 전",
-    nickname: "⚾ 야구팬",
-    isMyMessage: false,
-  },
-  {
-    content: "오늘 날씨도 좋고 경기하기 딱 좋네요",
-    timestamp: "9분 전",
-    nickname: "🌤️ 맑음이",
-    isMyMessage: false,
-  },
-  {
-    content: "김도영 선수 타석에 들어서네요!",
-    timestamp: "8분 전",
-    nickname: "📺 중계봇",
-    isMyMessage: false,
-  },
-  {
-    content: "도영이 화이팅!! 홈런 기대해요",
-    timestamp: "7분 전",
-    nickname: "⚾ 도니살",
-    isMyMessage: true,
-  },
-  {
-    content: "와 진짜 멋있다 ㅠㅠ",
-    timestamp: "6분 전",
-    nickname: "💝 팬심폭발",
-    isMyMessage: false,
-  },
-  {
-    content: "오늘 컨디션 좋아보이는데?",
-    timestamp: "5분 전",
-    nickname: "👀 관찰자",
-    isMyMessage: false,
-  },
-  {
-    content: "저기 외야 끝까지 날아갈 것 같은데요",
-    timestamp: "4분 전",
-    nickname: "⚾ 나",
-    isMyMessage: true,
-  },
-  {
-    content: "볼카운트 2-1이네요",
-    timestamp: "3분 전",
-    nickname: "📊 야구통계",
-    isMyMessage: false,
-  },
-  {
-    content: "다음 구가 승부처인 것 같아요",
-    timestamp: "2분 전",
-    nickname: "🎯 예측맨",
-    isMyMessage: false,
-  },
-  {
-    content: "홈런!!!!! 김도영 홈런!!!!!",
-    timestamp: "방금 전",
-    nickname: "⚾ 나",
-    isMyMessage: true,
-  },
-]);
+// TODO BaseURL 환경 별로 분리 필요
+// 웹소켓 연결
+const connectWebSocket = () => {
+  const client = new Client({
+    brokerURL: "ws://localhost:8080/ws",
+    connectHeaders: {},
+    webSocketFactory: () => new SockJS("http://localhost:8080/ws"),
+    debug: function (str) {
+      console.log("STOMP: " + str);
+    },
+  });
+
+  client.onConnect = function (frame) {
+    console.log("웹소켓 연결 성공:", frame);
+    // 여기에 모든 데이터가 들어오기 때문에 채팅 메시지 처리 로직 여기에 작성
+    client.subscribe(
+      `/server/liveboard/room/ROOM_${roomId}`,
+      function (message) {
+        // 여기서 채팅 메시지를 처리
+        const data = JSON.parse(message.body);
+
+        if (data.messageType === "CHAT") {
+          chatMessages.value.push({
+            content: data.content,
+            sentAt: data.sentAt,
+            senderNickName: data.senderNickName,
+            isMyMessage: store.user.id === data.senderId,
+          });
+
+          // 채팅 메시지 추가 후 스크롤 맨 아래로 이동
+          setTimeout(() => {
+            if (chatMessageWrapper.value) {
+              chatMessageWrapper.value.scrollTop =
+                chatMessageWrapper.value.scrollHeight;
+
+              const lastMessage = chatMessageWrapper.value.lastElementChild;
+              if (lastMessage) {
+                lastMessage.scrollIntoView({
+                  behavior: "smooth",
+                  block: "end",
+                });
+              }
+            }
+          }, 50);
+        }
+      }
+    );
+    sendEnterMessage(client);
+  };
+
+  client.onStompError = function (frame) {
+    console.error("STOMP 에러:", frame.headers["message"]);
+    console.error("상세 내용:", frame.body);
+  };
+
+  client.onWebSocketError = function (event) {
+    console.error("웹소켓 에러:", event);
+  };
+
+  client.onWebSocketClose = function (event) {
+    console.log("웹소켓 연결 종료:", event);
+  };
+
+  // 연결 활성화
+  client.activate();
+
+  return client;
+};
+
+const sendEnterMessage = (client) => {
+  const message = {
+    roomId: `ROOM_${roomId}`,
+    content: "입장",
+  };
+
+  client.publish({
+    destination: `/client/liveboard/enter`,
+    body: JSON.stringify(message),
+  });
+
+  console.log("입장 메세지 전송:", message);
+};
+
+const client = connectWebSocket();
+
+const sendMessage = () => {
+  if (!client) {
+    console.error("웹소켓 연결이 안되어 있습니다.");
+    return;
+  }
+
+  if (!store.user) {
+    alert("로그인 후 이용해주세요.");
+    return;
+  }
+
+  if (message.value.trim()) {
+    client.publish({
+      destination: `/client/liveboard/message`,
+      body: JSON.stringify({
+        roomId: `ROOM_${roomId}`,
+        content: message.value,
+        senderNickName: "test",
+        messageType: "CHAT",
+      }),
+    });
+
+    message.value = "";
+
+    // 메시지 전송 후 스크롤 맨 아래로 이동 (약간의 딜레이로 확실하게)
+    setTimeout(() => {
+      if (chatMessageWrapper.value) {
+        chatMessageWrapper.value.scrollTop =
+          chatMessageWrapper.value.scrollHeight;
+      }
+    }, 100);
+  }
+};
+
+const chatMessages = ref([]);
 </script>
