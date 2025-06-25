@@ -63,34 +63,27 @@ async function login() {
 
   <div class="social-login-div">
     <img
-        src="../../../../public/images/social/kakao_login_medium_wide.png"
-        height="45"
-        width="300"
+        src="../../../../public/images/social/kakao/kakao.png"
         alt="kakao_login"
         @click="kakaoLogin"
-        style="cursor: pointer"
+        class="social-login-img kakao-login-img"
     />
 
     <img
-        src="../../../../public/images/social/kakao_login_medium_wide.png"
-        height="45"
-        width="300"
-        alt="kakao_login"
+        src="../../../../public/images/social/naver/btnG_아이콘사각.png"
+        alt="naver-login"
         @click="naverLogin"
-        style="cursor: pointer"
+        class="social-login-img naver-login-img"
     />
-
 
     <img
-        src="../../../../public/images/social/kakao_login_medium_wide.png"
-        height="45"
-        width="300"
-        alt="kakao_login"
+        src="../../../../public/images/social/google/signin-assets/Android/png@1x/neutral/android_neutral_rd_na@1x.png"
+        alt="google-login"
         @click="googleLogin"
-        style="cursor: pointer"
+        class="social-login-img google-login-img"
     />
-
   </div>
+
 
   <div class="login-info">
     <router-link to="/login-help" >로그인 관련 문제</router-link>
@@ -130,7 +123,8 @@ async function login() {
 }
 
 .login-form input {
-  height: 40px;
+  width: 400px;
+  height: 60px;
   padding: 0 10px;
   font-size: 14px;
   border: 1px solid #ccc;
@@ -165,4 +159,26 @@ async function login() {
   cursor: pointer;
 }
 
+.social-login-div {
+  display: flex;
+  gap: 12px; /* 버튼 간격 */
+}
+
+.social-login-img {
+  width: 400px;
+  height: 60px;
+  object-fit: contain;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.kakao-login-img{
+  background: #FFDE00;
+}
+.naver-login-img {
+  background: #03C75A;
+}
+.google-login-img {
+  background: #F2F2F2;
+}
 </style>

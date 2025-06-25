@@ -8,7 +8,6 @@ export const useUserStore = defineStore('user', () => {
     const loading = ref(false)
     const error = ref(null)
     const jwtToken = ref(null);
-
     const login = async (email, password) => {
         loading.value = true;
         error.value = null;
@@ -55,8 +54,9 @@ export const useUserStore = defineStore('user', () => {
             })
             user.value = response.data.data
         } catch (err) {
-            error.value = err
-            console.error(err)
+            if(err.response?.status === 401){
+                user.value = null
+            }
         } finally {
             loading.value = false
         }
@@ -69,7 +69,10 @@ export const useUserStore = defineStore('user', () => {
             await axios.post('/users/logout', null, { withCredentials: true })
             user.value = null
             localStorage.removeItem('jwt_token')
+
             await router.push('/')
+
+
         } catch (err) {
             error.value = err
             console.error('로그아웃 실패', err)
