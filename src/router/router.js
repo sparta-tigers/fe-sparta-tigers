@@ -16,6 +16,8 @@ import RecordWrite from "@/page/mobile/record/Write.vue";
 import RecordTeams from "@/page/mobile/record/Teams.vue";
 import RecordSchedule from "@/page/mobile/record/Schedule.vue";
 import RecordDetails from "@/page/mobile/record/Details.vue";
+import Channel from "@/page/mobile/user/Channel.vue";
+import Chatroom from "@/page/mobile/exchange/Chatroom.vue";
 
 const routes = [
     {
@@ -162,17 +164,17 @@ const routes = [
 ];
 
 const router = createRouter({
-    history: createWebHistory(),
-    routes
+  history: createWebHistory(),
+  routes,
 });
 
 router.beforeEach((to, from, next) => {
-    const isLoggedIn = !!localStorage.getItem('jwt_token');
-    if (to.meta.requiresAuth && !isLoggedIn) {
-        next('/login');
-    } else {
-        next();
-    }
+  const isLoggedIn = !!localStorage.getItem("jwt_token");
+  if (to.meta.requiresAuth && !isLoggedIn) {
+    next("/login");
+  } else {
+    next();
+  }
 });
 
 export default router;
