@@ -6,8 +6,7 @@ import {createPinia} from "pinia";
 import piniaPersist from 'pinia-plugin-persistedstate'
 import {useKakao} from "vue3-kakao-maps";
 
-// TODO 시크릿 제거 필요!
-useKakao('d889c3a75f0dea9c42b0b4a914a19316');
+useKakao(import.meta.env.VITE_KAKAO_MAP_API_KEY);
 const app = createApp(App);
 app.use(router);
 app.use(createPinia());

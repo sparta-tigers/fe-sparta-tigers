@@ -49,6 +49,7 @@ const connectWebSocket = () => {
   });
 
   stompClient.value.onConnect = () => {
+    // 여기를 바꾼다
     const userSpecificTopic = `/server/items/user/${store.user.id}`;
 
     subscription.value = stompClient.value.subscribe(userSpecificTopic, (message) => {
