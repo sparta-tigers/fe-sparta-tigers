@@ -11,21 +11,21 @@
 
     <!-- 채팅방은 항상 고정 -->
     <div class="box chat-container">
-      <div class="chat-message-wrapper" ref="chatMessageWrapper">
+      <div ref="chatMessageWrapper" class="chat-message-wrapper">
         <ChatMessage
-          v-for="(msg, index) in chatMessages"
-          :key="index"
-          :message="msg"
+            v-for="(msg, index) in chatMessages"
+            :key="index"
+            :message="msg"
         />
       </div>
 
       <div class="chat-message-input-container">
         <input
-          type="text"
-          v-model="message"
-          class="chat-message-input"
-          @keyup.enter="sendMessage"
-          placeholder="메시지를 입력하세요..."
+            v-model="message"
+            class="chat-message-input"
+            placeholder="메시지를 입력하세요..."
+            type="text"
+            @keyup.enter="sendMessage"
         />
         <button @click="sendMessage">전송</button>
       </div>
@@ -33,7 +33,7 @@
 
     <!-- 문자 중계만 슬라이드 애니메이션 -->
     <transition name="slide-up">
-      <div class="live-board-text" v-if="isLiveBoardTextVisible">
+      <div v-if="isLiveBoardTextVisible" class="live-board-text">
         <div>문자 중계</div>
         <div>이 녀석이 채팅방 영역을 대체해서 올라올 거</div>
       </div>
@@ -127,13 +127,14 @@
 </style>
 
 <script setup>
-import { onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
+import {onMounted, ref} from "vue";
+import {useRoute} from "vue-router";
 import ChatMessage from "@/components/shard/ChatMessage.vue";
-import { Client } from "@stomp/stompjs";
+import {Client} from "@stomp/stompjs";
 import SockJS from "sockjs-client";
-import { useUserStore } from "@/store/useUserStore.js";
+import {useUserStore} from "@/store/useUserStore.js";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'localhost:8080';
 const store = useUserStore();
 
 const fetchUser = async () => {
@@ -156,9 +157,9 @@ const toggleLiveBoardText = () => {
 // 웹소켓 연결
 const connectWebSocket = () => {
   const client = new Client({
-    brokerURL: "ws://localhost:8080/ws",
+    brokerURL: `ws://${API_BASE_URL}/ws`,
     connectHeaders: {},
-    webSocketFactory: () => new SockJS("http://localhost:8080/ws"),
+    webSocketFactory: () => new SockJS(`http://${API_BASE_URL}/ws`),
     debug: function (str) {
       console.log("STOMP: " + str);
     },
@@ -168,36 +169,36 @@ const connectWebSocket = () => {
     console.log("웹소켓 연결 성공:", frame);
     // 여기에 모든 데이터가 들어오기 때문에 채팅 메시지 처리 로직 여기에 작성
     client.subscribe(
-      `/server/liveboard/room/ROOM_${roomId}`,
-      function (message) {
-        // 여기서 채팅 메시지를 처리
-        const data = JSON.parse(message.body);
+        `/server/liveboard/room/ROOM_${roomId}`,
+        function (message) {
+          // 여기서 채팅 메시지를 처리
+          const data = JSON.parse(message.body);
 
-        if (data.messageType === "CHAT") {
-          chatMessages.value.push({
-            content: data.content,
-            sentAt: data.sentAt,
-            senderNickName: data.senderNickName,
-            isMyMessage: store.user.id === data.senderId,
-          });
+          if (data.messageType === "CHAT") {
+            chatMessages.value.push({
+              content: data.content,
+              sentAt: data.sentAt,
+              senderNickName: data.senderNickName,
+              isMyMessage: store.user.id === data.senderId,
+            });
 
-          // 채팅 메시지 추가 후 스크롤 맨 아래로 이동
-          setTimeout(() => {
-            if (chatMessageWrapper.value) {
-              chatMessageWrapper.value.scrollTop =
-                chatMessageWrapper.value.scrollHeight;
+            // 채팅 메시지 추가 후 스크롤 맨 아래로 이동
+            setTimeout(() => {
+              if (chatMessageWrapper.value) {
+                chatMessageWrapper.value.scrollTop =
+                    chatMessageWrapper.value.scrollHeight;
 
-              const lastMessage = chatMessageWrapper.value.lastElementChild;
-              if (lastMessage) {
-                lastMessage.scrollIntoView({
-                  behavior: "smooth",
-                  block: "end",
-                });
+                const lastMessage = chatMessageWrapper.value.lastElementChild;
+                if (lastMessage) {
+                  lastMessage.scrollIntoView({
+                    behavior: "smooth",
+                    block: "end",
+                  });
+                }
               }
-            }
-          }, 50);
+            }, 50);
+          }
         }
-      }
     );
     sendEnterMessage(client);
   };
@@ -265,7 +266,7 @@ const sendMessage = () => {
     setTimeout(() => {
       if (chatMessageWrapper.value) {
         chatMessageWrapper.value.scrollTop =
-          chatMessageWrapper.value.scrollHeight;
+            chatMessageWrapper.value.scrollHeight;
       }
     }, 100);
   }

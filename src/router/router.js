@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router";
+import {createRouter, createWebHistory} from "vue-router";
 import MainPage from "@/page/MainPage.vue";
 import LiveBoardMatch from "@/page/mobile/live-board-match/Main.vue";
 import LiveBoardRoom from "@/page/mobile/live-board-room/Main.vue";
@@ -17,6 +17,9 @@ import RecordTeams from "@/page/mobile/record/Teams.vue";
 import RecordSchedule from "@/page/mobile/record/Schedule.vue";
 import RecordDetails from "@/page/mobile/record/Details.vue";
 import Chatroom from "@/page/mobile/exchange/Chatroom.vue";
+import ChatRooms from "@/page/mobile/exchange/ChatRooms.vue";
+import CreateExchange from "@/page/mobile/exchange/CreateExchange.vue";
+import ExchangeRequestList from "@/page/mobile/exchange/ExchangeRequestList.vue";
 
 const routes = [
     {
@@ -31,13 +34,13 @@ const routes = [
                 path: 'match',
                 name: 'liveboard-match',
                 component: LiveBoardMatch,
-                meta: { title: '라이브보드' }
+                meta: {title: '라이브보드'}
             },
             {
                 path: 'match/room/:roomId',
                 name: 'liveboard-room',
                 component: LiveBoardRoom,
-                meta: { title: '라이브보드' }
+                meta: {title: '라이브보드'}
             }
         ]
     },
@@ -49,19 +52,19 @@ const routes = [
                 path: '',
                 name: 'record-main',
                 component: recordMain,
-                meta: { requiresAuth: true, title: '기록' }
+                meta: {requiresAuth: true, title: '기록'}
             },
             {
                 path: 'write',
                 name: 'record-write',
                 component: RecordWrite,
-                meta: { requiresAuth: true, title: '기록' }
+                meta: {requiresAuth: true, title: '기록'}
             },
             {
                 path: 'details/:id',
-                name : 'record-details',
+                name: 'record-details',
                 component: RecordDetails,
-                meta : { requiresAuth: true, title: '기록'}
+                meta: {requiresAuth: true, title: '기록'}
             }
         ]
     },
@@ -69,13 +72,13 @@ const routes = [
         path: '/record/teams',
         name: 'record-teams',
         component: RecordTeams,
-        meta: { requiresAuth: true, title: '기록' }
+        meta: {requiresAuth: true, title: '기록'}
     },
     {
         path: '/record/teams/:teamId/schedule',
         name: 'record-schedule',
         component: RecordSchedule,
-        meta: { requiresAuth: true, title: '기록' }
+        meta: {requiresAuth: true, title: '기록'}
     },
     {
         path: '/exchange',
@@ -85,7 +88,27 @@ const routes = [
                 path: '',
                 name: 'exchange-main',
                 component: exchangeMain,
-                meta: { requiresAuth:true, title: '교환' }
+                meta: {requiresAuth: true, title: '교환'}
+            },
+            {
+                path: 'create',
+                name: 'create-exchange',
+                component: CreateExchange,
+            },
+            {
+                path: 'chatrooms',
+                name: 'exchange-chatrooms',
+                component: ChatRooms,
+            },
+            {
+                path: 'chatrooms:roomId',
+                name: 'chatroom',
+                component: Chatroom,
+            },
+            {
+                path: 'requests',
+                name: 'exchange-requests',
+                component: ExchangeRequestList,
             }
         ]
     },
@@ -97,25 +120,25 @@ const routes = [
                 path: '',
                 name: 'alarm-main',
                 component: alarmMain,
-                meta: { requiresAuth: true, title: '알람' }
+                meta: {requiresAuth: true, title: '알람'}
             },
             {
                 path: 'teams',
                 name: 'Teams',
                 component: AlarmTeams,
-                meta: { requiresAuth: true, title: '알람' }
+                meta: {requiresAuth: true, title: '알람'}
             },
             {
                 path: 'teams/:teamId/schedule',
                 name: 'alarm-schedule',
                 component: AlarmSchedule,
-                meta: { requiresAuth: true, title: '알람' }
+                meta: {requiresAuth: true, title: '알람'}
             },
             {
                 path: 'teams/:teamId/reservation/:matchId',
                 name: 'MatchReservation',
                 component: MatchReservation,
-                meta: { requiresAuth: true, title: '알람' }
+                meta: {requiresAuth: true, title: '알람'}
             }
         ]
     },
@@ -127,7 +150,7 @@ const routes = [
                 path: '',
                 name: 'stadium-main',
                 component: stadiumInfoMain,
-                meta: { title: '경기장' }
+                meta: {title: '경기장'}
             }
         ]
     },
@@ -139,7 +162,7 @@ const routes = [
                 path: '',
                 name: 'login',
                 component: Login,
-                meta: { title: '로그인' }
+                meta: {title: '로그인'}
             }
         ]
     },
@@ -151,7 +174,7 @@ const routes = [
                 path: '',
                 name: 'mypage',
                 component: MyPage,
-                meta: { requiresAuth: true, title: '마이페이지' }
+                meta: {requiresAuth: true, title: '마이페이지'}
             }
         ]
     },
@@ -163,17 +186,17 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
-  routes,
+    history: createWebHistory(),
+    routes,
 });
 
 router.beforeEach((to, from, next) => {
-  const isLoggedIn = !!localStorage.getItem("jwt_token");
-  if (to.meta.requiresAuth && !isLoggedIn) {
-    next("/login");
-  } else {
-    next();
-  }
+    const isLoggedIn = !!localStorage.getItem("jwt_token");
+    if (to.meta.requiresAuth && !isLoggedIn) {
+        next("/login");
+    } else {
+        next();
+    }
 });
 
 export default router;
