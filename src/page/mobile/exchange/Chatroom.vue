@@ -1,9 +1,9 @@
 <script setup>
-import { onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
-import { Client } from "@stomp/stompjs";
+import {onMounted, ref} from "vue";
+import {useRoute} from "vue-router";
+import {Client} from "@stomp/stompjs";
 import SockJS from "sockjs-client";
-import { useUserStore } from "@/store/useUserStore.js";
+import {useUserStore} from "@/store/useUserStore.js";
 import ChatMessage from "@/components/shard/ChatMessage.vue";
 
 const store = useUserStore();
@@ -35,6 +35,7 @@ const connectWebSocket = () => {
         content: data.message,
         sentAt: data.sentAt,
         senderNickName: data.senderNickname,
+        userId: store.user.id,
         isMyMessage: store.user.id === data.senderId,
       });
     });
@@ -48,31 +49,14 @@ const connectWebSocket = () => {
 const client = connectWebSocket();
 
 const sendMessage = () => {
-  // client.publish({
-  //   destination: `/client/exchange/room/${roomId}`,
-  //   body: JSON.stringify({
-  //     message: message,
-  //   }),
-  // });
-  console.log(`/client/directRoom/send 메세지 전송`);
-  console.log(
-    "메시지 바디:",
-    JSON.stringify({
-      roomId: roomId,
-      message: message.value,
-    })
-  );
   client.publish({
-    destination: `/client/directRoom/send`,
+    destination: `/client/directRoom/send/`,
     body: JSON.stringify({
       roomId: roomId,
       message: message.value,
     }),
   });
-  console.log(message.value);
 };
-
-console.log(client);
 </script>
 
 <template>
@@ -82,19 +66,19 @@ console.log(client);
     <div class="chat-wrapper">
       <div class="chat-message-wrapper">
         <ChatMessage
-          v-for="(msg, index) in chatMessages"
-          :key="index"
-          :message="msg"
+            v-for="(msg, index) in chatMessages"
+            :key="index"
+            :message="msg"
         />
       </div>
     </div>
     <div class="chat-message-input-container">
       <input
-        type="text"
-        v-model="message"
-        class="chat-message-input"
-        @keyup.enter="sendMessage"
-        placeholder="메시지를 입력하세요..."
+          v-model="message"
+          class="chat-message-input"
+          placeholder="메시지를 입력하세요..."
+          type="text"
+          @keyup.enter="sendMessage"
       />
       <button @click="sendMessage">메시지 전송</button>
     </div>
