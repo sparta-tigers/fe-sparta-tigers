@@ -16,7 +16,6 @@ import RecordWrite from "@/page/mobile/record/Write.vue";
 import RecordTeams from "@/page/mobile/record/Teams.vue";
 import RecordSchedule from "@/page/mobile/record/Schedule.vue";
 import RecordDetails from "@/page/mobile/record/Details.vue";
-import Channel from "@/page/mobile/user/Channel.vue";
 import Chatroom from "@/page/mobile/exchange/Chatroom.vue";
 
 const routes = [
