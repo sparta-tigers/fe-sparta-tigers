@@ -30,8 +30,11 @@ const alarmStore = useAlarmStore()
 
 onMounted(async () => {
   alarmStore.connectSSE();
-  await userStore.getUser()
 
+  if(userStore.user){
+    await userStore.getUser()
+
+  }
 })
 
 </script>
