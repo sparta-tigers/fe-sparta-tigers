@@ -16,9 +16,9 @@ export const useWatchListStore = defineStore('watchList', () => {
             const response = await axios.get('/watchlist', {
             params: {
                 page: pageNum,
-                size: pageSize
+                size: pageSize,
             },
-            withCredentials: true  // 여기 추가
+            withCredentials: true
         })
 
             const data = response.data.data
@@ -34,7 +34,18 @@ export const useWatchListStore = defineStore('watchList', () => {
             loading.value = false
         }
     }
-
+    const createWatchList = async (payload) => {
+        try {
+            const response = await axios.post('/watchlist', payload, {
+                withCredentials: true
+            })
+            console.log('✅ 등록 성공:', response.data)
+            return response.data
+        } catch (error) {
+            console.error('❌ 등록 실패:', error)
+            throw error
+        }
+    }
     return {
         watchList,
         totalElements,
@@ -42,6 +53,7 @@ export const useWatchListStore = defineStore('watchList', () => {
         page,
         size,
         loading,
-        fetchWatchList
+        fetchWatchList,
+        createWatchList,
     }
 })
