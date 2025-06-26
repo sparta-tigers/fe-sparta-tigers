@@ -160,11 +160,6 @@ onMounted(fetchUser);
         <div class="pitcher">투수</div>
         <div class="batter">타자</div>
         <div class="catcher">포수</div>
-        <div class="toggle-btn-wrapper">
-          <button @click="toggleLiveBoardText">
-            채팅 보기
-          </button>
-        </div>
       </div>
     </div>
 
@@ -186,17 +181,10 @@ onMounted(fetchUser);
             type="text"
             @keyup.enter="sendMessage"
         />
-        <button @click="sendMessage">전송</button>
+        <button @click="sendMessage">메시지 전송</button>
       </div>
     </div>
 
-    <!-- 문자 중계만 슬라이드 애니메이션 -->
-    <transition name="slide-up">
-      <div v-if="isLiveBoardTextVisible" class="live-board-text">
-        <div>문자 중계</div>
-        <div>이 녀석이 채팅방 영역을 대체해서 올라올 거</div>
-      </div>
-    </transition>
   </div>
 </template>
 
@@ -205,15 +193,10 @@ onMounted(fetchUser);
   height: 100%;
   display: flex;
   flex-direction: column;
-  /**
-  display: flex;
-  flex-direction: column;
-  position: relative;
-   */
 }
 
 .live-board-room-wrapper .live-board {
-  height: 300px;
+  height: 220px;
 }
 
 /* 경기 현황 판 */
@@ -312,11 +295,6 @@ onMounted(fetchUser);
   bottom: 5%;
 }
 
-.toggle-btn-wrapper {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-}
 
 .live-board-room-wrapper .live-board.chat-container {
   display: flex;
@@ -325,13 +303,20 @@ onMounted(fetchUser);
 }
 
 .live-board.chat-container .chat-message-wrapper {
-  border: 1px solid black;
+  background-color: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
   flex: 1;
   overflow-y: auto;
-  padding: 10px;
+  padding: 16px;
 
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
+}
+
+.live-board.chat-container .chat-message-wrapper .toggle-btn-wrapper {
+  background-color: transparent;
+
 }
 
 /* 스크롤바 숨기기 */
@@ -340,54 +325,47 @@ onMounted(fetchUser);
 }
 
 .chat-message-input-container {
+  position: sticky;
+  bottom: 0;
+  background-color: white;
   display: flex;
   flex-direction: row;
-  gap: 10px;
-  padding: 10px;
-  border-top: 1px solid #f9f9f9;
+  gap: 8px;
+  padding: 16px;
+  border-top: 1px solid #e0e0e0;
+  flex-shrink: 0;
 }
 
 .chat-message-input {
   flex: 1;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.2s ease;
 }
 
-.live-board-text {
-  background-color: #f9f9f9; /* 배경색이 있어야 채팅방 가릴 수 있음 주의 */
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 57%; /* 채팅방과 같은 크기 */
-  z-index: 10;
-  padding: 10px;
+.chat-message-input:focus {
+  border-color: #659287;
 }
 
-/* 문자 중계 슬라이드 애니메이션 */
-.slide-up-enter-active,
-.slide-up-leave-active {
-  transition: all 0.4s ease-in-out;
+.chat-message-input-container button {
+  padding: 12px 16px;
+  background-color: #659287;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
 }
 
-/* 나타날 때: 아래에서 위로 */
-.slide-up-enter-from {
-  transform: translateY(100%);
-  opacity: 0;
-}
-
-.slide-up-enter-to {
-  transform: translateY(0);
-  opacity: 1;
-}
-
-/* 사라질 때: 위에서 아래로 */
-.slide-up-leave-from {
-  transform: translateY(0);
-  opacity: 1;
-}
-
-.slide-up-leave-to {
-  transform: translateY(100%);
-  opacity: 0;
+.chat-message-input-container button:hover {
+  background-color: #5a8278;
+  transform: translateY(-1px);
 }
 </style>
 
