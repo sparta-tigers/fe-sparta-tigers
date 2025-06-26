@@ -1,10 +1,11 @@
 <script setup>
 import {KakaoMap, KakaoMapMarker} from "vue3-kakao-maps";
-import {onBeforeUnmount, onMounted, ref} from "vue";
+import {onBeforeUnmount, onMounted, ref, toRaw} from "vue";
 import {useUserStore} from "@/store/useUserStore.js";
 import {Client} from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import instance from "@/axios.js"
+import router from "@/router/router.js";
 
 // userStore
 const store = useUserStore();
@@ -73,7 +74,7 @@ const disconnectWebSocket = () => {
 
 // 수신된 메시지를 타입별로 처리하는 핸들러
 const handleRealtimeMessage = (message) => {
-  console.log(`메시지 수신: ${JSON.stringify(message)}`);
+  // console.log(`메시지 수신: ${JSON.stringify(message)}`);
   switch (message.type) {
     case 'ADD_ITEM':
       drawItemMarker(message.data);
@@ -97,7 +98,7 @@ const fetchAndDrawItems = async () => {
   try {
     const response = await instance.get('/items');
     const items = response.data.data.content;
-    console.log(`주변 아이템: [${JSON.stringify(items)}]`)
+    // console.log(`주변 아이템: [${JSON.stringify(items)}]`)
     items.forEach(item => drawItemMarker(item));
   } catch (error) {
     console.log('주변 아이템 로드 실패:', error);
@@ -142,6 +143,7 @@ const updateUserMarker = (userId, latitude, longitude) => {
   // 마커에 넣을 데이터
   const markerData = {
     id: userId,
+    itemId: item ? item.id : null,
     lat: latitude,
     lng: longitude,
     imageSrc: imageSrc,
@@ -235,30 +237,39 @@ const onLoadKakaoMap = async (ref) => {
 // onLoadKakaoMap 지도가 로드되었을 때 발생하는 이벤트
 // onLoadKakaoMapMarkerCluster 지도의 마커 클러스터가 로드되었을때 발생하는 이벤트
 
+const onMarkerClick = (marker) => {
+  const rawMarker = toRaw(marker);
+  
+  if (rawMarker.itemId) {
+    router.push(`/exchange/item/${rawMarker.itemId}`)
+  }
+}
+
 </script>
 
 <template>
   <div class="map-container">
-    <KakaoMap :draggable="true"
-              :lat="coordinate.lat"
-              :lng="coordinate.lng"
-              style="width: 100%; height: 100%;"
-              @onLoadKakaoMap="onLoadKakaoMap">
+    <KakaoMap
+        :draggable="true"
+        :lat="coordinate.lat"
+        :lng="coordinate.lng"
+        style="width: 100%; height: 100%;"
+        @onLoadKakaoMap="onLoadKakaoMap">
       <KakaoMapMarker
           v-for="marker in markers"
           :key="marker.id"
+          :clickable="true"
           :image="{
-          imageSrc: marker.imageSrc,
-          imageWidth: marker.imageWidth,
-          imageHeight: marker.imageHeight
-        }"
+                      imageSrc: marker.imageSrc,
+                      imageWidth: marker.imageWidth,
+                      imageHeight: marker.imageHeight
+                    }"
           :lat="marker.lat"
           :lng="marker.lng"
           :title="marker.title"
+          @onClickKakaoMapMarker="() => onMarkerClick(marker)"
       />
     </KakaoMap>
-    <div id="map">
-    </div>
   </div>
 
 </template>

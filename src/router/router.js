@@ -20,6 +20,7 @@ import Chatroom from "@/page/mobile/exchange/Chatroom.vue";
 import ChatRooms from "@/page/mobile/exchange/ChatRooms.vue";
 import CreateExchange from "@/page/mobile/exchange/CreateExchange.vue";
 import ExchangeRequestList from "@/page/mobile/exchange/ExchangeRequestList.vue";
+import ItemDetail from "@/page/mobile/exchange/ItemDetail.vue";
 
 const routes = [
     {
@@ -96,12 +97,17 @@ const routes = [
                 component: CreateExchange,
             },
             {
+                path: 'item/:itemId',
+                name: 'item-detail',
+                component: ItemDetail,
+            },
+            {
                 path: 'chatrooms',
                 name: 'exchange-chatrooms',
                 component: ChatRooms,
             },
             {
-                path: 'chatrooms:roomId',
+                path: 'chatrooms/:roomId/exchangeRequest/:exchangeRequestId',
                 name: 'chatroom',
                 component: Chatroom,
             },
