@@ -107,7 +107,7 @@ const routes = [
                 component: ChatRooms,
             },
             {
-                path: 'chatrooms:roomId',
+                path: 'chatrooms/:roomId/exchangeRequest/:exchangeRequestId',
                 name: 'chatroom',
                 component: Chatroom,
             },

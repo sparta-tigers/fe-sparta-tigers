@@ -17,7 +17,6 @@ const fetchExchangeRequests = async (pageNum = 0) => {
   try {
     const response = await instance.get(`/exchanges/request/receive?page=${pageNum}&size=10`)
     const {content, ...rest} = response.data.data
-    console.log(content)
     if (pageNum === 0) {
       exchangeRequests.value = content
     } else {
@@ -70,10 +69,6 @@ const handleScroll = () => {
   if (scrollTop + clientHeight >= scrollHeight - threshold) {
     loadNextPage()
   }
-}
-
-const refreshData = () => {
-  fetchExchangeRequests(0)
 }
 
 const navigateToItemDetailPage = (itemId) => {

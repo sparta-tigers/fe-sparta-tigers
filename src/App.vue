@@ -1,13 +1,12 @@
 <template>
-  <router-view />
-  <MainFooter v-if="!isMobile"></MainFooter>
+  <router-view/>
 </template>
 
 <script setup>
-import MainFooter from './layout/MainFooter.vue'
-import { ref, onMounted, onUnmounted } from 'vue'
+import {onMounted, onUnmounted, ref} from 'vue'
 import {useAlarmStore} from "@/store/useAlarmStore.js";
 import {useUserStore} from "@/store/useUserStore.js";
+
 const userStore = useUserStore()
 
 const isMobile = ref(false)
@@ -31,7 +30,7 @@ const alarmStore = useAlarmStore()
 onMounted(async () => {
   alarmStore.connectSSE();
 
-  if(userStore.user){
+  if (userStore.user) {
     await userStore.getUser()
 
   }
