@@ -1,14 +1,21 @@
 <script setup>
-import {onMounted, ref} from "vue";
-import {useRoute} from "vue-router";
-import {Client} from "@stomp/stompjs";
+import { onMounted, ref } from "vue";
+import { useRoute } from "vue-router";
+import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
-import {useUserStore} from "@/store/useUserStore.js";
+import { useUserStore } from "@/store/useUserStore.js";
 import ChatMessage from "@/components/shard/ChatMessage.vue";
 import instance from "@/axios.js";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'localhost:8080';
 const store = useUserStore();
+const baseURL = import.meta.env.VITE_API_BASE_URL;
+const wsBaseURL = baseURL.replace(/^http/, 'ws')
+
+const fetchUser = async () => {
+  await store.getUser();
+};
+
+onMounted(fetchUser);
 
 const route = useRoute();
 const roomId = route.params.roomId;
@@ -19,7 +26,7 @@ const chatMessageWrapper = ref(null);
 
 const connectWebSocket = () => {
   const client = new Client({
-    brokerURL: `ws://${API_BASE_URL}/ws`,
+    brokerURL: `${wsBaseURL}/ws`,
     connectHeaders: {
       Authorization: `Bearer ${localStorage.getItem('jwt_token')}`,
       ChatDomain: 'directroom'

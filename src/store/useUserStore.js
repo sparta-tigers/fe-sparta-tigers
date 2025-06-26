@@ -2,15 +2,17 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import axios from '@/axios.js'
 import router from "@/router/router.js";
+import {useLoadingStore} from "@/store/useLoadingStore.js";
+import {ApiError} from "@/utils/ApiError.js";
 
 export const useUserStore = defineStore('user', () => {
     const user = ref(null)
     const loading = ref(false)
     const error = ref(null)
-    const jwtToken = ref(null);
+    const jwtToken = ref(localStorage.getItem('jwt_token') || null)
+    const loadingStore = useLoadingStore()
     const login = async (email, password) => {
-        loading.value = true;
-        error.value = null;
+        loadingStore.stop(user);
 
         try {
             const response = await axios.post('/users/login', { email, password })
@@ -28,39 +30,32 @@ export const useUserStore = defineStore('user', () => {
 
             return true
         } catch (err) {
-            console.error('전체 에러:', err)
-
-
-            if (err.response && err.response.data && err.response.data.error) {
-                const msg = err.response.data.error.message
-                error.value = msg
-            } else {
-                error.value = '알 수 없는 오류가 발생했습니다.'
-            }
-
-            return false
-        } finally {
-            loading.value = false
+            const { message } = ApiError(err);
+            alert(message);
+        } finally {122100
+            loadingStore.stop(user);
         }
 
     };
 
     const getUser = async () => {
-        loading.value = true
+        loadingStore.isLoading(user)
         error.value = null
         try {
-            const response = await axios.get('/users/me', {
-                withCredentials: true,
-            })
+            const response = await axios.get('/users/me')
             user.value = response.data.data
         } catch (err) {
-            if(err.response?.status === 401){
+            if (err.response?.status === 401) {
                 user.value = null
+                // 추가: 인증 만료 시 로그아웃 처리나 리다이렉트도 여기서 가능
+            } else {
+                error.value = '사용자 정보를 불러오는 중 오류가 발생했습니다.'
             }
         } finally {
             loading.value = false
         }
     }
+
 
     const logout = async () => {
         loading.value = true

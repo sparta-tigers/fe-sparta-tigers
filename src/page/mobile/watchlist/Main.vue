@@ -3,7 +3,8 @@ import {ref, onMounted, computed} from 'vue'
 import {useWatchListStore } from '@/store/useWatchListStore.js'
 import { useRouter } from 'vue-router'
 import { stripHtml, formatMatchTime, formatStars } from '@/utils'
-
+import { useLoadingStore } from '@/store/useLoadingStore.js'
+const loadingStore = useLoadingStore();
 const router = useRouter()
 const goToDetail = (id) => {
   router.push({ name: 'record-details', params: { id } })
@@ -43,7 +44,7 @@ const isEmpty = computed(() => {
       <button class="register-btn" @click="goToRecordWrite">기록 등록 하기</button>
     </div>
 
-    <div v-if="watchListStore.loading" class="loading">불러오는 중...</div>
+    <div v-if="loadingStore.isLoading('watchList')" class="loading">불러오는 중...</div>
 
     <div v-else>
       <div v-if="isEmpty" class="empty">경기 기록이 없습니다.</div>
@@ -68,18 +69,21 @@ const isEmpty = computed(() => {
         <p class="match-rate">평점: {{ formatStars(item.record.rate) }}</p>
       </div>
     </div>
+    <div v-if="watchListStore.watchList.length > 0">
 
-    <div class="pagination">
-      <button
-          v-for="n in totalPages"
-          :key="n"
-          @click="goToPage(n - 1)"
-          :class="['page-number', { active: page === n - 1 }]"
-      >
-        {{ n }}
-      </button>
-    </div>
+      <div class="pagination">
+        <button
+            v-for="n in totalPages"
+            :key="n"
+            @click="goToPage(n - 1)"
+            :class="['page-number', { active: page === n - 1 }]"
+        >
+          {{ n }}
+        </button>
+      </div>
+   </div>
   </div>
+
 </template>
 
 

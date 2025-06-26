@@ -4,7 +4,7 @@ import Quill from 'quill'
 import 'quill/dist/quill.snow.css'
 import axios from '@/axios.js'
 import {useWatchListStore} from "@/store/useWatchListStore.js";
-import SchedulePopup from '@/page/mobile/record/SchedulePopUp.vue'
+import SchedulePopup from '@/page/mobile/watchlist/SchedulePopUp.vue'
 import { formatMatchTime } from '@/utils'
 import router from "@/router/router.js";
 
@@ -75,30 +75,29 @@ function imageHandler() {
 const submit = async () => {
   const content = quill.root.innerHTML
 
-  if (!content || content === '<p><br></p>') {
+  const isContentEmpty = (text) => !text || text === '<p><br></p>'
+
+  if (isContentEmpty(content)) {
     alert('내용을 입력하세요.')
     return
   }
-  const payload = {
-    match: {
-      id: selectedMatch.value.matchId
-    },
-    record: {
-      content: quill.root.innerHTML,
-      rate: rate.value
-    },
-    seat: seat.value
-  }
 
+  const payload = {
+    match: { id: selectedMatch.value.matchId },
+    record: { content, rate: rate.value },
+    seat: seat.value,
+  }
 
   try {
     await watchListStore.createWatchList(payload)
     alert('등록 완료!')
     await router.push({ name: 'record-main' })
   } catch (err) {
-    alert('등록 실패!')
+    console.error('등록 실패:', err)
+    alert('등록 실패! 다시 시도해주세요.')
   }
 }
+
 onMounted(() => {
   quill = new Quill(editorContainer.value, {
     theme: 'snow',
