@@ -7,6 +7,8 @@ import { useUserStore } from "@/store/useUserStore.js";
 import ChatMessage from "@/components/shard/ChatMessage.vue";
 
 const store = useUserStore();
+const baseURL = import.meta.env.VITE_API_BASE_URL;
+const wsBaseURL = baseURL.replace(/^http/, 'ws')
 
 const fetchUser = async () => {
   await store.getUser();
@@ -23,9 +25,9 @@ const chatMessages = ref([]);
 
 const connectWebSocket = () => {
   const client = new Client({
-    brokerURL: "ws://localhost:8080/ws",
+    brokerURL: `${wsBaseURL}/ws`,
     connectHeaders: {},
-    webSocketFactory: () => new SockJS("http://localhost:8080/ws"),
+    webSocketFactory: () => new SockJS(`${baseURL}/ws`),
   });
 
   client.onConnect = function (frame) {

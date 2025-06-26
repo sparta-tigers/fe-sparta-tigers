@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import MainPage from "@/page/MainPage.vue";
 import LiveBoardMatch from "@/page/mobile/live-board-match/Main.vue";
 import LiveBoardRoom from "@/page/mobile/live-board-room/Main.vue";
-import recordMain from "@/page/mobile/record/Main.vue";
+import recordMain from "@/page/mobile/watchlist/Main.vue";
 import exchangeMain from "@/page/mobile/exchange/Main.vue";
 import alarmMain from "@/page/mobile/alarm/Main.vue";
 import AlarmTeams from "@/page/mobile/alarm/Teams.vue";
@@ -12,11 +12,16 @@ import stadiumInfoMain from "@/page/mobile/stadium-info/Main.vue";
 import Login from "@/page/mobile/user/Login.vue";
 import OAuth2Redirect from "@/page/mobile/util/OAuth2Redirect.vue";
 import MyPage from "@/page/mobile/user/MyPage.vue";
-import RecordWrite from "@/page/mobile/record/Write.vue";
-import RecordTeams from "@/page/mobile/record/Teams.vue";
-import RecordSchedule from "@/page/mobile/record/Schedule.vue";
-import RecordDetails from "@/page/mobile/record/Details.vue";
+import RecordWrite from "@/page/mobile/watchlist/Write.vue";
+import RecordTeams from "@/page/mobile/watchlist/Teams.vue";
+import RecordSchedule from "@/page/mobile/watchlist/Schedule.vue";
+import RecordDetails from "@/page/mobile/watchlist/Details.vue";
 import Chatroom from "@/page/mobile/exchange/Chatroom.vue";
+import signUp from "@/page/mobile/user/SignUp.vue";
+import SignUp from "@/page/mobile/user/SignUp.vue";
+import FindId from "@/page/mobile/user/FindId.vue";
+import FindPassword from "@/page/mobile/user/FindPassword.vue";
+import LoginHelp from "@/page/mobile/user/LoginHelp.vue";
 
 const routes = [
     {
@@ -149,9 +154,58 @@ const routes = [
         children: [
             {
                 path: '',
-                name: 'mypage',
+                name: 'my-page',
                 component: MyPage,
                 meta: { requiresAuth: true, title: '마이페이지' }
+            }
+        ]
+    },
+    {
+        path: '/signup',
+        component: MainPage,
+        children: [
+            {
+                path: '',
+                name: 'sign-up',
+                component: SignUp,
+                meta: {title: '회원가입' }
+
+            }
+        ]
+    },
+    {
+        path: '/findid',
+        component: MainPage,
+        children: [
+            {
+                path: '',
+                name: 'find-id',
+                component: FindId,
+                meta: {title: '아이디 찾기' }
+            }
+        ]
+    },
+    {
+        path: '/findpassword',
+        component: MainPage,
+        children: [
+            {
+                path: '',
+                name: 'find-password',
+                component: FindPassword,
+                meta: {title: '비밀번호 찾기' }
+            }
+        ]
+    },
+    {
+        path: '/loginhelp',
+        component: MainPage,
+        children: [
+            {
+                path: '',
+                name: 'login-help',
+                component: LoginHelp,
+                meta: {title: '로그인 관련 문제' }
             }
         ]
     },

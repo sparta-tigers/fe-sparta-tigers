@@ -12,7 +12,6 @@ import MobileLayout from '../layout/MobileLayout.vue'
 
 <style scoped>
 .page-layout {
-  background: red;
   display: flex;
   justify-content: center;
   align-items: center;

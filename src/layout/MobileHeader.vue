@@ -30,10 +30,6 @@
 <script setup>
 import { useRoute } from 'vue-router'
 import { computed } from 'vue'
-import { useAlarmStore } from '@/store/useAlarmStore.js'
-import {storeToRefs} from "pinia";
-
-const alarmStore = useAlarmStore()
 
 const route = useRoute()
 

@@ -5,6 +5,7 @@ import axios from '@/axios.js'
 import router from "@/router/router.js";
 
 export const useAlarmStore = defineStore('alarm', () => {
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
     const alarms = ref([])
     const loading = ref(false)
     const error = ref(null)
@@ -100,9 +101,8 @@ export const useAlarmStore = defineStore('alarm', () => {
             eventSource.close()
         }
 
-        eventSource = new EventSource(`http://localhost:8080/api/alarms/sse/subscribe`, {
-            withCredentials: true
-        })
+        eventSource = new EventSource(`${baseURL}/api/alarms/sse/subscribe`)
+
 
         eventSource.onopen = () => {
             console.log('✅ SSE 연결됨')

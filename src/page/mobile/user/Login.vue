@@ -1,48 +1,56 @@
 <script setup>
 import {useUserStore} from "@/store/useUserStore.js";
-import router from "@/router/router.js";
 import {ref} from "vue";
+import {useRouter} from "vue-router";
 const store = useUserStore()
+const baseUrl = import.meta.env.VITE_API_BASE_URL
+
 const kakaoLogin = () => {
-  window.location.href = 'http://localhost:8080/oauth2/authorization/kakao';
+  window.location.href = `${baseUrl}/oauth2/authorization/kakao`
 };
 const naverLogin = () => {
-  window.location.href = 'http://localhost:8080/oauth2/authorization/naver';
+  window.location.href = `${baseUrl}/oauth2/authorization/naver`
 }
 
 const googleLogin = () => {
-  window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+  window.location.href = `${baseUrl}/oauth2/authorization/google`
 }
+
+const router = useRouter()
+
+const goToSignup = () => {
+  router.push({ name: 'sign-up' })
+}
+const goToFindId = () => {
+  router.push({ name: 'find-id' })
+}
+const goToFindPw = () => {
+  router.push({ name: 'find-password' })
+}
+const goToLoginHelp = () => {
+  router.push({ name: 'login-help' })
+}
+
+
 const email = ref('')
 const password = ref('')
-
-
-async function login() {
-  try {
-    await store.login(email.value, password.value);
-    alert('로그인 성공!');
+const login = async () => {
+  const success = await store.login(email.value, password.value);
+  if (success) {
     await router.push('/');
-  } catch (err) {
-    console.log(err);
-    alert('로그인 실패: 이메일 또는 비밀번호를 확인하세요.');
   }
-}
-
-
-
+};
 </script>
 
 <template>
 <div class="login-container">
   <div class="instruction-div">
-    <div class="instruction-title">
-      조금 큰 글씨
+    <div class="instruction-left"></div>
+    <div class="instruction-center">
+      <img src="/images/fe-design/main-font.png" class="main-font-img" alt="main-font">
     </div>
-    <div class="instruction-content">
-      그보다 작은 글씨
-    </div>
-    <div class="instruction-image">
-      야구 관련 이미지 넣기
+    <div class="instruction-right">
+      <img src="/images/fe-design/character-1.png" class="character-img" alt="character-1">
     </div>
   </div>
 
@@ -53,11 +61,11 @@ async function login() {
     <button class="login-btn" @click="login">로그인</button>
 
     <div class="auth-links">
-<!--      <a @click="goToFindId">아이디 찾기</a>-->
+      <a @click="goToFindId">아이디 찾기</a>
       <span>|</span>
-<!--      <a @click="goToFindPw">비밀번호 찾기</a>-->
+      <a @click="goToFindPw">비밀번호 찾기</a>
       <span>|</span>
-<!--      <a @click="goToSignup">회원가입</a>-->
+      <a @click="goToSignup">회원가입</a>
     </div>
   </div>
 
@@ -86,18 +94,49 @@ async function login() {
 
 
   <div class="login-info">
-    <router-link to="/login-help" >로그인 관련 문제</router-link>
+    <a @click="goToLoginHelp">로그인 관련 문제</a>
   </div>
 </div>
 </template>
 
 <style scoped>
-.social-login-div {
+/* @@@@@@@@ 상단 이미지 및 로고 @@@@@@@ */
+.instruction-div {
   display: flex;
-  flex-direction: column;
-  gap: 1em;
-  align-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 5em;
+  position: relative;
 }
+
+.instruction-div::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 5%;
+  width: 90%;
+  height: 2px;
+  background: linear-gradient(to right, #ccc, #999, #ccc);
+}
+
+.instruction-left,
+.instruction-right,
+.instruction-center {
+  flex: 1;
+}
+
+.instruction-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.instruction-right {
+  display: flex;
+  justify-content: right;
+}
+
+
+/* @@@@@@@@ 로그인 DIV 영역 @@@@@@@ */
 .login-container {
   display: flex;
   flex-direction: column;
@@ -105,11 +144,7 @@ async function login() {
   align-content: center;
 }
 
-.instruction-div {
-  text-align: center;
-  width : 100%;
-  margin-bottom: 5em;
-}
+
 .login-info {
   cursor:pointer;
   font-size: 0.5em;
@@ -123,10 +158,10 @@ async function login() {
 }
 
 .login-form input {
-  width: 400px;
-  height: 60px;
+  width: clamp(18rem, 25vw, 25rem);
+  height: clamp(3rem, 6vh, 3.75rem);
   padding: 0 10px;
-  font-size: 14px;
+  font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 6px;
 }
@@ -146,6 +181,7 @@ async function login() {
   background-color: #003f99;
 }
 
+/* @@@@@@@@ 아이디 비밀번호 회원가입 영역 @@@@@@@ */
 .auth-links {
   text-align: center;
   font-size: 14px;
@@ -159,14 +195,18 @@ async function login() {
   cursor: pointer;
 }
 
+/* @@@@@@@@ 소셜 로그인 DIV 영역 @@@@@@@ */
+
 .social-login-div {
   display: flex;
-  gap: 12px; /* 버튼 간격 */
+  flex-direction: column;
+  gap: 1em;
+  align-content: center;
 }
 
 .social-login-img {
-  width: 400px;
-  height: 60px;
+  width: clamp(18rem, 25vw, 25rem);
+  height: clamp(3rem, 6vh, 3.75rem);
   object-fit: contain;
   cursor: pointer;
   user-select: none;
@@ -181,4 +221,34 @@ async function login() {
 .google-login-img {
   background: #F2F2F2;
 }
+
+/* @@@@@@@@ 상단 로고 및 이미지 @@@@@@@ */
+
+.main-font-img,
+.character-img {
+  max-width: 100%;
+  width: clamp(150px, 20vw, 280px);
+  height: auto;
+}
+
+/* @@@@@@@@ 로그인 인포 @@@@@@@ */
+.login-info {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 0.875rem;
+}
+
+.login-info a {
+  color: #666;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.login-info a:hover {
+  color: #0052cc;
+  text-decoration: underline;
+}
+
+
 </style>

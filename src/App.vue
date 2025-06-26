@@ -1,6 +1,5 @@
 <template>
   <router-view />
-  <MainFooter v-if="!isMobile"></MainFooter>
 </template>
 
 <script setup>
@@ -16,24 +15,21 @@ function checkMobile() {
   isMobile.value = window.innerWidth <= 768
 }
 
-onMounted(() => {
-  checkMobile()
-  window.addEventListener('resize', checkMobile)
-})
 onUnmounted(() => {
   window.removeEventListener('resize', checkMobile)
 })
-onMounted(async () => {
-})
+
 
 const alarmStore = useAlarmStore()
 
 onMounted(async () => {
+  checkMobile()
+  window.addEventListener('resize', checkMobile)
+
   alarmStore.connectSSE();
 
-  if(userStore.user){
+  if (!userStore.user && localStorage.getItem('jwt_token')) {
     await userStore.getUser()
-
   }
 })
 
