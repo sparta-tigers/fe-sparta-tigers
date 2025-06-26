@@ -1,7 +1,7 @@
 <template>
   <div class="page-layout">
     <div class="main-floating">
-      <MobileLayout />
+      <MobileLayout/>
     </div>
   </div>
 </template>

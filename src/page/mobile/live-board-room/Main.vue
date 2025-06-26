@@ -1,164 +1,34 @@
-<template>
-  <div class="live-board-room-wrapper">
-    <div class="box">
-      <div>게임 중계</div>
-      <div>
-        <button @click="toggleLiveBoardText">
-          문자 중계 박스를 위로 올리는 버튼
-        </button>
-      </div>
-    </div>
-
-    <!-- 채팅방은 항상 고정 -->
-    <div class="box chat-container">
-      <div class="chat-message-wrapper" ref="chatMessageWrapper">
-        <ChatMessage
-          v-for="(msg, index) in chatMessages"
-          :key="index"
-          :message="msg"
-        />
-      </div>
-
-      <div class="chat-message-input-container">
-        <input
-          type="text"
-          v-model="message"
-          class="chat-message-input"
-          @keyup.enter="sendMessage"
-          placeholder="메시지를 입력하세요..."
-        />
-        <button @click="sendMessage">전송</button>
-      </div>
-    </div>
-
-    <!-- 문자 중계만 슬라이드 애니메이션 -->
-    <transition name="slide-up">
-      <div class="live-board-text" v-if="isLiveBoardTextVisible">
-        <div>문자 중계</div>
-        <div>이 녀석이 채팅방 영역을 대체해서 올라올 거</div>
-      </div>
-    </transition>
-  </div>
-</template>
-
-<style scoped>
-.live-board-room-wrapper {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-}
-
-.live-board-room-wrapper .box {
-  flex: 1;
-}
-
-.live-board-room-wrapper .box.chat-container {
-  display: flex;
-  flex-direction: column;
-  height: 100px; /* 채팅방 영역 크기 여기를 줘야만 반반이 되는데 일단 왜 되는지 모르겠음 더이상 수정하면 사고임 기준 높이가 생겨서 라고함 */
-}
-
-.box.chat-container .chat-message-wrapper {
-  border: 1px solid black;
-  flex: 1;
-  overflow-y: auto;
-  padding: 10px;
-
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
-}
-
-/* 스크롤바 숨기기 */
-.box.chat-container .chat-message-wrapper::-webkit-scrollbar {
-  display: none;
-}
-
-.chat-message-input-container {
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-  padding: 10px;
-  border-top: 1px solid #f9f9f9;
-}
-
-.chat-message-input {
-  flex: 1;
-}
-
-.live-board-text {
-  background-color: #f9f9f9; /* 배경색이 있어야 채팅방 가릴 수 있음 주의 */
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 50%; /* 채팅방과 같은 크기 */
-  z-index: 10;
-  padding: 10px;
-}
-
-/* 문자 중계 슬라이드 애니메이션 */
-.slide-up-enter-active,
-.slide-up-leave-active {
-  transition: all 0.4s ease-in-out;
-}
-
-/* 나타날 때: 아래에서 위로 */
-.slide-up-enter-from {
-  transform: translateY(100%);
-  opacity: 0;
-}
-
-.slide-up-enter-to {
-  transform: translateY(0);
-  opacity: 1;
-}
-
-/* 사라질 때: 위에서 아래로 */
-.slide-up-leave-from {
-  transform: translateY(0);
-  opacity: 1;
-}
-
-.slide-up-leave-to {
-  transform: translateY(100%);
-  opacity: 0;
-}
-</style>
-
 <script setup>
-import { onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
+import {onMounted, ref} from "vue";
+import {useRoute} from "vue-router";
 import ChatMessage from "@/components/shard/ChatMessage.vue";
-import { Client } from "@stomp/stompjs";
+import {Client} from "@stomp/stompjs";
 import SockJS from "sockjs-client";
-import { useUserStore } from "@/store/useUserStore.js";
+import {useUserStore} from "@/store/useUserStore.js";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'localhost:8080';
 const store = useUserStore();
 
 const fetchUser = async () => {
   await store.getUser();
 };
-
-onMounted(fetchUser);
-
 const route = useRoute();
 const roomId = route.params.roomId;
 const isLiveBoardTextVisible = ref(false);
 const message = ref("");
 const chatMessageWrapper = ref(null);
+const chatMessages = ref([]);
 
 const toggleLiveBoardText = () => {
   isLiveBoardTextVisible.value = !isLiveBoardTextVisible.value;
 };
 
-// TODO BaseURL 환경 별로 분리 필요
 // 웹소켓 연결
 const connectWebSocket = () => {
   const client = new Client({
-    brokerURL: "ws://localhost:8080/ws",
+    brokerURL: `ws://${API_BASE_URL}/ws`,
     connectHeaders: {},
-    webSocketFactory: () => new SockJS("http://localhost:8080/ws"),
+    webSocketFactory: () => new SockJS(`http://${API_BASE_URL}/ws`),
     debug: function (str) {
       console.log("STOMP: " + str);
     },
@@ -168,36 +38,36 @@ const connectWebSocket = () => {
     console.log("웹소켓 연결 성공:", frame);
     // 여기에 모든 데이터가 들어오기 때문에 채팅 메시지 처리 로직 여기에 작성
     client.subscribe(
-      `/server/liveboard/room/ROOM_${roomId}`,
-      function (message) {
-        // 여기서 채팅 메시지를 처리
-        const data = JSON.parse(message.body);
+        `/server/liveboard/room/ROOM_${roomId}`,
+        function (message) {
+          // 여기서 채팅 메시지를 처리
+          const data = JSON.parse(message.body);
 
-        if (data.messageType === "CHAT") {
-          chatMessages.value.push({
-            content: data.content,
-            sentAt: data.sentAt,
-            senderNickName: data.senderNickName,
-            isMyMessage: store.user.id === data.senderId,
-          });
+          if (data.messageType === "CHAT") {
+            chatMessages.value.push({
+              content: data.content,
+              sentAt: data.sentAt,
+              senderNickName: data.senderNickName,
+              isMyMessage: store.user.id === data.senderId,
+            });
 
-          // 채팅 메시지 추가 후 스크롤 맨 아래로 이동
-          setTimeout(() => {
-            if (chatMessageWrapper.value) {
-              chatMessageWrapper.value.scrollTop =
-                chatMessageWrapper.value.scrollHeight;
+            // 채팅 메시지 추가 후 스크롤 맨 아래로 이동
+            setTimeout(() => {
+              if (chatMessageWrapper.value) {
+                chatMessageWrapper.value.scrollTop =
+                    chatMessageWrapper.value.scrollHeight;
 
-              const lastMessage = chatMessageWrapper.value.lastElementChild;
-              if (lastMessage) {
-                lastMessage.scrollIntoView({
-                  behavior: "smooth",
-                  block: "end",
-                });
+                const lastMessage = chatMessageWrapper.value.lastElementChild;
+                if (lastMessage) {
+                  lastMessage.scrollIntoView({
+                    behavior: "smooth",
+                    block: "end",
+                  });
+                }
               }
-            }
-          }, 50);
+            }, 50);
+          }
         }
-      }
     );
     sendEnterMessage(client);
   };
@@ -231,15 +101,13 @@ const sendEnterMessage = (client) => {
     destination: `/client/liveboard/enter`,
     body: JSON.stringify(message),
   });
-
-  console.log("입장 메세지 전송:", message);
 };
 
 const client = connectWebSocket();
 
 const sendMessage = () => {
   if (!client) {
-    console.error("웹소켓 연결이 안되어 있습니다.");
+    alert('서버와 연결에 문제가 있습니다! 네트워크 환경을 확인 해주세요!')
     return;
   }
 
@@ -261,15 +129,244 @@ const sendMessage = () => {
 
     message.value = "";
 
-    // 메시지 전송 후 스크롤 맨 아래로 이동 (약간의 딜레이로 확실하게)
+    // 메시지 전송 후 스크롤 맨 아래로 이동
     setTimeout(() => {
       if (chatMessageWrapper.value) {
         chatMessageWrapper.value.scrollTop =
-          chatMessageWrapper.value.scrollHeight;
+            chatMessageWrapper.value.scrollHeight;
       }
     }, 100);
   }
 };
 
-const chatMessages = ref([]);
+onMounted(fetchUser);
+
 </script>
+
+<template>
+  <div class="live-board-room-wrapper">
+    <div class="live-board">
+      <div class="live-board-container">
+        <div class="base-1">1루</div>
+        <div class="base-2">2루</div>
+        <div class="base-3">3루</div>
+        <div class="first-base">1루수</div>
+        <div class="second-base">2루수</div>
+        <div class="third-base">3루수</div>
+        <div class="shortstop">유격수</div>
+        <div class="left-field">좌익수</div>
+        <div class="center-field">중견수</div>
+        <div class="right-field">우익수</div>
+        <div class="pitcher">투수</div>
+        <div class="batter">타자</div>
+        <div class="catcher">포수</div>
+      </div>
+    </div>
+
+    <!-- 채팅방은 항상 고정 -->
+    <div class="live-board chat-container">
+      <div ref="chatMessageWrapper" class="chat-message-wrapper">
+        <ChatMessage
+            v-for="(msg, index) in chatMessages"
+            :key="index"
+            :message="msg"
+        />
+      </div>
+
+      <div class="chat-message-input-container">
+        <input
+            v-model="message"
+            class="chat-message-input"
+            placeholder="메시지를 입력하세요..."
+            type="text"
+            @keyup.enter="sendMessage"
+        />
+        <button @click="sendMessage">메시지 전송</button>
+      </div>
+    </div>
+
+  </div>
+</template>
+
+<style scoped>
+.live-board-room-wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.live-board-room-wrapper .live-board {
+  height: 220px;
+}
+
+/* 경기 현황 판 */
+.live-board-container {
+  background-image: url("../../../assets/images/ground.png");
+  background-size: cover;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  position: relative;
+  max-width: 500px;
+  margin: 0 auto;
+  height: 100%;
+}
+
+.live-board-container > div {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  transform: translate(-50%, -50%);
+}
+
+/* 베이스 */
+.base-1 {
+  right: 10%;
+  bottom: 50%;
+}
+
+.base-2 {
+  left: 55%;
+  bottom: 70%;
+}
+
+.base-3 {
+  left: 35%;
+  bottom: 45%;
+}
+
+/* 내야수 */
+.first-base {
+  right: 10%;
+  bottom: 60%;
+}
+
+.second-base {
+  left: 65%;
+  bottom: 62%;
+}
+
+.third-base {
+  left: 35%;
+  bottom: 55%;
+}
+
+/* 유격수 */
+.shortstop {
+  left: 45%;
+  bottom: 60%;
+}
+
+/* 좌익수 */
+.left-field {
+  left: 30%;
+  bottom: 75%;
+}
+
+/* 중견수 */
+.center-field {
+  left: 50%;
+  bottom: 85%;
+}
+
+/* 우익수 */
+.right-field {
+  right: 15%;
+  bottom: 75%;
+}
+
+/* 투수 */
+.pitcher {
+  left: 55%;
+  bottom: 50%;
+}
+
+/* 타자 */
+.batter {
+  left: 50%;
+  bottom: 20%;
+}
+
+/* 포수 */
+.catcher {
+  left: 55%;
+  bottom: 5%;
+}
+
+
+.live-board-room-wrapper .live-board.chat-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.live-board.chat-container .chat-message-wrapper {
+  background-color: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.live-board.chat-container .chat-message-wrapper .toggle-btn-wrapper {
+  background-color: transparent;
+
+}
+
+/* 스크롤바 숨기기 */
+.live-board.chat-container .chat-message-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
+.chat-message-input-container {
+  position: sticky;
+  bottom: 0;
+  background-color: white;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  padding: 16px;
+  border-top: 1px solid #e0e0e0;
+  flex-shrink: 0;
+}
+
+.chat-message-input {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.chat-message-input:focus {
+  border-color: #659287;
+}
+
+.chat-message-input-container button {
+  padding: 12px 16px;
+  background-color: #659287;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.chat-message-input-container button:hover {
+  background-color: #5a8278;
+  transform: translateY(-1px);
+}
+</style>
+
+
