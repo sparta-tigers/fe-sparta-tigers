@@ -1,5 +1,5 @@
 <template>
-  <div class="chat-message" :class="{ 'my-message': message.isMyMessage }">
+  <div :class="{ 'my-message': message.isMyMessage }" class="chat-message">
     <div class="overlap-group">
       <div class="message-top">
         <div class="nickname">{{ message.senderNickName }}</div>
@@ -51,18 +51,22 @@ const changeDateFormat = (date) => {
 }
 
 .chat-message .overlap-group {
-  background-color: #deaa79; /* 기본: 내 메시지 색상 */
-  border-radius: 10px;
-  height: 57px;
-  padding: 10px 16px 24px 16px;
+  background-color: #DEAA79; /* 기본: 내 메시지 색상 */
+  color: white;
+  border-radius: 18px;
+  min-height: auto;
+  padding: 12px 16px;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-width: 280px;
 }
 
 /* 다른 사람 메시지 배경색 */
 .chat-message:not(.my-message) .overlap-group {
-  background-color: #ffe6a9;
+  background-color: #FFE6A9;
+  color: #333;
   border: 1px solid #e0e0e0;
 }
 
@@ -77,16 +81,19 @@ const changeDateFormat = (date) => {
 }
 
 .chat-message .content {
-  font-size: 13px;
+  font-size: 14px;
+  line-height: 1.4;
 }
 
 .chat-message .timestamp {
-  font-size: 12px;
+  font-size: 11px;
+  opacity: 0.8;
 }
 
 .chat-message .nickname {
-  font-size: 16px;
+  font-size: 13px;
   font-weight: 600;
   margin-right: 8px;
+  opacity: 0.9;
 }
 </style>
