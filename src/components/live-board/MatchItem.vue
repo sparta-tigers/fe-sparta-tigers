@@ -10,8 +10,8 @@ import skLogo from "@/assets/images/sk-logo.png";
 import ssLogo from "@/assets/images/ss-logo.png";
 import woLogo from "@/assets/images/wo-logo.png";
 
-import { computed } from "vue";
-import { useRouter } from "vue-router";
+import {computed} from "vue";
+import {useRouter} from "vue-router";
 
 const router = useRouter();
 
@@ -66,11 +66,11 @@ const getTeamLogo = (teamCode) => {
   return logoMap[teamCode];
 };
 
-const homeTeamLogo = computed(() => getTeamLogo(props.match.home_team_code));
-const awayTeamLogo = computed(() => getTeamLogo(props.match.away_team_code));
+const homeTeamLogo = computed(() => getTeamLogo(props.match.homeTeamCode));
+const awayTeamLogo = computed(() => getTeamLogo(props.match.awayTeamCode));
 
 const navigateToLiveBoardRoom = () => {
-  router.push(`/liveboard/match/room/${props.match.match_id}`);
+  router.push(`/liveboard/match/room/${props.match.matchId}`);
 };
 </script>
 
@@ -78,25 +78,26 @@ const navigateToLiveBoardRoom = () => {
   <li class="match-item" @click="navigateToLiveBoardRoom">
     <div class="logo-wrapper home">
       <img
-        :alt="match.home_team_name + '로고'"
-        :src="homeTeamLogo"
-        class="team-logo"
+          :alt="match.homeTeamName + '로고'"
+          :src="homeTeamLogo"
+          class="team-logo"
       />
     </div>
 
     <div class="match-summary">
       <div class="position">{{ match.position }}</div>
-      <div class="match-time">{{ formatTime(match.match_time) }}</div>
+      <div class="match-time">{{ formatTime(match.startedAt) }}</div>
+      <div class="connect-count">관중 수: {{ match.connectCount }}</div>
       <div class="match-result">
-        <span class="text">{{ match.match_result }}</span>
+        <span class="text">{{ match.matchResult }}</span>
       </div>
     </div>
 
     <div class="logo-wrapper away">
       <img
-        :alt="match.away_team_name + '로고'"
-        :src="awayTeamLogo"
-        class="team-logo"
+          :alt="match.away_team_name + '로고'"
+          :src="awayTeamLogo"
+          class="team-logo"
       />
     </div>
   </li>
@@ -172,6 +173,14 @@ const navigateToLiveBoardRoom = () => {
   margin-bottom: 8px;
   z-index: 2;
   position: relative;
+}
+
+.connect-count {
+  color: #000000;
+  font-family: "KBO Dia Gothic-Medium", Helvetica;
+  font-size: 12px;
+  margin-bottom: 8px;
+  font-weight: 500;
 }
 
 .match-result {
