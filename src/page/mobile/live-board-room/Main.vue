@@ -1,13 +1,14 @@
 <script setup>
-import {onMounted, ref} from "vue";
+import {onMounted, onUnmounted, ref} from "vue";
 import {useRoute} from "vue-router";
 import ChatMessage from "@/components/shard/ChatMessage.vue";
 import {Client} from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import {useUserStore} from "@/store/useUserStore.js";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'localhost:8080';
 const store = useUserStore();
+const WS_BASE_URL = import.meta.env.VITE_WS_BASE_URL;
+const HTTP_BASE_URL = import.meta.env.VITE_HTTP_BASE_URL;
 
 const fetchUser = async () => {
   await store.getUser();
@@ -19,6 +20,22 @@ const message = ref("");
 const chatMessageWrapper = ref(null);
 const chatMessages = ref([]);
 
+// 게임 데이터
+const matchData = ref({
+  matchId: null,
+  players: [],
+  matchScore: {
+    strike: 0,
+    ball: 0,
+    out: 0
+  }
+});
+
+// 포지션별 선수 매핑
+const getPlayerByRole = (role) => {
+  return matchData.value.players.find(player => player.role === role)?.name || '';
+};
+
 const toggleLiveBoardText = () => {
   isLiveBoardTextVisible.value = !isLiveBoardTextVisible.value;
 };
@@ -26,9 +43,9 @@ const toggleLiveBoardText = () => {
 // 웹소켓 연결
 const connectWebSocket = () => {
   const client = new Client({
-    brokerURL: `ws://${API_BASE_URL}/ws`,
+    brokerURL: `${WS_BASE_URL}/ws`,
     connectHeaders: {},
-    webSocketFactory: () => new SockJS(`http://${API_BASE_URL}/ws`),
+    webSocketFactory: () => new SockJS(`${HTTP_BASE_URL}/ws`),
     debug: function (str) {
       console.log("STOMP: " + str);
     },
@@ -42,6 +59,7 @@ const connectWebSocket = () => {
         function (message) {
           // 여기서 채팅 메시지를 처리
           const data = JSON.parse(message.body);
+          console.log(data);
 
           if (data.messageType === "CHAT") {
             chatMessages.value.push({
@@ -70,6 +88,20 @@ const connectWebSocket = () => {
         }
     );
     sendEnterMessage(client);
+
+    client.subscribe(`/server/liveboard/room/${roomId}/game`, function (message) {
+      const data = JSON.parse(message.body);
+      console.log(data);
+
+      // 게임 데이터 업데이트
+      if (data.matchId && data.players && data.matchScore) {
+        matchData.value = {
+          matchId: data.matchId,
+          players: data.players,
+          matchScore: data.matchScore
+        };
+      }
+    });
   };
 
   client.onStompError = function (frame) {
@@ -116,13 +148,17 @@ const sendMessage = () => {
     return;
   }
 
+  console.log(store.user);
+
+
   if (message.value.trim()) {
     client.publish({
       destination: `/client/liveboard/message`,
       body: JSON.stringify({
         roomId: `ROOM_${roomId}`,
+        senderId: store.user.id,
         content: message.value,
-        senderNickName: "test",
+        senderNickName: store.user.nickname,
         messageType: "CHAT",
       }),
     });
@@ -139,27 +175,46 @@ const sendMessage = () => {
   }
 };
 
+const disconnectWebSocket = () => {
+  if (client.value) {
+    client.value.deactivate();
+    client.value = null;
+  }
+}
+
 onMounted(fetchUser);
+onUnmounted(() => {
+  disconnectWebSocket();
+})
 
 </script>
 
 <template>
   <div class="live-board-room-wrapper">
     <div class="live-board">
+
+
       <div class="live-board-container">
-        <div class="base-1">1루</div>
-        <div class="base-2">2루</div>
-        <div class="base-3">3루</div>
-        <div class="first-base">1루수</div>
-        <div class="second-base">2루수</div>
-        <div class="third-base">3루수</div>
-        <div class="shortstop">유격수</div>
-        <div class="left-field">좌익수</div>
-        <div class="center-field">중견수</div>
-        <div class="right-field">우익수</div>
-        <div class="pitcher">투수</div>
-        <div class="batter">타자</div>
-        <div class="catcher">포수</div>
+
+        <div class="score-board">
+          <div class="score-item">B: {{ matchData.matchScore.ball }}</div>
+          <div class="score-item">S: {{ matchData.matchScore.strike }}</div>
+          <div class="score-item">O: {{ matchData.matchScore.out }}</div>
+        </div>
+
+        <div class="base-1">{{ getPlayerByRole('firBase') || '1루수' }}</div>
+        <div class="base-2">{{ getPlayerByRole('secondBase') || '2루수' }}</div>
+        <div class="base-3">{{ getPlayerByRole('thirdBase') || '3루수' }}</div>
+        <div class="first-base">{{ getPlayerByRole('typing1') }}</div>
+        <div class="second-base">{{ getPlayerByRole('typing2') }}</div>
+        <div class="third-base">{{ getPlayerByRole('typing3') || '' }}</div>
+        <div class="shortstop">{{ getPlayerByRole('shortstop') || '유격수' }}</div>
+        <div class="left-field">{{ getPlayerByRole('leftFielder') || '좌익수' }}</div>
+        <div class="center-field">{{ getPlayerByRole('centerFielder') || '중견수' }}</div>
+        <div class="right-field">{{ getPlayerByRole('rightFielder') || '우익수' }}</div>
+        <div class="pitcher">{{ getPlayerByRole('pitcher') || '투수' }}</div>
+        <div class="batter">{{ getPlayerByRole('supervision') || getPlayerByRole('supervision2') || '타자' }}</div>
+        <div class="catcher">{{ getPlayerByRole('catcher') || '포수' }}</div>
       </div>
     </div>
 
@@ -228,53 +283,53 @@ onMounted(fetchUser);
 }
 
 .base-2 {
-  left: 55%;
+  left: 67%;
   bottom: 70%;
 }
 
 .base-3 {
   left: 35%;
-  bottom: 45%;
+  bottom: 47%;
 }
 
 /* 내야수 */
 .first-base {
-  right: 10%;
-  bottom: 60%;
+  right: 12%;
+  bottom: 63%;
 }
 
 .second-base {
-  left: 65%;
-  bottom: 62%;
+  left: 56%;
+  bottom: 75%;
 }
 
 .third-base {
-  left: 35%;
-  bottom: 55%;
+  left: 32%;
+  bottom: 65%;
 }
 
 /* 유격수 */
 .shortstop {
   left: 45%;
-  bottom: 60%;
+  bottom: 68%;
 }
 
 /* 좌익수 */
 .left-field {
-  left: 30%;
-  bottom: 75%;
+  left: 35%;
+  bottom: 80%;
 }
 
 /* 중견수 */
 .center-field {
-  left: 50%;
+  left: 65%;
   bottom: 85%;
 }
 
 /* 우익수 */
 .right-field {
-  right: 15%;
-  bottom: 75%;
+  right: 10%;
+  bottom: 80%;
 }
 
 /* 투수 */
@@ -293,6 +348,28 @@ onMounted(fetchUser);
 .catcher {
   left: 55%;
   bottom: 5%;
+}
+
+/* 점수판 */
+.score-board {
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+  padding: 10px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.score-item {
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 5px 10px;
+  border-radius: 5px;
+  min-width: 40px;
+  text-align: center;
 }
 
 
