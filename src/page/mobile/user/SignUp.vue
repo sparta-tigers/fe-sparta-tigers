@@ -21,6 +21,11 @@ watch([agreeService, agreePrivacy, agreeMarketing], ([s, p, m]) => {
   agreeAll.value = s && p && m
 })
 
+watch(agreeAll, (val) => {
+  agreeService.value = val
+  agreePrivacy.value = val
+  agreeMarketing.value = val
+})
 
 
 const register = async () => {
