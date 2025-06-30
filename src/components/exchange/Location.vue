@@ -9,6 +9,8 @@ import router from "@/router/router.js";
 
 // userStore
 const store = useUserStore();
+const WS_BASE_URL = import.meta.env.VITE_WS_BASE_URL;
+const HTTP_BASE_URL = import.meta.env.VITE_HTTP_BASE_URL;
 
 // 초기 위치
 const coordinate = {
@@ -44,9 +46,9 @@ const connectWebSocket = () => {
   if (store.user.id === undefined || store.user.id === null) return;
 
   stompClient.value = new Client({
-    brokerURL: "ws://localhost:8080/ws",
+    brokerURL: `${WS_BASE_URL}/ws`,
     connectHeaders: {},
-    webSocketFactory: () => new SockJS("http://localhost:8080/ws"),
+    webSocketFactory: () => new SockJS(`${HTTP_BASE_URL}/ws`),
   });
 
   stompClient.value.onConnect = () => {
@@ -239,7 +241,7 @@ const onLoadKakaoMap = async (ref) => {
 
 const onMarkerClick = (marker) => {
   const rawMarker = toRaw(marker);
-  
+
   if (rawMarker.itemId) {
     router.push(`/exchange/item/${rawMarker.itemId}`)
   }

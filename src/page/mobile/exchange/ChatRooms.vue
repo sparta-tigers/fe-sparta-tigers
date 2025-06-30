@@ -67,7 +67,7 @@ onMounted(async () => {
     if (scrollContainer.value) {
       scrollContainer.value.addEventListener('scroll', handleScroll)
     }
-  }, 100)
+  }, 200)
 })
 
 </script>
