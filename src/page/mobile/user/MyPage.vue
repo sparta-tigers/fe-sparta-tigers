@@ -1,27 +1,279 @@
 <script setup>
-import { onMounted, watch } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useUserStore } from '@/store/useUserStore.js'
+import CancelBtn from '@/components/btn/CancelBtn.vue'
+import SubBtn from '@/components/btn/SubBtn.vue'
+import SelectBtn from "@/components/btn/SelectBtn.vue";
 
-const store = useUserStore()
+const userStore = useUserStore()
 const route = useRoute()
+const editing = ref(false)
+const newNickname = ref('')
+const showPasswordForm = ref(false)
+const oldPassword = ref('')
+const newPassword = ref('')
+const confirmPassword = ref('')
+
 
 const fetchUser = async () => {
-  await store.getUser()
+  await userStore.getUser()
+  newNickname.value = userStore.user?.nickname || ''
+}
+
+const updateNickname = async () => {
+  if (!newNickname.value.trim()) return
+  await userStore.updateNickname(newNickname.value)
+  editing.value = false
+  await fetchUser()
+}
+
+const updatePassword = async () => {
+  await userStore.updatePassword({
+    oldPassword: oldPassword.value,
+    newPassword: newPassword.value,
+    confirmPassword: confirmPassword.value,
+  })
+
+  showPasswordForm.value = false
+  oldPassword.value = ''
+  newPassword.value = ''
+  confirmPassword.value = ''
+}
+
+const deleteUser = async () => {
+  await userStore.deleteUser()
+}
+
+const showModal = ref(false)
+const fileInput = ref(null)
+
+const openModal = () => {
+  showModal.value = true
+}
+
+const closeModal = () => {
+  showModal.value = false
+}
+
+const triggerFileInput = () => {
+  fileInput.value?.click()
+}
+const uploadImage = async (event) => {
+  const file = event.target.files[0]
+  if (!file) return
+  await userStore.updateProfile(file)
+  closeModal()
+}
+
+const deleteProfile = async () => {
+  await userStore.deleteProfile()
+  closeModal()
 }
 
 onMounted(fetchUser)
-
 watch(() => route.fullPath, fetchUser)
-
 </script>
 
 <template>
-  <div v-if="store.loading">로딩중...</div>
-  <div v-else-if="store.error">에러 발생!</div>
-  <div v-else-if="store.user">
-    <h2>유저 정보</h2>
-    <p><strong>닉네임:</strong> {{ store.user.nickname }}</p>
-    <p><strong>이메일:</strong> {{ store.user.email }}</p>
+  <div class="user-info-container">
+    <div v-if="userStore.loading" class="loading">로딩중...</div>
+    <div v-else-if="userStore.error" class="error">에러 발생!</div>
+    <div v-else-if="userStore.user" class="user-card">
+      <img :src="userStore.user.path" alt="프로필 이미지" class="profile-image" @click="openModal" />
+
+      <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
+        <div class="modal">
+          <img :src="userStore.user.path" alt="프로필 미리보기" class="modal-image" />
+          <input type="file" ref="fileInput" accept="image/*" @change="uploadImage" hidden />
+          <div class="modal-buttons">
+            <button @click="triggerFileInput">이미지 변경</button>
+            <button @click="deleteProfile">기본 이미지로 변경</button>
+            <button @click="closeModal">닫기</button>
+          </div>
+        </div>
+      </div>
+
+
+
+      <div class="nickname-section">
+        <template v-if="editing">
+          <input v-model="newNickname" class="nickname-input" />
+          <SubBtn @click="updateNickname" />
+          <CancelBtn @click="editing = false" />
+
+        </template>
+        <template v-else>
+          <p class="nickname">
+            <strong>닉네임:</strong> {{ userStore.user.nickname }}
+          </p>
+          <SelectBtn @click="editing = true" label="닉네임 수정" />
+        </template>
+      </div>
+
+      <p class="email"><strong>이메일:</strong> {{ userStore.user.email }}</p>
+
+      <div class="password-section">
+        <SelectBtn @click="showPasswordForm = !showPasswordForm" label="비밀번호 변경" />
+
+        <div v-if="showPasswordForm" class="password-form">
+          <input
+              v-model="oldPassword"
+              type="password"
+              placeholder="현재 비밀번호"
+              class="password-input"
+          />
+          <input
+              v-model="newPassword"
+              type="password"
+              placeholder="새 비밀번호"
+              class="password-input"
+          />
+          <input
+              v-model="confirmPassword"
+              type="password"
+              placeholder="새 비밀번호 확인"
+              class="password-input"
+          />
+
+          <SubBtn @click="updatePassword" />
+          <CancelBtn @click="showPasswordForm = false" />
+        </div>
+      </div>
+
+      <div class="delete-section">
+        <CancelBtn @click="deleteUser" label="회원 탈퇴"/>
+      </div>
+    </div>
   </div>
 </template>
+
+<style scoped>
+.user-info-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+}
+
+.loading,
+.error {
+  font-size: 1.5rem;
+  color: #666;
+  text-align: center;
+}
+
+.user-card {
+  padding: 2rem;
+  border: 1px solid #ddd;
+  border-radius: 1.5rem;
+  background-color: #f5f5f5;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.profile-image {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 1.5rem;
+  border: 3px solid #ccc;
+  cursor: pointer;
+}
+
+.nickname-section {
+  margin-bottom: 1rem;
+}
+
+.nickname {
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+}
+
+.email {
+  font-size: 1.3rem;
+  color: #444;
+}
+
+.nickname-input {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+
+.password-section {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.password-section .password-form {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.password-section .password-input {
+  width: 250px;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.4rem;
+}
+
+.delete-section {
+  margin-top: 2rem;
+  text-align: center;
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  width: 300px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.modal-image {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 1rem;
+}
+
+.modal-buttons button {
+  margin: 0.3rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  background: #4a90e2;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.modal-buttons button:hover {
+  background: #357ab8;
+}
+
+</style>

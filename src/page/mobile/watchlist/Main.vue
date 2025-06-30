@@ -110,6 +110,7 @@ const isEmpty = computed(() => {
 }
 
 .record-card {
+  cursor: pointer;
   background-color: #f9f9f9;
   border: 1px solid #ddd;
   border-radius: 12px;

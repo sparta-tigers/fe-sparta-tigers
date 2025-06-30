@@ -6,7 +6,8 @@ import {Client} from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import {useUserStore} from "@/store/useUserStore.js";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'localhost:8080';
+const baseURL = import.meta.env.VITE_VITE_HTTP_BASE_URL;
+const wsBaseURL = import.meta.env.VITE_VITE_WS_BASE_URL;
 const store = useUserStore();
 
 const fetchUser = async () => {
@@ -26,9 +27,9 @@ const toggleLiveBoardText = () => {
 // 웹소켓 연결
 const connectWebSocket = () => {
   const client = new Client({
-    brokerURL: `ws://${API_BASE_URL}/ws`,
+    brokerURL: `${wsBaseURL}/ws`,
     connectHeaders: {},
-    webSocketFactory: () => new SockJS(`http://${API_BASE_URL}/ws`),
+    webSocketFactory: () => new SockJS(`${baseURL}/ws`),
     debug: function (str) {
       console.log("STOMP: " + str);
     },

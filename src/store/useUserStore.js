@@ -7,12 +7,11 @@ import {ApiError} from "@/utils/ApiError.js";
 
 export const useUserStore = defineStore('user', () => {
     const user = ref(null)
-    const loading = ref(false)
     const error = ref(null)
     const jwtToken = ref(localStorage.getItem('jwt_token') || null)
     const loadingStore = useLoadingStore()
     const login = async (email, password) => {
-        loadingStore.stop(user);
+        loadingStore.start('user')
 
         try {
             const response = await axios.post('/users/login', { email, password })
@@ -32,56 +31,172 @@ export const useUserStore = defineStore('user', () => {
         } catch (err) {
             const { message } = ApiError(err);
             alert(message);
-        } finally {122100
-            loadingStore.stop(user);
+        } finally {
+            loadingStore.stop('user')
         }
 
     };
 
     const getUser = async () => {
-        loadingStore.isLoading(user)
+        loadingStore.start('user')
         error.value = null
         try {
             const response = await axios.get('/users/me')
             user.value = response.data.data
         } catch (err) {
-            if (err.response?.status === 401) {
-                user.value = null
-                // 추가: 인증 만료 시 로그아웃 처리나 리다이렉트도 여기서 가능
-            } else {
-                error.value = '사용자 정보를 불러오는 중 오류가 발생했습니다.'
-            }
+            const { message } = ApiError(err);
+            alert(message);
         } finally {
-            loading.value = false
+            loadingStore.stop('user')
         }
     }
 
 
     const logout = async () => {
-        loading.value = true
-        error.value = null
+        loadingStore.start('user')
         try {
             await axios.post('/users/logout', null, { withCredentials: true })
             user.value = null
             localStorage.removeItem('jwt_token')
-
             await router.push('/')
 
-
         } catch (err) {
-            error.value = err
-            console.error('로그아웃 실패', err)
+            const { message } = ApiError(err);
+            alert(message);
         } finally {
-            loading.value = false
+            loadingStore.stop('user')
         }
     }
+
+    const updateNickname = async (nickname) => {
+        loadingStore.start('user')
+        try {
+            const response = await axios.patch(`/users/nickname`, {
+                nickname: nickname,
+            });
+            alert(response.data.data);
+        } catch (err) {
+            const { message } = ApiError(err);
+            alert(message);
+        } finally {
+            loadingStore.stop('user')
+        }
+    };
+
+    const updatePassword = async ({ oldPassword, newPassword, confirmPassword }) => {
+
+        if (!oldPassword || !newPassword || !confirmPassword) {
+            alert('모든 비밀번호 칸을 채워주세요.')
+            return
+        }
+
+        if (newPassword !== confirmPassword) {
+            alert('새 비밀번호가 일치하지 않습니다.')
+            return
+        }
+
+        loadingStore.start(user)
+        try{
+            const response = await axios.patch('/users/password', {
+                oldPassword: oldPassword,
+                newPassword: newPassword
+            })
+            alert(response.data.data);
+        }
+        catch (err){
+            const { message } = ApiError(err);
+            alert(message);
+        }
+        finally {
+            loadingStore.stop(user)
+        }
+    }
+    const deleteUser = async () => {
+        const confirmed = confirm('정말 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')
+        if (!confirmed) return
+
+        loadingStore.start('user')
+
+        try{
+            const response = await axios.delete(`/users`)
+            alert(response.data.data);
+            localStorage.removeItem('jwt_token')
+            await router.push('/')
+        }
+        catch (err){
+            const { message } = ApiError(err);
+            alert(message);
+        }
+        finally {
+            loadingStore.stop('user')
+        }
+    }
+
+    const signUp = async ({ email, password, nickname }) => {
+        loadingStore.start('user')
+        try {
+            const response = await axios.post('/users/signup', {
+                email,
+                password,
+                nickname
+            })
+            alert(response.data.data)
+            await router.push('/')
+        } catch (err) {
+            const { message } = ApiError(err)
+            alert(message)
+        } finally {
+            loadingStore.stop('user')
+        }
+    }
+
+    const updateProfile = async (file) => {
+        const formData = new FormData()
+        formData.append('file', file)
+
+        loadingStore.start('user')
+
+        try {
+             await axios.patch('/users/profile', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            })
+            alert("프로필 이미지가 변경되었습니다.");
+            await getUser()
+        } catch (err) {
+            const { message } = ApiError(err)
+            alert(message || '이미지 업로드에 실패했습니다.')
+        } finally {
+            loadingStore.stop('user')
+        }
+
+    }
+    const deleteProfile = async () => {
+        loadingStore.start('user')
+        try {
+            const response = await axios.delete('/users/profile')
+            alert(response.data.data || '기본 이미지로 변경되었습니다.')
+            await getUser()
+        } catch (err) {
+            const { message } = ApiError(err)
+            alert(message || '기본 이미지 설정에 실패했습니다.')
+        } finally {
+            loadingStore.stop('user')
+        }
+    }
+
+
     return {
         user,
-        loading,
         error,
         jwtToken,
         getUser,
         logout,
-        login
+        login,
+        updateNickname,
+        updatePassword,
+        deleteUser,
+        signUp,
+        updateProfile,
+        deleteProfile,
     }
 })

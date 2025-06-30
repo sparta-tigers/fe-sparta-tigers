@@ -1,5 +1,6 @@
 <script setup>
 import {ref, watch} from 'vue'
+import {useUserStore} from "@/store/useUserStore.js";
 
 const nickname = ref('')
 const email = ref('')
@@ -15,13 +16,15 @@ const agreeService = ref(false)
 const agreePrivacy = ref(false)
 const agreeMarketing = ref(false)
 
+const userStore = useUserStore()
 watch([agreeService, agreePrivacy, agreeMarketing], ([s, p, m]) => {
   agreeAll.value = s && p && m
 })
 
 
 
-const register = () => {  nicknameError.value = ''
+const register = async () => {
+  nicknameError.value = ''
   emailError.value = ''
   passwordError.value = ''
   confirmPasswordError.value = ''
@@ -40,11 +43,18 @@ const register = () => {  nicknameError.value = ''
   }
   if (!confirmPassword.value) {
     confirmPasswordError.value = '비밀번호 확인을 입력해주세요.'
-    return
+
   } else if (password.value !== confirmPassword.value) {
     confirmPasswordError.value = '비밀번호가 일치하지 않습니다.'
-    return
   }
+  if (!agreeService.value || !agreePrivacy.value) {
+    alert('필수 약관에 동의해주세요.')
+  }
+  await userStore.signUp({
+    nickname: nickname.value,
+    email: email.value,
+    password: password.value,
+  })
 }
 </script>
 
@@ -174,13 +184,5 @@ input:focus {
   font-size: 0.9rem;
   color: #333;
 }
-.agreement-input {
-  padding: 30px 12px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  transition: all 0.2s ease-in-out;
-}
-
 
 </style>

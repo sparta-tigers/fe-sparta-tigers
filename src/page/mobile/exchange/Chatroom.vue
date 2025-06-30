@@ -8,7 +8,7 @@ import ChatMessage from "@/components/shard/ChatMessage.vue";
 import instance from "@/axios.js";
 
 const store = useUserStore();
-const baseURL = import.meta.env.VITE_API_BASE_URL;
+const baseURL = import.meta.env.VITE_VITE_HTTP_BASE_URL;
 const wsBaseURL = baseURL.replace(/^http/, 'ws')
 
 const fetchUser = async () => {
@@ -31,7 +31,7 @@ const connectWebSocket = () => {
       Authorization: `Bearer ${localStorage.getItem('jwt_token')}`,
       ChatDomain: 'directroom'
     },
-    webSocketFactory: () => new SockJS(`http://${API_BASE_URL}/ws`),
+    webSocketFactory: () => new SockJS(`${baseURL}/ws`),
   });
 
   client.onConnect = function (frame) {

@@ -27,11 +27,18 @@ onMounted(async () => {
   checkMobile()
   window.addEventListener('resize', checkMobile)
 
-  alarmStore.connectSSE();
+  const token = localStorage.getItem('jwt_token')
 
-  if (!userStore.user && localStorage.getItem('jwt_token')) {
-    await userStore.getUser()
+  if (token) {
+    if (!userStore.user) {
+      await userStore.getUser()
+    }
+
+    if (userStore.user) {
+      alarmStore.connectSSE()
+    }
   }
+
 })
 
 </script>
