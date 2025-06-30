@@ -42,16 +42,29 @@ const toggleLiveBoardText = () => {
 
 // 웹소켓 연결
 const connectWebSocket = () => {
-  const client = new Client({
-    brokerURL: `${WS_BASE_URL}/ws`,
-    connectHeaders: {
-      Authorization: `Bearer ${localStorage.getItem('jwt_token')}`,
-    },
-    webSocketFactory: () => new SockJS(`${HTTP_BASE_URL}/ws`),
-    debug: function (str) {
-      console.log("STOMP: " + str);
-    },
-  });
+  const token = localStorage.getItem('jwt_token');
+  let client = null;
+  if (token) {
+    client = new Client({
+      brokerURL: `${WS_BASE_URL}/ws`,
+      connectHeaders: {
+        Authorization: `Bearer ${localStorage.getItem('jwt_token')}`,
+      },
+      webSocketFactory: () => new SockJS(`${HTTP_BASE_URL}/ws`),
+      debug: function (str) {
+        console.log("STOMP: " + str);
+      },
+    });
+  } else {
+    client = new Client({
+      brokerURL: `${WS_BASE_URL}/ws`,
+      connectHeaders: {},
+      webSocketFactory: () => new SockJS(`${HTTP_BASE_URL}/ws`),
+      debug: function (str) {
+        console.log("STOMP: " + str);
+      },
+    });
+  }
 
   client.onConnect = function (frame) {
     console.log("웹소켓 연결 성공:", frame);
