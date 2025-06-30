@@ -6,9 +6,10 @@
 import {onMounted, onUnmounted, ref} from 'vue'
 import {useAlarmStore} from "@/store/useAlarmStore.js";
 import {useUserStore} from "@/store/useUserStore.js";
-import {useRouter} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 const router = useRouter()
 const userStore = useUserStore()
+const route = useRoute()
 
 const isMobile = ref(false)
 
@@ -29,22 +30,18 @@ onMounted(async () => {
   window.addEventListener('resize', checkMobile)
 
   const token = localStorage.getItem('jwt_token')
-  if (!token) {
+  if (route.meta.requiresAuth && !token) {
     await router.push('/login')
     return
   }
 
-  if (!userStore.user) {
+  if (token && !userStore.user) {
     await userStore.getUser()
   }
 
-  if (!userStore.user) {
-    // 유저 정보 못가져오면 로그인 페이지 이동
-    await router.push('/login')
-    return
+  if (token && userStore.user) {
+    alarmStore.connectSSE()
   }
-
-  alarmStore.connectSSE()
 })
 
 
