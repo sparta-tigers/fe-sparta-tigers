@@ -26,6 +26,7 @@ import ChatRooms from "@/page/mobile/exchange/ChatRooms.vue";
 import CreateExchange from "@/page/mobile/exchange/CreateExchange.vue";
 import ExchangeRequestList from "@/page/mobile/exchange/ExchangeRequestList.vue";
 import ItemDetail from "@/page/mobile/exchange/ItemDetail.vue";
+import NotFound from "@/page/mobile/util/NotFound.vue";
 
 const routes = [
     {
@@ -242,7 +243,20 @@ const routes = [
         path: '/redirect',
         name: 'OauthRedirect',
         component: OAuth2Redirect
+    },
+    {
+        path: '/',
+        component: MainPage,
+        children: [
+            {
+                path: '/:pathMatch(.*)*',
+                name: 'not-found',
+                component: NotFound,
+                meta: { requiresAuth: false }
+            }
+        ]
     }
+
 ];
 
 const router = createRouter({

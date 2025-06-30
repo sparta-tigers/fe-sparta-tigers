@@ -119,7 +119,7 @@ export const useAlarmStore = defineStore('alarm', () => {
                 return
             }
 
-            eventSource = new EventSource(`${baseURL}/api/alarms/sse/subscribe`)
+            eventSource = new EventSource(`${baseURL}/api/alarms/sse/subscribe?token=${token}`)
 
             eventSource.onopen = () => {
                 sseConnected.value = true
