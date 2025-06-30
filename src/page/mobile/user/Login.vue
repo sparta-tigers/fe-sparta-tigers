@@ -3,17 +3,17 @@ import {useUserStore} from "@/store/useUserStore.js";
 import {ref} from "vue";
 import {useRouter} from "vue-router";
 const store = useUserStore()
-const baseUrl = import.meta.env.VITE_API_BASE_URL
+const baseURL = import.meta.env.VITE_HTTP_BASE_URL
 
 const kakaoLogin = () => {
-  window.location.href = `${baseUrl}/oauth2/authorization/kakao`
+  window.location.href = `${baseURL}/oauth2/authorization/kakao`
 };
 const naverLogin = () => {
-  window.location.href = `${baseUrl}/oauth2/authorization/naver`
+  window.location.href = `${baseURL}/oauth2/authorization/naver`
 }
 
 const googleLogin = () => {
-  window.location.href = `${baseUrl}/oauth2/authorization/google`
+  window.location.href = `${baseURL}/oauth2/authorization/google`
 }
 
 const router = useRouter()

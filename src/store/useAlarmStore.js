@@ -3,9 +3,10 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import axios from '@/axios.js'
 import router from "@/router/router.js";
+import {ApiError} from "@/utils/ApiError.js";
 
 export const useAlarmStore = defineStore('alarm', () => {
-    const baseURL = import.meta.env.VITE_API_BASE_URL;
+    const baseURL = import.meta.env.VITE_HTTP_BASE_URL;
     const alarms = ref([])
     const loading = ref(false)
     const error = ref(null)
@@ -20,7 +21,8 @@ export const useAlarmStore = defineStore('alarm', () => {
         error.value = null
         try {
             const response = await axios.get('/alarms', { withCredentials: true })
-            alarms.value = response.data.data        } catch (err) {
+            alarms.value = response.data.data
+        } catch (err) {
             error.value = err
             console.error('알람 불러오기 실패:', err)
         } finally {
@@ -97,31 +99,60 @@ export const useAlarmStore = defineStore('alarm', () => {
     }
 
     const connectSSE = () => {
-        if (eventSource) {
-            eventSource.close()
-        }
+        try {
+            // 중복 연결 방지
+            if (eventSource && sseConnected.value) {
+                console.warn('⚠️ SSE 이미 연결됨')
+                return
+            }
 
-        eventSource = new EventSource(`${baseURL}/api/alarms/sse/subscribe`)
+            // 기존 연결 닫기
+            if (eventSource) {
+                eventSource.close()
+                eventSource = null
+            }
+
+            // JWT 확인
+            const token = localStorage.getItem('jwt_token')
+            if (!token) {
+                console.warn('❌ JWT 토큰 없음, SSE 연결 취소')
+                return
+            }
+
+            eventSource = new EventSource(`${baseURL}/api/alarms/sse/subscribe`)
+
+            eventSource.onopen = () => {
+                sseConnected.value = true
+            }
+
+            eventSource.onerror = (err) => {
+                sseConnected.value = false
+
+                if (eventSource) {
+                    eventSource.close()
+                    eventSource = null
+                }
+            }
 
 
-        eventSource.onopen = () => {
-            console.log('✅ SSE 연결됨')
-            sseConnected.value = true
-        }
+            eventSource.addEventListener('alarm', async (event) => {
+                try {
+                    alert('⏰ 알람 도착: ' + event.data)
+                    await fetchAlarms?.()
+                } catch (e) {
+                    console.error('❌ alarm 이벤트 처리 중 오류:', e)
+                }
+            })
 
-        eventSource.onerror = (err) => {
-            console.error('❌ SSE 에러 발생:', err)
+        } catch (error) {
+            ApiError(error);
+
+            if (eventSource) {
+                eventSource.close()
+                eventSource = null
+            }
             sseConnected.value = false
         }
-
-        eventSource.addEventListener('connect', (event) => {
-            console.log('🔔 서버로부터 초기 메시지:', event.data)
-        })
-
-        eventSource.addEventListener('alarm', async (event) => {
-            alert('⏰ 알람 도착:' + event.data)
-            await fetchAlarms();
-        })
     }
 
 

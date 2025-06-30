@@ -36,8 +36,10 @@ onMounted(() => {
 
 
   async function uploadImage(file) {
-  const formData = new FormData()
-  formData.append('file', file)
+    const resizedFile = await resizeImage(file)
+
+    const formData = new FormData()
+    formData.append('file', resizedFile)
 
   // 예시: S3 업로드 API 호출
   return axios.post('/watchlist/uploads', formData, {
@@ -62,7 +64,6 @@ function imageHandler() {
 
         const imageUrl = await uploadImage(file)
 
-        // 로딩 이미지 제거 후 실제 이미지 삽입
         quill.deleteText(range.index, 1)
         quill.insertEmbed(range.index, 'image', imageUrl)
         quill.setSelection(range.index + 1)
@@ -118,6 +119,55 @@ onMounted(() => {
     }
   })
 })
+async function resizeImage(file, maxWidth = 800, maxHeight = 800) {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    const canvas = document.createElement('canvas')
+    const reader = new FileReader()
+
+    reader.onload = e => {
+      img.src = e.target.result
+    }
+    reader.onerror = reject
+
+    img.onload = () => {
+      let width = img.width
+      let height = img.height
+
+      // 비율 유지하며 리사이징
+      if (width > maxWidth || height > maxHeight) {
+        const aspectRatio = width / height
+        if (width > height) {
+          width = maxWidth
+          height = Math.round(maxWidth / aspectRatio)
+        } else {
+          height = maxHeight
+          width = Math.round(maxHeight * aspectRatio)
+        }
+      }
+
+      canvas.width = width
+      canvas.height = height
+      const ctx = canvas.getContext('2d')
+      ctx.clearRect(0, 0, width, height)
+      ctx.drawImage(img, 0, 0, width, height)
+
+      canvas.toBlob(blob => {
+        if (!blob) {
+          reject(new Error('이미지 리사이징 실패'))
+          return
+        }
+        // 리사이징된 Blob을 File 객체로 변환
+        const resizedFile = new File([blob], file.name, { type: file.type })
+        resolve(resizedFile)
+      }, file.type, 0.8) // 0.8은 이미지 품질 (JPEG 등)
+    }
+
+    img.onerror = reject
+
+    reader.readAsDataURL(file)
+  })
+}
 
 onBeforeUnmount(() => {
   quill = null
@@ -222,6 +272,8 @@ onBeforeUnmount(() => {
   border: 1px solid #ccc;
   border-radius: 6px;
   background: white;
+  max-height: 800px;
+  overflow-y: auto;
 }
 
 .submit-container {
@@ -242,6 +294,15 @@ onBeforeUnmount(() => {
 
 .submit-button:hover {
   background-color: #3730a3;
+}
+
+.ql-editor img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1rem auto;
+  object-fit: contain;
+  max-height: 400px;
 }
 
 </style>

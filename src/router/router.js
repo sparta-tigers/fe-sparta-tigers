@@ -239,7 +239,7 @@ const routes = [
         ]
     },
     {
-        path: '/oauth2/redirect',
+        path: '/redirect',
         name: 'OauthRedirect',
         component: OAuth2Redirect
     }
