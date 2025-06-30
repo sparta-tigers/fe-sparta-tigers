@@ -44,7 +44,9 @@ const toggleLiveBoardText = () => {
 const connectWebSocket = () => {
   const client = new Client({
     brokerURL: `${WS_BASE_URL}/ws`,
-    connectHeaders: {},
+    connectHeaders: {
+      Authorization: `Bearer ${localStorage.getItem('jwt_token')}`,
+    },
     webSocketFactory: () => new SockJS(`${HTTP_BASE_URL}/ws`),
     debug: function (str) {
       console.log("STOMP: " + str);
