@@ -73,7 +73,7 @@ const login = async () => {
     </div>
 
     <div class="social-login-div">
-      <a href="http://localhost:8080/oauth2/authorization/kakao">
+      <a :href="`${baseURL}/oauth2/authorization/kakao`">
         <img
             alt="kakao_login"
             class="social-login-img kakao-login-img"
