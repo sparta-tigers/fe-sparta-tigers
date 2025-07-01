@@ -2,8 +2,11 @@
 import {useUserStore} from "@/store/useUserStore.js";
 import {ref} from "vue";
 import {useRouter} from "vue-router";
+
 const store = useUserStore()
 const baseURL = import.meta.env.VITE_HTTP_BASE_URL
+
+console.log(baseURL);
 
 const kakaoLogin = () => {
   window.location.href = `${baseURL}/oauth2/authorization/kakao`
@@ -19,16 +22,16 @@ const googleLogin = () => {
 const router = useRouter()
 
 const goToSignup = () => {
-  router.push({ name: 'sign-up' })
+  router.push({name: 'sign-up'})
 }
 const goToFindId = () => {
-  router.push({ name: 'find-id' })
+  router.push({name: 'find-id'})
 }
 const goToFindPw = () => {
-  router.push({ name: 'find-password' })
+  router.push({name: 'find-password'})
 }
 const goToLoginHelp = () => {
-  router.push({ name: 'login-help' })
+  router.push({name: 'login-help'})
 }
 
 
@@ -43,60 +46,61 @@ const login = async () => {
 </script>
 
 <template>
-<div class="login-container">
-  <div class="instruction-div">
-    <div class="instruction-left"></div>
-    <div class="instruction-center">
-      <img src="/images/fe-design/main-font.png" class="main-font-img" alt="main-font">
+  <div class="login-container">
+    <div class="instruction-div">
+      <div class="instruction-left"></div>
+      <div class="instruction-center">
+        <img alt="main-font" class="main-font-img" src="/images/fe-design/main-font.png">
+      </div>
+      <div class="instruction-right">
+        <img alt="character-1" class="character-img" src="/images/fe-design/character-1.png">
+      </div>
     </div>
-    <div class="instruction-right">
-      <img src="/images/fe-design/character-1.png" class="character-img" alt="character-1">
+
+    <div class="login-form">
+      <input v-model="email" placeholder="이메일 또는 아이디" type="text"/>
+      <input v-model="password" placeholder="비밀번호" type="password"/>
+
+      <button class="login-btn" @click="login">로그인</button>
+
+      <div class="auth-links">
+        <a @click="goToFindId">아이디 찾기</a>
+        <span>|</span>
+        <a @click="goToFindPw">비밀번호 찾기</a>
+        <span>|</span>
+        <a @click="goToSignup">회원가입</a>
+      </div>
+    </div>
+
+    <div class="social-login-div">
+      <a href="http://localhost:8080/oauth2/authorization/kakao">
+        <img
+            alt="kakao_login"
+            class="social-login-img kakao-login-img"
+            src="../../../../public/images/social/kakao/kakao.png"
+        />
+      </a>
+
+      <img
+          alt="naver-login"
+          class="social-login-img naver-login-img"
+          src="../../../../public/images/social/naver/btnG_아이콘사각.png"
+          @click="naverLogin"
+      />
+
+      <img
+          alt="google-login"
+          class="social-login-img google-login-img"
+          src="../../../../public/images/social/google/signin-assets/Android/png@1x/neutral/android_neutral_rd_na@1x.png"
+          @click="googleLogin"
+      />
+    </div>
+
+
+    <div class="login-info">
+      <a @click="goToLoginHelp">로그인 관련 문제</a>
     </div>
   </div>
-
-  <div class="login-form">
-    <input v-model="email" type="text" placeholder="이메일 또는 아이디" />
-    <input v-model="password" type="password" placeholder="비밀번호" />
-
-    <button class="login-btn" @click="login">로그인</button>
-
-    <div class="auth-links">
-      <a @click="goToFindId">아이디 찾기</a>
-      <span>|</span>
-      <a @click="goToFindPw">비밀번호 찾기</a>
-      <span>|</span>
-      <a @click="goToSignup">회원가입</a>
-    </div>
-  </div>
-
-  <div class="social-login-div">
-    <img
-        src="../../../../public/images/social/kakao/kakao.png"
-        alt="kakao_login"
-        @click="kakaoLogin"
-        class="social-login-img kakao-login-img"
-    />
-
-    <img
-        src="../../../../public/images/social/naver/btnG_아이콘사각.png"
-        alt="naver-login"
-        @click="naverLogin"
-        class="social-login-img naver-login-img"
-    />
-
-    <img
-        src="../../../../public/images/social/google/signin-assets/Android/png@1x/neutral/android_neutral_rd_na@1x.png"
-        alt="google-login"
-        @click="googleLogin"
-        class="social-login-img google-login-img"
-    />
-  </div>
-
-
-  <div class="login-info">
-    <a @click="goToLoginHelp">로그인 관련 문제</a>
-  </div>
-</div>
 </template>
 
 <style scoped>
@@ -130,6 +134,7 @@ const login = async () => {
   justify-content: center;
   align-items: center;
 }
+
 .instruction-right {
   display: flex;
   justify-content: right;
@@ -146,10 +151,11 @@ const login = async () => {
 
 
 .login-info {
-  cursor:pointer;
+  cursor: pointer;
   font-size: 0.5em;
   text-decoration: underline;
 }
+
 .login-form {
   display: flex;
   flex-direction: column;
@@ -210,14 +216,17 @@ const login = async () => {
   object-fit: contain;
   cursor: pointer;
   user-select: none;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-.kakao-login-img{
+
+.kakao-login-img {
   background: #FFDE00;
 }
+
 .naver-login-img {
   background: #03C75A;
 }
+
 .google-login-img {
   background: #F2F2F2;
 }

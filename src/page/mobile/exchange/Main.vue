@@ -5,15 +5,15 @@ import {useRouter} from "vue-router";
 const router = useRouter();
 
 const routeCreateExchangePage = () => {
-  router.push({ name: 'create-exchange' });
+  router.push({name: 'create-exchange'});
 }
 
 const routeExchangeRequestListPage = () => {
-  router.push({ name: 'exchange-request' });
+  router.push({name: 'exchange-requests'});
 }
 
 const routeChatRoomsPage = () => {
-  router.push({ name: 'exchange-chatrooms' });
+  router.push({name: 'exchange-chatrooms'});
 }
 
 </script>

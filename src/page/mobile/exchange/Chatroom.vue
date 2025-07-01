@@ -54,7 +54,9 @@ const connectWebSocket = () => {
 
       // 새 메시지 수신 시 스크롤
       nextTick(() => {
-        scrollToBottom();
+        setTimeout(() => {
+          scrollToBottom();
+        }, 50);
       });
     });
   };
@@ -94,14 +96,17 @@ const sendMessage = () => {
 
   message.value = "";
   // 스크롤 맨 아래로 이동
-  setTimeout(() => {
-    scrollToBottom();
-  }, 100);
+  nextTick(() => {
+    setTimeout(() => {
+      scrollToBottom();
+    }, 150);
+  });
 };
 
 const scrollToBottom = () => {
   if (chatMessageWrapper.value) {
-    chatMessageWrapper.value.scrollTop = chatMessageWrapper.value.scrollHeight;
+    const element = chatMessageWrapper.value;
+    element.scrollTop = element.scrollHeight;
   }
 };
 
@@ -132,7 +137,9 @@ const fetchMessage = async (pageNum = 0, isLoadingMore = false) => {
       // 첫 로드 시
       chatMessages.value = newMessages;
       await nextTick();
-      scrollToBottom();
+      setTimeout(() => {
+        scrollToBottom();
+      }, 200);
     } else {
       // 이전 메시지 로드 시
       const prevScrollHeight = chatMessageWrapper.value.scrollHeight;
@@ -192,7 +199,7 @@ onMounted(async () => {
     if (chatMessageWrapper.value) {
       chatMessageWrapper.value.addEventListener('scroll', handleScroll);
     }
-  }, 200);
+  }, 300);
 });
 
 onUnmounted(() => {
