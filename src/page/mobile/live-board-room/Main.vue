@@ -81,7 +81,7 @@ const connectWebSocket = () => {
               content: data.content,
               sentAt: data.sentAt,
               senderNickName: data.senderNickName,
-              isMyMessage: store.user.id === data.senderId,
+              isMyMessage: store.user ? store.user.id === data.senderId : false
             });
 
             // 채팅 메시지 추가 후 스크롤 맨 아래로 이동
