@@ -14,6 +14,17 @@ export const useWatchListStore = defineStore('watchList', () => {
     const size = ref(10)
     const loadingStore = useLoadingStore()
 
+    const statistics = ref({
+        total: 0,
+        winRate: 0.0,
+        mostVisitedStadium: null,
+        bestWinRateStadium: null,
+        win: 0,
+        draw: 0,
+        lose: 0,
+    })
+
+
     const fetchWatchList = async (pageNum = 1, pageSize = 10) => {
         loadingStore.start('watchList');
         try {
@@ -87,6 +98,22 @@ export const useWatchListStore = defineStore('watchList', () => {
         }
     };
 
+    const fetchStatistics = async () => {
+        loadingStore.start('watchList');
+        try {
+            const res = await axios.get('/watchlist/stats')
+            console.log(res.data.data);
+            statistics.value = res.data.data
+        } catch (err) {
+            const { message } = ApiError(err);
+            alert(message);
+        }
+        finally {
+            loadingStore.stop('watchList');
+        }
+    }
+
+
 
 
 
@@ -97,10 +124,12 @@ export const useWatchListStore = defineStore('watchList', () => {
         page,
         size,
         watchlistDetail,
+        statistics,
         fetchWatchList,
         createWatchList,
         fetchWatchListDetail,
         updateWatchList,
         deleteWatchList,
+        fetchStatistics,
     }
 })

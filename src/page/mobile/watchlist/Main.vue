@@ -17,7 +17,9 @@ const goToPage = (targetPage) => {
   page.value = targetPage
   watchListStore.fetchWatchList(page.value, size)
 }
-
+const goToStats = () => {
+  router.push({ name: 'statistics' })
+}
 
 const watchListStore = useWatchListStore()
 
@@ -42,6 +44,7 @@ const isEmpty = computed(() => {
   <div class="container">
     <div class="register-container">
       <button class="register-btn" @click="goToRecordWrite">기록 등록 하기</button>
+      <button class="register-btn" @click="goToStats">직관 통계 보기</button>
     </div>
 
     <div v-if="loadingStore.isLoading('watchList')" class="loading">불러오는 중...</div>
@@ -184,7 +187,11 @@ const isEmpty = computed(() => {
 }
 
 .register-container {
+  display: flex;
   text-align: center;
+  gap: 12px;
+  justify-content: center;
+
   margin: 20px 0;
 }
 
