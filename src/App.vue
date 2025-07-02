@@ -40,7 +40,7 @@ onMounted(async () => {
   }
 
   if (token && userStore.user) {
-    alarmStore.connectSSE()
+    // alarmStore.connectSSE()
   }
 })
 

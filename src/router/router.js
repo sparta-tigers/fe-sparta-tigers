@@ -27,6 +27,7 @@ import CreateExchange from "@/page/mobile/exchange/CreateExchange.vue";
 import ExchangeRequestList from "@/page/mobile/exchange/ExchangeRequestList.vue";
 import ItemDetail from "@/page/mobile/exchange/ItemDetail.vue";
 import NotFound from "@/page/mobile/util/NotFound.vue";
+import Statistics from "@/page/mobile/watchlist/Statistics.vue";
 
 const routes = [
     {
@@ -72,6 +73,12 @@ const routes = [
                 name: 'record-details',
                 component: RecordDetails,
                 meta: {requiresAuth: true, title: '기록'}
+            },
+            {
+                path: 'statistics',
+                name: 'statistics',
+                component: Statistics,
+                meta: {requiresAuth: true, title: '기록'}
             }
         ]
     },
@@ -101,26 +108,31 @@ const routes = [
                 path: 'create',
                 name: 'create-exchange',
                 component: CreateExchange,
+                meta: {requiresAuth: true, title: '교환'}
             },
             {
                 path: 'item/:itemId',
                 name: 'item-detail',
                 component: ItemDetail,
+                meta: {requiresAuth: true, title: '교환'}
             },
             {
                 path: 'chatrooms',
                 name: 'exchange-chatrooms',
                 component: ChatRooms,
+                meta: {requiresAuth: true, title: '교환'}
             },
             {
                 path: 'chatrooms/:roomId/exchangeRequest/:exchangeRequestId',
                 name: 'chatroom',
                 component: Chatroom,
+                meta: {requiresAuth: true, title: '교환'}
             },
             {
                 path: 'requests',
                 name: 'exchange-requests',
                 component: ExchangeRequestList,
+                meta: {requiresAuth: true, title: '교환'}
             }
         ]
     },

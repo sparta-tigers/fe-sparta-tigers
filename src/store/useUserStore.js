@@ -29,6 +29,7 @@ export const useUserStore = defineStore('user', () => {
 
             return true
         } catch (err) {
+            console.log('전체 에러 응답:', err.response?.data);
             const { message } = ApiError(err);
             alert(message);
         } finally {
@@ -55,7 +56,6 @@ export const useUserStore = defineStore('user', () => {
     const logout = async () => {
         loadingStore.start('user')
         try {
-            await axios.post('/users/logout', null, { withCredentials: true })
             user.value = null
             localStorage.removeItem('jwt_token')
             await router.push('/')

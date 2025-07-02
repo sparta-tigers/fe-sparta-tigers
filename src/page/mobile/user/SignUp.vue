@@ -1,7 +1,8 @@
 <script setup>
-import {ref, watch} from 'vue'
+import {computed, ref, watch} from 'vue'
 import {useUserStore} from "@/store/useUserStore.js";
-
+import UserTeams from '@/page/mobile/user/Teams.vue'
+import {useRoute} from "vue-router";
 const nickname = ref('')
 const email = ref('')
 const password = ref('')
@@ -10,11 +11,11 @@ const nicknameError = ref('')
 const emailError = ref('')
 const passwordError = ref('')
 const confirmPasswordError = ref('')
-
 const agreeAll = ref(false)
 const agreeService = ref(false)
 const agreePrivacy = ref(false)
 const agreeMarketing = ref(false)
+
 
 const userStore = useUserStore()
 watch([agreeService, agreePrivacy, agreeMarketing], ([s, p, m]) => {
@@ -189,5 +190,6 @@ input:focus {
   font-size: 0.9rem;
   color: #333;
 }
+
 
 </style>

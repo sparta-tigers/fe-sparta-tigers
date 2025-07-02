@@ -3,7 +3,6 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import axios from '@/axios.js'
 import router from "@/router/router.js";
-import {ApiError} from "@/utils/ApiError.js";
 
 export const useAlarmStore = defineStore('alarm', () => {
     const baseURL = import.meta.env.VITE_HTTP_BASE_URL;
@@ -98,62 +97,62 @@ export const useAlarmStore = defineStore('alarm', () => {
         }
     }
 
-    const connectSSE = () => {
-        try {
-            // 중복 연결 방지
-            if (eventSource && sseConnected.value) {
-                console.warn('⚠️ SSE 이미 연결됨')
-                return
-            }
-
-            // 기존 연결 닫기
-            if (eventSource) {
-                eventSource.close()
-                eventSource = null
-            }
-
-            // JWT 확인
-            const token = localStorage.getItem('jwt_token')
-            if (!token) {
-                console.warn('❌ JWT 토큰 없음, SSE 연결 취소')
-                return
-            }
-
-            eventSource = new EventSource(`${baseURL}/api/alarms/sse/subscribe?token=${token}`)
-
-            eventSource.onopen = () => {
-                sseConnected.value = true
-            }
-
-            eventSource.onerror = (err) => {
-                sseConnected.value = false
-
-                if (eventSource) {
-                    eventSource.close()
-                    eventSource = null
-                }
-            }
-
-
-            eventSource.addEventListener('alarm', async (event) => {
-                try {
-                    alert('⏰ 알람 도착: ' + event.data)
-                    await fetchAlarms?.()
-                } catch (e) {
-                    console.error('❌ alarm 이벤트 처리 중 오류:', e)
-                }
-            })
-
-        } catch (error) {
-            ApiError(error);
-
-            if (eventSource) {
-                eventSource.close()
-                eventSource = null
-            }
-            sseConnected.value = false
-        }
-    }
+    // const connectSSE = () => {
+    //     try {
+    //         // 중복 연결 방지
+    //         if (eventSource && sseConnected.value) {
+    //             console.warn('⚠️ SSE 이미 연결됨')
+    //             return
+    //         }
+    //
+    //         // 기존 연결 닫기
+    //         if (eventSource) {
+    //             eventSource.close()
+    //             eventSource = null
+    //         }
+    //
+    //         // JWT 확인
+    //         const token = localStorage.getItem('jwt_token')
+    //         if (!token) {
+    //             console.warn('❌ JWT 토큰 없음, SSE 연결 취소')
+    //             return
+    //         }
+    //
+    //         eventSource = new EventSource(`${baseURL}/api/alarms/sse/subscribe?token=${token}`)
+    //
+    //         eventSource.onopen = () => {
+    //             sseConnected.value = true
+    //         }
+    //
+    //         eventSource.onerror = (err) => {
+    //             sseConnected.value = false
+    //
+    //             if (eventSource) {
+    //                 eventSource.close()
+    //                 eventSource = null
+    //             }
+    //         }
+    //
+    //
+    //         eventSource.addEventListener('alarm', async (event) => {
+    //             try {
+    //                 alert('⏰ 알람 도착: ' + event.data)
+    //                 await fetchAlarms?.()
+    //             } catch (e) {
+    //                 console.error('❌ alarm 이벤트 처리 중 오류:', e)
+    //             }
+    //         })
+    //
+    //     } catch (error) {
+    //         ApiError(error);
+    //
+    //         if (eventSource) {
+    //             eventSource.close()
+    //             eventSource = null
+    //         }
+    //         sseConnected.value = false
+    //     }
+    // }
 
 
     return {
@@ -170,6 +169,6 @@ export const useAlarmStore = defineStore('alarm', () => {
         fetchSchedules,
         fetchMatchDetail,
         createAlarm,
-        connectSSE
+        // connectSSE
     }
 })
