@@ -47,7 +47,9 @@ const connectWebSocket = () => {
 
   stompClient.value = new Client({
     brokerURL: `${WS_BASE_URL}/ws`,
-    connectHeaders: {},
+    connectHeaders: {
+      Authorization: `Bearer ${localStorage.getItem('jwt_token')}`,
+    },
     webSocketFactory: () => new SockJS(`${HTTP_BASE_URL}/ws`),
   });
 
@@ -100,7 +102,7 @@ const fetchAndDrawItems = async () => {
   try {
     const response = await instance.get('/items');
     const items = response.data.data.content;
-    // console.log(`주변 아이템: [${JSON.stringify(items)}]`)
+    console.log(`주변 아이템: [${JSON.stringify(items)}]`)
     items.forEach(item => drawItemMarker(item));
   } catch (error) {
     console.log('주변 아이템 로드 실패:', error);

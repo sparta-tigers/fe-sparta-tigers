@@ -29,6 +29,7 @@ const page = ref(0);
 const pageInfo = ref({});
 const loading = ref(false);
 const isLoadingOlderMessages = ref(false);
+const exchangeRoomWrapper = ref(null);
 
 const connectWebSocket = () => {
   const client = new Client({
@@ -54,7 +55,9 @@ const connectWebSocket = () => {
 
       // 새 메시지 수신 시 스크롤
       nextTick(() => {
-        scrollToBottom();
+        setTimeout(() => {
+          scrollToBottom();
+        }, 50);
       });
     });
   };
@@ -94,14 +97,18 @@ const sendMessage = () => {
 
   message.value = "";
   // 스크롤 맨 아래로 이동
-  setTimeout(() => {
-    scrollToBottom();
-  }, 100);
+  nextTick(() => {
+    setTimeout(() => {
+      scrollToBottom();
+    }, 550);
+  });
 };
 
 const scrollToBottom = () => {
+  // TODO 바깥 스크롤 때문에 제대로 동작 안함.
   if (chatMessageWrapper.value) {
-    chatMessageWrapper.value.scrollTop = chatMessageWrapper.value.scrollHeight;
+    const element = chatMessageWrapper.value;
+    element.scrollTop = element.scrollHeight;
   }
 };
 
@@ -132,7 +139,9 @@ const fetchMessage = async (pageNum = 0, isLoadingMore = false) => {
       // 첫 로드 시
       chatMessages.value = newMessages;
       await nextTick();
-      scrollToBottom();
+      setTimeout(() => {
+        scrollToBottom();
+      }, 200);
     } else {
       // 이전 메시지 로드 시
       const prevScrollHeight = chatMessageWrapper.value.scrollHeight;
@@ -187,12 +196,19 @@ onMounted(async () => {
   await fetchMessage();
   client.value = connectWebSocket();
 
+  // 전체 페이지 스크롤을 맨 하단으로 이동
+  setTimeout(() => {
+    if (exchangeRoomWrapper.value) {
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+  }, 100);
+
   // 스크롤 이벤트 리스너 추가
   setTimeout(() => {
     if (chatMessageWrapper.value) {
       chatMessageWrapper.value.addEventListener('scroll', handleScroll);
     }
-  }, 200);
+  }, 300);
 });
 
 onUnmounted(() => {
@@ -207,7 +223,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="exchange-chatroom-wrapper">
+  <div ref="exchangeRoomWrapper" class="exchange-chatroom-wrapper">
     <div class="button-wrapper">
       <button @click="handleExchangeComplete">교환 완료</button>
     </div>
