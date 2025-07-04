@@ -7,8 +7,11 @@ import {onMounted, onUnmounted, ref} from 'vue'
 import {useAlarmStore} from "@/store/useAlarmStore.js";
 import {useUserStore} from "@/store/useUserStore.js";
 import {useRoute, useRouter} from "vue-router";
+import { watch } from 'vue'
+
 const router = useRouter()
 const userStore = useUserStore()
+const alarmStore = useAlarmStore()
 const route = useRoute()
 
 const isMobile = ref(false)
@@ -23,8 +26,6 @@ onUnmounted(() => {
 })
 
 
-const alarmStore = useAlarmStore()
-
 onMounted(async () => {
   checkMobile()
   window.addEventListener('resize', checkMobile)
@@ -36,13 +37,24 @@ onMounted(async () => {
   }
 
   if (token && !userStore.user) {
-    await userStore.getUser()
+    try {
+      await userStore.getUser()
+    } catch (error) {
+      console.error('유저 정보 가져오기 실패:', error)
+      await router.push('/login')
+      return
+    }
   }
 
-  if (token && userStore.user) {
-    // alarmStore.connectSSE()
-  }
+  watch(
+      () => userStore.user,
+      (newUser) => {
+        if (newUser) {
+          alarmStore.connectSSE()
+        }
+      },
+      { immediate: true }
+  )
 })
-
 
 </script>

@@ -4,12 +4,14 @@ import axios from '@/axios.js'
 import router from "@/router/router.js";
 import {useLoadingStore} from "@/store/useLoadingStore.js";
 import {ApiError} from "@/utils/ApiError.js";
+import {useAlarmStore} from "@/store/useAlarmStore.js";
 
 export const useUserStore = defineStore('user', () => {
     const user = ref(null)
     const error = ref(null)
     const jwtToken = ref(localStorage.getItem('jwt_token') || null)
     const loadingStore = useLoadingStore()
+    const alarmStore = useAlarmStore()
     const login = async (email, password) => {
         loadingStore.start('user')
 
@@ -57,6 +59,7 @@ export const useUserStore = defineStore('user', () => {
         try {
             user.value = null
             localStorage.removeItem('jwt_token')
+            alarmStore.disconnectSSE()
             await router.push('/')
 
         } catch (err) {
