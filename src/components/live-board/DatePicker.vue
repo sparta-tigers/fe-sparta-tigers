@@ -32,8 +32,6 @@ export default {
     dateList() {
       const dates = [];
       const today = new Date();
-      // TODO 테스트용
-      today.setDate(today.getDate() - 1);
       const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
 
       // 오늘부터 5일 후 까지 6개의 날짜 생성
