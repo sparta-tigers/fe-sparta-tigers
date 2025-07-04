@@ -10,6 +10,8 @@ import {
   Legend,
   ArcElement
 } from 'chart.js'
+import {useRouter} from "vue-router";
+const router = useRouter()
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement);
 
@@ -18,6 +20,17 @@ const watchListStore = useWatchListStore()
 
 onMounted(async () => {
   await favoriteStore.fetchFavoriteTeam()
+
+  if (!favoriteStore.favoriteTeam) {
+    const goToMyPage = confirm('응원팀이 등록되어 있지 않습니다.\n마이페이지에서 먼저 등록하시겠습니까?')
+    if (goToMyPage) {
+      await router.push({name: 'my-page'})
+    } else {
+      router.back()
+    }
+    return
+  }
+
   await watchListStore.fetchStatistics()
 })
 
