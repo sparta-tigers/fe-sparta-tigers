@@ -1,9 +1,10 @@
 <template>
   <header class="header">
-    <div class="title">{{ title }}</div>
+    <div class="title">
+      {{ title }}
+    </div>
     <button class="menu-btn" @click="$emit('toggleMenu')">≡</button>
   </header>
-
 </template>
 
 <style scoped>
@@ -18,6 +19,9 @@
 }
 .title {
   font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 .menu-btn {
   cursor: pointer;
@@ -30,12 +34,6 @@
 <script setup>
 import { useRoute } from 'vue-router'
 import { computed } from 'vue'
-
 const route = useRoute()
-
-const title = computed(() => {
-  return route.meta.title || '기본 타이틀'
-})
-
-
+const title = computed(() => route.meta.title || '기본 타이틀')
 </script>
