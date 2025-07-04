@@ -107,7 +107,7 @@ export const useAlarmStore = defineStore('alarm', () => {
             eventSource.close()
         }
 
-        eventSource = new EventSource(`http://localhost:8080/api/alarms/sse/subscribe/${userId}`, {
+        eventSource = new EventSource(`${baseURL}/api/alarms/sse/subscribe/${userId}`, {
             withCredentials: true
         })
 
