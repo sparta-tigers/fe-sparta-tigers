@@ -1,5 +1,6 @@
 import {createRouter, createWebHistory} from "vue-router";
 import MainPage from "@/page/MainPage.vue";
+import HomePage from '@/page/mobile/home/Main.vue'
 import LiveBoardMatch from "@/page/mobile/live-board-match/Main.vue";
 import LiveBoardRoom from "@/page/mobile/live-board-room/Main.vue";
 import recordMain from "@/page/mobile/watchlist/Main.vue";
@@ -17,7 +18,6 @@ import RecordTeams from "@/page/mobile/watchlist/Teams.vue";
 import RecordSchedule from "@/page/mobile/watchlist/Schedule.vue";
 import RecordDetails from "@/page/mobile/watchlist/Details.vue";
 import Chatroom from "@/page/mobile/exchange/Chatroom.vue";
-import signUp from "@/page/mobile/user/SignUp.vue";
 import SignUp from "@/page/mobile/user/SignUp.vue";
 import FindId from "@/page/mobile/user/FindId.vue";
 import FindPassword from "@/page/mobile/user/FindPassword.vue";
@@ -32,7 +32,15 @@ import Statistics from "@/page/mobile/watchlist/Statistics.vue";
 const routes = [
     {
         path: '/',
-        redirect: '/liveboard/match'
+        component: MainPage,
+        children: [
+            {
+                path: '',
+                name: 'home-page',
+                component: HomePage,
+                meta: { title: '야구대학' }
+            }
+        ]
     },
     {
         path: '/liveboard',
