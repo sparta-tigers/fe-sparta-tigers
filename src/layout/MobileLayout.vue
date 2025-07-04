@@ -6,9 +6,7 @@ import {computed, ref} from 'vue'
 import {useRouter} from 'vue-router';
 import {useUserStore} from "@/store/useUserStore.js";
 
-
 const store = useUserStore()
-
 const isMenuOpen = ref(false)
 const isToken = computed(() => !!store.user)
 const router = useRouter();
@@ -16,9 +14,6 @@ const router = useRouter();
 const closeMenu = () => {
   isMenuOpen.value = false;
 };
-
-
-
 const goToMyPage = () => {
   router.push('/mypage');
 };
@@ -29,6 +24,8 @@ const logout = async () => {
   await store.logout()
 };
 </script>
+
+
 <template>
   <div class="mobile-layout-container">
     <mobile-header @toggleMenu="isMenuOpen = !isMenuOpen"/>
