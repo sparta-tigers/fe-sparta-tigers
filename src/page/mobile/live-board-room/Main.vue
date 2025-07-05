@@ -36,7 +36,6 @@ const activeInning = ref('1');
 // 게임 데이터
 const matchData = ref({
   matchId: null,
-  current: '1회 말',
   players: [],
   matchScore: {
     strike: 0,
@@ -57,7 +56,8 @@ const matchData = ref({
     inningEightTexts: [],
     inningNineTexts: [],
     inningExtraTexts: []
-  }
+  },
+  currentInning: '1회 초'
 });
 
 // 팀 관련 데이터
@@ -145,7 +145,8 @@ const connectWebSocket = () => {
           matchId: data.matchId,
           players: data.players,
           matchScore: data.matchScore,
-          inningTexts: data.inningTexts || matchData.value.inningTexts
+          inningTexts: data.inningTexts || matchData.value.inningTexts,
+          currentInning: data.currentInning
         };
       }
     });
@@ -291,8 +292,7 @@ onUnmounted(() => {
 
           <div class="game-info">
             <div class="base-wrapper">
-              <!--              <div class="current-game">{{ matchData.current }}</div>-->
-              <div class="current-game">1회 말</div>
+              <div class="current-game">{{ matchData.currentInning }}</div>
 
               <div class="bases">
                 <div :class="{ active: getPlayerByRole('typing1') }" class="base-one base-indicator"></div>
