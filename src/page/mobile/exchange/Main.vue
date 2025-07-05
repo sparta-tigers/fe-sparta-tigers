@@ -44,15 +44,22 @@ const routeChatRoomsPage = () => {
 }
 
 .button-wrapper {
+  position: fixed;
+  bottom: 56px; /* Footer 높이만큼 위로 */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 700px;
   height: 80px;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
   background-color: white;
-  border-radius: 40px 40px 0px 0px;
+  border-radius: 40px 40px 0 0;
   border-top: 1px solid gray;
   gap: 20px;
+  z-index: 98;
 }
 
 .exchange-button {
