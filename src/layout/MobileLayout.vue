@@ -78,8 +78,7 @@ const logout = async () => {
 }
 
 .content {
-  padding: 16px;
-  padding-bottom: 80px;
+  padding: 16px 16px 80px;
 }
 
 /* 메뉴 오버레이 */
