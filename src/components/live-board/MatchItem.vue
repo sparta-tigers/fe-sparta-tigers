@@ -1,14 +1,14 @@
 <script setup>
-import hhLogo from "@/assets/images/hh-logo.png";
-import htLogo from "@/assets/images/ht-logo.png";
-import ktLogo from "@/assets/images/kt-logo.png";
-import lgLogo from "@/assets/images/lg-logo.png";
-import ltLogo from "@/assets/images/lt-logo.png";
-import ncLogo from "@/assets/images/nc-logo.png";
-import obLogo from "@/assets/images/ob-logo.png";
-import skLogo from "@/assets/images/sk-logo.png";
-import ssLogo from "@/assets/images/ss-logo.png";
-import woLogo from "@/assets/images/wo-logo.png";
+import hhLogo from "@/assets/images/team-logo/hh-logo.png";
+import htLogo from "@/assets/images/team-logo/ht-logo.png";
+import ktLogo from "@/assets/images/team-logo/kt-logo.png";
+import lgLogo from "@/assets/images/team-logo/lg-logo.png";
+import ltLogo from "@/assets/images/team-logo/lt-logo.png";
+import ncLogo from "@/assets/images/team-logo/nc-logo.png";
+import obLogo from "@/assets/images/team-logo/ob-logo.png";
+import skLogo from "@/assets/images/team-logo/sk-logo.png";
+import ssLogo from "@/assets/images/team-logo/ss-logo.png";
+import woLogo from "@/assets/images/team-logo/wo-logo.png";
 
 import {computed} from "vue";
 import {useRouter} from "vue-router";

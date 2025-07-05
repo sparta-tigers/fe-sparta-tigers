@@ -27,48 +27,59 @@ const logout = async () => {
 
 
 <template>
-  <div class="mobile-layout-container">
-    <mobile-header @toggleMenu="isMenuOpen = !isMenuOpen"/>
+  <div class="mobile-layout-wrapper">
+    <div class="mobile-layout-container">
+      <mobile-header class="mobile-header" @toggleMenu="isMenuOpen = !isMenuOpen"/>
 
-    <div v-if="isMenuOpen" class="menu-overlay" @click.self="isMenuOpen = false">
-      <div class="slide-menu">
-        <div class="menu-header">
-          <span>메뉴</span>
-          <button class="close-btn" @click="isMenuOpen = false">✕</button>
-        </div>
-        <div v-if="isToken">
-          <div class="menu-item" @click="goToMyPage(); closeMenu();">
-            마이페이지
+      <!-- 메뉴 -->
+      <div v-if="isMenuOpen" class="menu-overlay" @click.self="isMenuOpen = false">
+        <div class="slide-menu">
+          <div class="menu-header">
+            <span>메뉴</span>
+            <button class="close-btn" @click="isMenuOpen = false">✕</button>
           </div>
-          <div class="menu-item" @click="logout(); closeMenu();">로그아웃</div>
-        </div>
-        <div v-else>
-          <div class="menu-item" @click="goToLogin(); closeMenu();">로그인</div>
+          <div v-if="isToken">
+            <div class="menu-item" @click="goToMyPage(); closeMenu();">
+              마이페이지
+            </div>
+            <div class="menu-item" @click="logout(); closeMenu();">로그아웃</div>
+          </div>
+          <div v-else>
+            <div class="menu-item" @click="goToLogin(); closeMenu();">로그인</div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <main class="content">
-      <router-view/>
-    </main>
-    <mobile-footer/>
+      <!-- 메인 -->
+      <main class="content">
+        <router-view/>
+      </main>
+
+      <mobile-footer/>
+    </div>
   </div>
 </template>
 
 <style scoped>
+.mobile-layout-wrapper {
+  display: flex;
+  justify-content: center;
+  background-color: #f5f5f5; /* 바깥 영역 배경색 */
+  min-height: 100%;
+}
+
 .mobile-layout-container {
   position: relative; /* 기준점 */
   width: 100%;
-  height: 100vh;
+  max-width: 700px;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
 }
 
 .content {
-  flex: 1;
-  overflow-y: auto; /* 세로 스크롤 허용 */
-  overflow-x: hidden; /* 가로 스크롤 숨김 */
+  padding: 16px;
+  padding-bottom: 80px;
 }
 
 /* 메뉴 오버레이 */

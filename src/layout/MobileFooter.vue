@@ -19,16 +19,32 @@ function goRoute(name) {
 
 <style scoped>
 .mobile-footer {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 700px;
+  z-index: 99;
+  background-color: #fff;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
-  width: 100%;
-  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-  height: 7vh;
+  height: 56px;
+  border-top: 1px solid #e0e0e0
 }
 
 .footer-btn {
   flex: 1;
   text-align: center;
   cursor: pointer;
+  padding: 8px 0;
+  user-select: none;
+  transition: background-color 02.s ease;
+}
+
+.footer-btn:hover,
+.footer-btn:focus-visible {
+  background-color: #f7f7f7;
 }
 </style>
