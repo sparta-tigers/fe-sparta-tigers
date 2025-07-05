@@ -64,7 +64,6 @@ const logout = async () => {
 .mobile-layout-wrapper {
   display: flex;
   justify-content: center;
-  background-color: #f5f5f5; /* 바깥 영역 배경색 */
   min-height: 100%;
 }
 
