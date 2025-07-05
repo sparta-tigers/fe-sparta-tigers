@@ -1,7 +1,9 @@
 <template>
   <header :class="['header', { scrolled: isScrolled }]">
-    <div class="title">{{ title }}</div>
-    <button class="menu-btn" @click="$emit('toggleMenu')">≡</button>
+    <div class="header-inner">
+      <div class="title">{{ title }}</div>
+      <button class="menu-btn" @click="$emit('toggleMenu')">≡</button>
+    </div>
   </header>
 
 </template>
@@ -9,7 +11,7 @@
 <style scoped>
 .header {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   height: 7vh;
   padding: 0 16px;
@@ -21,6 +23,14 @@
   background-color: transparent;
   border-bottom: 1px solid transparent;
   transition: all 0.5s ease;
+}
+
+.header-inner {
+  width: 100%;
+  max-width: 700px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .header.scrolled {
