@@ -35,8 +35,8 @@ import MyPage from "@/page/mobile/user/mypage/MyPage.vue";
 
 const route = useRoute()
 const router = useRouter()
-
 const store = useUserStore()
+
 onMounted(async () => {
   await store.getUser();
 })
@@ -58,6 +58,14 @@ const goTo = (name) => {
   max-width: 700px;
   margin: 0 auto;
   padding: 60px 16px 80px;
+}
+
+.profile-summary-wrapper {
+  background: #f5f5f5;
+  border-radius: 16px;
+  padding: 24px 16px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
 }
 
 .mypage-menu {
