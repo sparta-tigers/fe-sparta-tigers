@@ -131,6 +131,9 @@ export const useAlarmStore = defineStore('alarm', () => {
         eventSource.addEventListener('connect', (event) => {
             console.log('🔔 서버로부터 초기 메시지:', event.data)
         })
+        eventSource.addEventListener('heartbeat', e => {
+            console.log('heartbeat');
+        });
 
         eventSource.addEventListener('testAlarm', async (event) => {
 
