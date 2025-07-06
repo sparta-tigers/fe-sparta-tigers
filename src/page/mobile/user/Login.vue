@@ -2,38 +2,18 @@
 import {useUserStore} from "@/store/useUserStore.js";
 import {ref} from "vue";
 import {useRouter} from "vue-router";
+import GoogleLoginIcon from "@/components/shard/GoogleLoginIcon.vue";
+import KakaoLoginIcon from "@/components/shard/KakaoLoginIcon.vue";
 
 const store = useUserStore()
 const baseURL = import.meta.env.VITE_HTTP_BASE_URL
 
-console.log(baseURL);
-
-const kakaoLogin = () => {
-  window.location.href = `${baseURL}/oauth2/authorization/kakao`
-};
-const naverLogin = () => {
-  window.location.href = `${baseURL}/oauth2/authorization/naver`
-}
-
-const googleLogin = () => {
-  window.location.href = `${baseURL}/oauth2/authorization/google`
-}
 
 const router = useRouter()
 
 const goToSignup = () => {
   router.push({name: 'sign-up'})
 }
-const goToFindId = () => {
-  router.push({name: 'find-id'})
-}
-const goToFindPw = () => {
-  router.push({name: 'find-password'})
-}
-const goToLoginHelp = () => {
-  router.push({name: 'login-help'})
-}
-
 
 const email = ref('')
 const password = ref('')
@@ -58,48 +38,34 @@ const login = async () => {
     </div>
 
     <div class="login-form">
+      <div class="form-title">
+        <h2>로그인</h2>
+      </div>
+
       <input v-model="email" placeholder="이메일 또는 아이디" type="text"/>
       <input v-model="password" placeholder="비밀번호" type="password"/>
 
       <button class="login-btn" @click="login">로그인</button>
 
       <div class="auth-links">
-        <a @click="goToFindId">아이디 찾기</a>
-        <span>|</span>
-        <a @click="goToFindPw">비밀번호 찾기</a>
-        <span>|</span>
+        <span>계정이 없으신가요?</span>
         <a @click="goToSignup">회원가입</a>
       </div>
-    </div>
 
-    <div class="social-login-div">
-      <a :href="`${baseURL}/oauth2/authorization/kakao`">
-        <img
-            alt="kakao_login"
-            class="social-login-img kakao-login-img"
-            src="../../../../public/images/social/kakao/kakao.png"
-        />
-      </a>
+      <div class="divider"></div>
 
-      <img
-          alt="naver-login"
-          class="social-login-img naver-login-img"
-          src="../../../../public/images/social/naver/btnG_아이콘사각.png"
-          @click="naverLogin"
-      />
+      <div class="social-login-btn-wrapper">
+        <a :href="`${baseURL}/oauth2/authorization/google`" class="social-login-btn">
+          <GoogleLoginIcon/>
+        </a>
+        <a :href="`${baseURL}/oauth2/authorization/kakao`" class="social-login-btn kakao-btn">
+          <KakaoLoginIcon/>
+        </a>
+      </div>
 
-      <img
-          alt="google-login"
-          class="social-login-img google-login-img"
-          src="../../../../public/images/social/google/signin-assets/Android/png@1x/neutral/android_neutral_rd_na@1x.png"
-          @click="googleLogin"
-      />
     </div>
 
 
-    <div class="login-info">
-      <a @click="goToLoginHelp">로그인 관련 문제</a>
-    </div>
   </div>
 </template>
 
@@ -109,7 +75,7 @@ const login = async () => {
   display: flex;
   align-items: center;
   width: 100%;
-  margin-bottom: 5em;
+  margin-bottom: 24px;
   position: relative;
 }
 
@@ -161,11 +127,16 @@ const login = async () => {
   flex-direction: column;
   gap: 12px;
   margin-bottom: 20px;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  min-width: 400px;
+  padding: 2rem;
+  background-color: #fff;
 }
 
 .login-form input {
-  width: clamp(18rem, 25vw, 25rem);
-  height: clamp(3rem, 6vh, 3.75rem);
+  width: 100%;
+  height: 50px;
   padding: 0 10px;
   font-size: 1rem;
   border: 1px solid #ccc;
@@ -174,7 +145,7 @@ const login = async () => {
 
 .login-btn {
   height: 45px;
-  background-color: #0052cc;
+  background-color: #659287;
   color: #fff;
   font-size: 16px;
   border: none;
@@ -184,19 +155,29 @@ const login = async () => {
 }
 
 .login-btn:hover {
-  background-color: #003f99;
+  background-color: #5a8278;
+}
+
+input {
+  outline: none;
+}
+
+input:active, input:focus {
+  border: 1px solid #659287;
 }
 
 /* @@@@@@@@ 아이디 비밀번호 회원가입 영역 @@@@@@@ */
 .auth-links {
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
   font-size: 14px;
   margin-top: 8px;
 }
 
 .auth-links a {
-  text-decoration: underline;
-  color: #555;
+  color: #659287;
+  font-weight: 600;
+  text-decoration: none;
   margin: 0 6px;
   cursor: pointer;
 }
@@ -259,5 +240,52 @@ const login = async () => {
   text-decoration: underline;
 }
 
+/* 김정민 코드 추가 */
+
+.form-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.social-login-btn-wrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  justify-content: center;
+}
+
+.social-login-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease-in-out;
+  border: 2px solid #e2e8f0;
+  background-color: white;
+}
+
+.social-login-btn:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.social-login-btn-wrapper .kakao-btn {
+  background-color: #fee500;
+  border-color: #fee500;
+}
+
+.social-login-btn-wrapper .kakao-btn:hover {
+  background-color: #ffeb3b;
+  border-color: #ffeb3b;
+}
+
+.divider {
+  height: 1px;
+  border-bottom: 1px solid lightgray;
+  margin: 4px 0;
+}
 
 </style>

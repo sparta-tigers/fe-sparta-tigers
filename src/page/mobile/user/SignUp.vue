@@ -1,8 +1,8 @@
 <script setup>
-import {computed, ref, watch} from 'vue'
+import {ref, watch} from 'vue'
 import {useUserStore} from "@/store/useUserStore.js";
-import UserTeams from '@/page/mobile/user/Teams.vue'
-import {useRoute} from "vue-router";
+import {useRouter} from "vue-router";
+
 const nickname = ref('')
 const email = ref('')
 const password = ref('')
@@ -16,7 +16,7 @@ const agreeService = ref(false)
 const agreePrivacy = ref(false)
 const agreeMarketing = ref(false)
 
-
+const router = useRouter();
 const userStore = useUserStore()
 watch([agreeService, agreePrivacy, agreeMarketing], ([s, p, m]) => {
   agreeAll.value = s && p && m
@@ -65,56 +65,61 @@ const register = async () => {
 </script>
 
 <template>
-    <div class="input-container">
-      <div class="input-group">
-        <label>닉네임</label>
-        <input class="register-input" v-model="nickname" type="text" placeholder="닉네임을 입력해주세요"/>
-        <p class="error" v-if="nicknameError">{{ nicknameError }}</p>
-      </div>
-
-      <div class="input-group">
-        <label>이메일</label>
-        <input class="register-input" v-model="email" type="email" placeholder="이메일을 입력해주세요"/>
-        <p class="error" v-if="emailError">{{ emailError }}</p>
-      </div>
-
-      <div class="input-group">
-        <label>비밀번호</label>
-        <input class="register-input" v-model="password" type="password" placeholder="영문자, 숫자, 특수문자 포함 8~20자"/>
-        <p class="error" v-if="passwordError">{{ passwordError }}</p>
-      </div>
-
-      <div class="input-group">
-        <input class="register-input" v-model="confirmPassword" type="password" placeholder="비밀번호를 확인해주세요"/>
-        <p class="error" v-if="confirmPasswordError">{{ confirmPasswordError }}</p>
-      </div>
-
-
-      <div class="agreement-group">
-        <label>
-          <input type="checkbox" v-model="agreeAll" />
-          전체 동의
-        </label>
-
-        <label>
-          <input type="checkbox" v-model="agreeService" />
-          [필수] 서비스 이용약관
-        </label>
-
-        <label>
-          <input type="checkbox" v-model="agreePrivacy" />
-          [필수] 개인정보 처리방침
-        </label>
-
-        <label>
-          <input type="checkbox" v-model="agreeMarketing" />
-          [선택] 마케팅 수신 동의
-        </label>
-      </div>
-
-      <button class="register-btn" @click="register">가입하기</button>
+  <div class="input-container">
+    <div class="input-group">
+      <label>닉네임</label>
+      <input v-model="nickname" class="register-input" placeholder="닉네임을 입력해주세요" type="text"/>
+      <p v-if="nicknameError" class="error">{{ nicknameError }}</p>
     </div>
 
+    <div class="input-group">
+      <label>이메일</label>
+      <input v-model="email" class="register-input" placeholder="이메일을 입력해주세요" type="email"/>
+      <p v-if="emailError" class="error">{{ emailError }}</p>
+    </div>
+
+    <div class="input-group">
+      <label>비밀번호</label>
+      <input v-model="password" class="register-input" placeholder="영문자, 숫자, 특수문자 포함 8~20자" type="password"/>
+      <p v-if="passwordError" class="error">{{ passwordError }}</p>
+    </div>
+
+    <div class="input-group">
+      <label>비밀번호 확인</label>
+      <input v-model="confirmPassword" class="register-input" placeholder="비밀번호를 확인해주세요" type="password"/>
+      <p v-if="confirmPasswordError" class="error">{{ confirmPasswordError }}</p>
+    </div>
+
+
+    <div class="agreement-group">
+      <label>
+        <input v-model="agreeAll" type="checkbox"/>
+        전체 동의
+      </label>
+
+      <label>
+        <input v-model="agreeService" type="checkbox"/>
+        [필수] 서비스 이용약관
+      </label>
+
+      <label>
+        <input v-model="agreePrivacy" type="checkbox"/>
+        [필수] 개인정보 처리방침
+      </label>
+
+      <label>
+        <input v-model="agreeMarketing" type="checkbox"/>
+        [선택] 마케팅 수신 동의
+      </label>
+    </div>
+
+    <div class="auth-links">
+      <span>이미 계정이 있으신가요?</span>
+      <a @click="() => router.push('/login')">로그인</a>
+    </div>
+
+    <button class="register-btn" @click="register">가입하기</button>
+  </div>
 
 
 </template>
@@ -127,6 +132,10 @@ const register = async () => {
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
+  border: 1px solid #e5e5e5;
+  padding: 2rem;
+  min-width: 400px;
+  border-radius: 8px;
 }
 
 
@@ -140,6 +149,7 @@ const register = async () => {
 label {
   font-size: 0.9rem;
   color: #444;
+  font-weight: bold;
 }
 
 .register-input {
@@ -151,16 +161,18 @@ label {
   transition: all 0.2s ease-in-out;
 }
 
-input:focus {
-  border-color: #007bff;
+input {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+}
+
+input:active, input:focus {
+  border: 1px solid #659287;
 }
 
 .register-btn {
   height: 48px;
   font-size: 1rem;
-  background: linear-gradient(135deg, #4a90e2, #007aff);
+  background-color: #659287;
   color: white;
   border: none;
   border-radius: 12px;
@@ -169,7 +181,7 @@ input:focus {
 }
 
 .register-btn:hover {
-  background: linear-gradient(135deg, #357ab8, #0062cc);
+  background-color: #5a8278;
 }
 
 .error {
@@ -177,6 +189,7 @@ input:focus {
   font-size: 0.875rem;
   margin-top: 4px;
 }
+
 .agreement-group {
   padding: 1rem;
   border: 1px solid #ddd;
@@ -191,5 +204,19 @@ input:focus {
   color: #333;
 }
 
+.auth-links {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.auth-links a {
+  color: #659287;
+  font-weight: 600;
+  text-decoration: none;
+  margin: 0 6px;
+  cursor: pointer;
+}
 
 </style>
