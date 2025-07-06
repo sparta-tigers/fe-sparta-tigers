@@ -94,12 +94,14 @@ function goToReservation(schedule) {
     }
   })
 }
+
 const getResultLabelForDate = (date) => {
   const schedulesOnDate = scheduleMap.value.get(date) || []
   // 우선순위: H(홈승) > A(어웨이승) > D(무승)
   if (schedulesOnDate.some(s => s.matchResult === 'HOME_WIN')) return 'H'
   if (schedulesOnDate.some(s => s.matchResult === 'AWAY_WIN')) return 'A'
   if (schedulesOnDate.some(s => s.matchResult === 'DRAW')) return 'D'
+  if (schedulesOnDate.some(s => s.matchResult === 'CANCEL')) return 'C'
   return ''
 }
 
@@ -150,7 +152,7 @@ const getResultLabelForDate = (date) => {
           <div class="match-text">
             <div v-if="new Date(schedule.matchTime) < now">
               {{ schedule.homeScore }}
-              <span v-if="schedule.matchResult !== 'DRAW'"> : </span>
+              <span v-if="schedule.matchResult && schedule.matchResult !== 'DRAW' && schedule.matchResult !== 'CANCEL'"> : </span>
               {{ schedule.awayScore }}
               <span
                   v-if="schedule.matchResult"
@@ -158,7 +160,8 @@ const getResultLabelForDate = (date) => {
                   :class="{
       win: schedule.matchResult === 'HOME_WIN',
       lose: schedule.matchResult === 'AWAY_WIN',
-      draw: schedule.matchResult === 'DRAW'
+      draw: schedule.matchResult === 'DRAW',
+      cancel: schedule.matchResult === 'CANCEL'
     }"
               >
     {{
@@ -166,7 +169,11 @@ const getResultLabelForDate = (date) => {
                       ? '승'
                       : schedule.matchResult === 'AWAY_WIN'
                           ? '패'
-                          : '무'
+                          : schedule.matchResult === 'DRAW'
+                              ? '무'
+                              : schedule.matchResult === 'CANCEL'
+                                  ? '취소'
+                                  : ''
                 }}
   </span>
             </div>
@@ -272,16 +279,19 @@ const getResultLabelForDate = (date) => {
 }
 
 .result-circle.win {
-  background-color :#ef4444; /* 파랑 */
+  background-color :#ef4444;
 }
 
 .result-circle.lose {
-  background-color: #3b82f6; /* 빨강 */
+  background-color: #3b82f6;
 
 }
 
 .result-circle.draw {
-  background-color: #6b7280; /* 회색 */
+  background-color: black;
+}
+.result-circle.cancel {
+  background-color :#ef4444;
 }
 
 .date-header {
