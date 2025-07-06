@@ -14,7 +14,7 @@ const goHome = () => {
   router.push('/');
 };
 
-const logoUrl = new URL('@/assets/images/app-logo.png', import.meta.url).href;
+const logoUrl = new URL('@/assets/images/app-logo.svg', import.meta.url).href;
 
 const isScrolled = ref(false);
 const handleScroll = () => {
@@ -82,17 +82,21 @@ onUnmounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding-left: 30px;
+  padding-right: 30px;
+  height: 100px;
 }
 
 .header.scrolled {
   background-color: rgba(255, 255, 255, 0.9);
+  //background-color: #cbebdb;
   border-bottom: 1px solid rgba(229, 231, 235, 0.8);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(6px);
 }
 
 .app-logo {
-  height: 100px;
+  height: 180px;
   cursor: pointer;
 }
 

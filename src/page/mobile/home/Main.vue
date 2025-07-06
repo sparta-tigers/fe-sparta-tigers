@@ -2,9 +2,13 @@
   <section class="layout">
     <!-- 페이지 제목 -->
     <section class="hero-section">
-      <h1>스포츠의 모든 순간, 함께하자!</h1>
-      <p>실시간 경기, 팬들과 소통, 굿즈 교환 등 다양한 기능을 만나보세요.</p>
-      <button class="cta-btn">지금 시작하기</button>
+      <div class="hero-div">
+        <img
+            class="brochure-logo"
+            :src="brochureUrl"
+            alt="브로셔 로고"
+        />
+      </div>
     </section>
 
     <!-- 주요 기능 소개 섹션 -->
@@ -108,7 +112,22 @@
   </section>
 </template>
 
+<script setup>
+const brochureUrl = new URL('@/assets/images/brochure.svg', import.meta.url).href;
+</script>
+
 <style scoped>
+.hero-section {
+  text-align: center;
+  margin: 20px 0;
+  color: white;
+}
+
+.brochure-logo {
+  width: 100%;
+  height: auto;
+}
+
 .features-section {
   margin: 40px 0;
   padding: 0 20px;
@@ -118,7 +137,7 @@
   display: flex;
   margin: 40px 0;
   gap: 20px;
-  background: #fff;
+  background: #fffdf6;
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -203,24 +222,6 @@
   }
 }
 
-.hero-section {
-  text-align: center;
-  padding: 50px 20px;
-  background: linear-gradient(135deg, #e66465, #9198e5);
-  border-radius: 15px;
-  margin: 20px 0;
-  color: white;
-}
-
-.hero-section h1 {
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.hero-section p {
-  font-size: 1.2rem;
-  margin-bottom: 1.5rem;
-}
 
 .cta-btn {
   background-color: #f8f9fa;

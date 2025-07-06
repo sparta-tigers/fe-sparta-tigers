@@ -58,3 +58,15 @@ onMounted(async () => {
 })
 
 </script>
+
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  background-image: url('@/assets/images/background-texture.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+}
+</style>

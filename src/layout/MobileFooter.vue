@@ -34,8 +34,8 @@
 .footer-wrapper {
   position: fixed;
   bottom: 0;
-  left: 50%;
   width: 100%;
+  left: 50%;
   transform: translateX(-50%);
   max-width: 700px;
   display: flex;
