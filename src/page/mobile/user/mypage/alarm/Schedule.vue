@@ -7,6 +7,7 @@ import router from "@/router/router.js";
 const today = new Date()
 const currentYear = ref(today.getFullYear())
 const currentMonth = ref(today.getMonth())
+const now = ref(new Date())
 
 const monthLabel = computed(() => {
   return `${currentYear.value}년 ${currentMonth.value + 1}월`
@@ -57,12 +58,13 @@ const scheduleMap = computed(() => {
   })
   return map
 })
-
 const formatDate = (year, month, day) => {
+  if (day === null) return '' // 또는 null 반환도 가능
   const mm = (month + 1).toString().padStart(2, '0')
   const dd = day.toString().padStart(2, '0')
   return `${year}-${mm}-${dd}`
 }
+
 
 const formatTime = (dateTime) => {
   return dateTime.slice(11, 16)
@@ -93,6 +95,16 @@ function goToReservation(schedule) {
   })
 }
 
+const getResultLabelForDate = (date) => {
+  const schedulesOnDate = scheduleMap.value.get(date) || []
+  // 우선순위: H(홈승) > A(어웨이승) > D(무승)
+  if (schedulesOnDate.some(s => s.matchResult === 'HOME_WIN')) return 'H'
+  if (schedulesOnDate.some(s => s.matchResult === 'AWAY_WIN')) return 'A'
+  if (schedulesOnDate.some(s => s.matchResult === 'DRAW')) return 'D'
+  if (schedulesOnDate.some(s => s.matchResult === 'CANCEL')) return 'C'
+  return ''
+}
+
 
 </script>
 
@@ -119,23 +131,55 @@ function goToReservation(schedule) {
           class="calendar-cell"
           :class="{ empty: date === null }"
       >
-        <span v-if="date">{{ date }}</span>
+      <div class="date-header" v-if="date">
+        <span class="date-number">{{ date }}</span>
+        <span
+            class="date-label"
+            :class="getResultLabelForDate(formatDate(currentYear, currentMonth, date))"
+        >
+  {{ getResultLabelForDate(formatDate(currentYear, currentMonth, date)) }}
+</span>
+      </div>
 
-        <div v-if="date !== null" class="match-list">
-          <div
-              v-for="schedule in scheduleMap.get(formatDate(currentYear, currentMonth, date)) || []"
-              :key="schedule.homeId + '-' + schedule.awayId + '-' + schedule.matchTime"
-              class="match-item"
-              @click="goToReservation(schedule)"
-              style="cursor: pointer;"
-          >
-            <div>{{ schedule.homeName }} vs {{ schedule.awayName }}</div>
-            <div>{{ schedule.stadiumName }}</div>
-            <div>{{ formatTime(schedule.matchTime) }}</div>
-            <div v-if="schedule.matchResult">
-              결과: {{ schedule.matchResult }}
+        <div
+            v-for="schedule in scheduleMap.get(formatDate(currentYear, currentMonth, date)) || []"
+            :key="schedule.homeId + '-' + schedule.awayId + '-' + schedule.matchTime"
+            class="match-item"
+            @click="goToReservation(schedule)"
+        >
+          <img :src="schedule.awayTeamPath" alt="Away Team Logo" class="team-logo" />
+
+          <div class="match-text">
+            <div v-if="new Date(schedule.matchTime) < now">
+              {{ schedule.homeScore }}
+              <span v-if="schedule.matchResult && schedule.matchResult !== 'DRAW' && schedule.matchResult !== 'CANCEL'"> : </span>
+              {{ schedule.awayScore }}
+              <span
+                  v-if="schedule.matchResult"
+                  class="result-circle"
+                  :class="{
+      win: schedule.matchResult === 'HOME_WIN',
+      lose: schedule.matchResult === 'AWAY_WIN',
+      draw: schedule.matchResult === 'DRAW',
+      cancel: schedule.matchResult === 'CANCEL'
+    }"
+              >
+    {{
+                  schedule.matchResult === 'HOME_WIN'
+                      ? '승'
+                      : schedule.matchResult === 'AWAY_WIN'
+                          ? '패'
+                          : schedule.matchResult === 'DRAW'
+                              ? '무'
+                              : schedule.matchResult === 'CANCEL'
+                                  ? '취소'
+                                  : ''
+                }}
+  </span>
             </div>
-
+            <div v-else>
+              {{ formatTime(schedule.matchTime) }}
+            </div>
           </div>
         </div>
 
@@ -216,5 +260,73 @@ function goToReservation(schedule) {
   margin-top: 4px;
 }
 
+.team-logo {
+  width: 10vw;
+  max-width: 80px;
+}
+
+.result-circle {
+  display: inline-block;
+  width: 1.8em;
+  height: 1.8em;
+  line-height: 1.8em;
+  border-radius: 50%;
+  text-align: center;
+  color: white;
+  font-weight: bold;
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+
+.result-circle.win {
+  background-color :#ef4444;
+}
+
+.result-circle.lose {
+  background-color: #3b82f6;
+
+}
+
+.result-circle.draw {
+  background-color: black;
+}
+.result-circle.cancel {
+  background-color :#ef4444;
+}
+
+.date-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 8px;
+  font-size: 0.85rem;
+  margin-bottom: 0.3rem;
+}
+
+.date-number {
+  text-align: center;
+  font-weight: bold;
+}
+
+.date-label {
+  font-weight: bold;
+  font-size: 0.85rem;
+  user-select: none;
+}
+
+.date-label.H {
+  color: #ef4444; /* 빨강 */
+
+}
+
+.date-label.A {
+  color: #3b82f6; /* 파랑 */
+
+
+}
+
+.date-label.D {
+  color: #6b7280; /* 회색 */
+}
 
 </style>

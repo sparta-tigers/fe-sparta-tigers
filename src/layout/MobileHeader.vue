@@ -42,6 +42,9 @@
 
 .title {
   font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .menu-btn {
@@ -53,18 +56,15 @@
 </style>
 
 <script setup>
+import {ref, onMounted, onUnmounted} from "vue";
 import {useRoute} from 'vue-router'
 import {computed} from 'vue'
-import {ref, onMounted, onUnmounted} from "vue";
 
 const route = useRoute()
 
-const title = computed(() => {
-  return route.meta.title || '기본 타이틀'
-})
+const title = computed(() => route.meta.title || '기본 타이틀')
 
 const isScrolled = ref(false);
-
 const handleScroll = () => {
   isScrolled.value = window.scrollY > 20;
 }
@@ -76,5 +76,4 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll);
 })
-
 </script>

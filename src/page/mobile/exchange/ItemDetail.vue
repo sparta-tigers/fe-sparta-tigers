@@ -47,11 +47,31 @@ const onExchangeRequestButtonClick = () => {
       itemId: rawItem.id,
     })
     alert('교환 신청 완료!')
-    router.push('/exchange/requests')
   } catch (e) {
     alert('교환 요청을 보내는데 실패했습니다! 잠시 후 다시 시도해주세요!');
-
   }
+}
+
+const onDeleteButtonClick = async () => {
+  const rawItem = toRaw(item.value)
+  const rawUser = toRaw(store.user)
+
+  if (rawUser.id !== rawItem.user.userId) {
+    alert('작성자만 삭제 할 수 있습니다!');
+    return;
+  }
+
+  try {
+    await instance.delete(`/items/${rawItem.id}`)
+    alert('삭제가 완료 되었습니다!');
+    router.push('/exchange');
+  } catch (e) {
+    alert('아이템 삭제중 문제가 발생 했습니다!');
+    router.push('/exchange')
+  }
+
+  console.log(rawItem);
+
 }
 
 onMounted(async () => {
@@ -69,6 +89,7 @@ onMounted(async () => {
     </div>
     <div class="item-detail-title">
       <h1>{{ item.title }}</h1>
+      <button class="delete-btn" @click="onDeleteButtonClick">삭제 하기</button>
     </div>
     <div class="item-detail-meta-wrapper">
       <div class="badge">{{ item.status }}</div>
@@ -80,7 +101,7 @@ onMounted(async () => {
     </div>
 
     <div class="item-detail-author-wrapper">
-      <div>{{ item.user.userNickname }}</div>
+      <div><span>작성자</span> <span class="username">{{ item.user.userNickname }}</span></div>
       <div>{{ formatMatchTime(item.createdAt) }}</div>
     </div>
     <div class="exchange-request-button-wrapper">
@@ -109,6 +130,10 @@ onMounted(async () => {
 }
 
 .item-detail-title {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
   font-size: 16px;
   padding: 16px 0;
 }
@@ -133,15 +158,31 @@ onMounted(async () => {
   padding: 8px;
   flex: 1;
   border: 1px solid lightgray;
+  border-radius: 8px;
   margin-bottom: 4px;
 }
 
 .item-detail-author-wrapper {
-  padding: 8px;
+  padding: 12px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 4px;
+}
+
+.item-detail-author-wrapper .username {
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+.item-detail-author-wrapper > div:last-child {
+  font-size: 12px;
+  color: #666;
+  font-weight: 400;
 }
 
 .exchange-request-button-wrapper {
@@ -159,6 +200,15 @@ onMounted(async () => {
   border: none;
   cursor: pointer;
   width: 100%;
+}
+
+.delete-btn {
+  padding: 8px;
+  border-radius: 8px;
+  background-color: #659287;
+  color: white;
+  border: none;
+  cursor: pointer;
 }
 
 </style>

@@ -3,6 +3,8 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import axios from '@/axios.js'
 import router from "@/router/router.js";
+import {ApiError} from "@/utils/ApiError.js";
+import {useUserStore} from "@/store/useUserStore.js";
 
 export const useAlarmStore = defineStore('alarm', () => {
     const baseURL = import.meta.env.VITE_HTTP_BASE_URL;
@@ -14,6 +16,7 @@ export const useAlarmStore = defineStore('alarm', () => {
     const matchDetail = ref(null)
     const sseConnected = ref(false)
     let eventSource = null
+    const userStore = useUserStore()
 
     const fetchAlarms = async () => {
         loading.value = true
@@ -88,71 +91,77 @@ export const useAlarmStore = defineStore('alarm', () => {
                     withCredentials: true,
                 }
             )
-            console.log('알림 등록 성공:', response.data.data)
-            alert('알림이 등록되었습니다!' + preBookingMinute)
+            alert('알림이 등록되었습니다!')
             await router.push('/');
         } catch (err) {
-            console.error('알림 등록 실패:', err)
-            alert('알림 등록에 실패했습니다.')
+            const {message} = ApiError(err);
+            alert(message);
         }
     }
 
-    // const connectSSE = () => {
-    //     try {
-    //         // 중복 연결 방지
-    //         if (eventSource && sseConnected.value) {
-    //             console.warn('⚠️ SSE 이미 연결됨')
-    //             return
-    //         }
-    //
-    //         // 기존 연결 닫기
-    //         if (eventSource) {
-    //             eventSource.close()
-    //             eventSource = null
-    //         }
-    //
-    //         // JWT 확인
-    //         const token = localStorage.getItem('jwt_token')
-    //         if (!token) {
-    //             console.warn('❌ JWT 토큰 없음, SSE 연결 취소')
-    //             return
-    //         }
-    //
-    //         eventSource = new EventSource(`${baseURL}/api/alarms/sse/subscribe?token=${token}`)
-    //
-    //         eventSource.onopen = () => {
-    //             sseConnected.value = true
-    //         }
-    //
-    //         eventSource.onerror = (err) => {
-    //             sseConnected.value = false
-    //
-    //             if (eventSource) {
-    //                 eventSource.close()
-    //                 eventSource = null
-    //             }
-    //         }
-    //
-    //
-    //         eventSource.addEventListener('alarm', async (event) => {
-    //             try {
-    //                 alert('⏰ 알람 도착: ' + event.data)
-    //                 await fetchAlarms?.()
-    //             } catch (e) {
-    //                 console.error('❌ alarm 이벤트 처리 중 오류:', e)
-    //             }
-    //         })
-    //
-    //     } catch (error) {
-    //         ApiError(error);
-    //
-    //         if (eventSource) {
-    //             eventSource.close()
-    //             eventSource = null
-    //         }
-    //         sseConnected.value = false
-    //     }
-    // }
+    const connectSSE = () => {
+        const userId = userStore.user?.id
+
+        if (eventSource) {
+            eventSource.close()
+        }
+
+        eventSource = new EventSource(`${baseURL}/api/alarms/sse/subscribe/${userId}`, {
+            withCredentials: true
+        })
+
+        eventSource.onopen = () => {
+            console.log('✅ SSE 연결됨')
+            sseConnected.value = true
+        }
+
+        eventSource.onerror = (err) => {
+            console.error('❌ SSE 에러 발생:', err)
+            sseConnected.value = false
+            if (eventSource) {
+                eventSource.close();
+                eventSource = null;
+            }
+            setTimeout(() => {
+                connectSSE();
+            }, 3000);
+
+        }
+
+        eventSource.addEventListener('connect', (event) => {
+            console.log('🔔 서버로부터 초기 메시지:', event.data)
+        })
+        eventSource.addEventListener('heartbeat', e => {
+            console.log('heartbeat');
+        });
+
+        eventSource.addEventListener('testAlarm', async (event) => {
+
+            const audio = new Audio('/audio/alarm-sound.mp3');
+
+            try {
+                await audio.play(); // 먼저 오디오 재생 시도
+                console.log('🔊 오디오 재생 성공');
+            } catch (e) {
+                console.warn('⚠️ 오디오 재생 실패:', e);
+            }
+
+            alert('🔔 알람이 도착했습니다!');
+
+            await fetchAlarms();
+        })
+    }
+
+    const disconnectSSE = () => {
+        if (eventSource) {
+            eventSource.close()
+            eventSource = null
+            sseConnected.value = false
+            console.log('SSE 연결 종료')
+        }
+    }
+
+
 
 
     return {
@@ -169,6 +178,7 @@ export const useAlarmStore = defineStore('alarm', () => {
         fetchSchedules,
         fetchMatchDetail,
         createAlarm,
-        // connectSSE
+        connectSSE,
+        disconnectSSE
     }
 })

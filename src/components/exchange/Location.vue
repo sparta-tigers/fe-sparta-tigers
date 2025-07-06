@@ -138,7 +138,7 @@ const updateUserMarker = (userId, latitude, longitude) => {
   } else {
     // 아이템이 아닌 경우
     imageSrc = isMe ?
-        'http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png' :
+        'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png' :
         'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png';
   }
 
