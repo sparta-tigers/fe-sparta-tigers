@@ -1,12 +1,11 @@
 <script setup>
-import {ref, onMounted, watch} from 'vue'
+import {ref, onMounted, watch, computed} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import {useUserStore} from '@/store/useUserStore.js'
 import {useFavoriteTeamStore} from '@/store/useFavoriteTeamStore.js'
 import CancelBtn from '@/components/btn/CancelBtn.vue'
 import SelectBtn from '@/components/btn/SelectBtn.vue'
 import UserTeams from '@/page/mobile/user/Teams.vue'
-import doosan from "@/assets/images/team-logo-wordmark/doosan.png"
 
 const userStore = useUserStore()
 const favoriteTeamStore = useFavoriteTeamStore()
@@ -82,7 +81,6 @@ const handleTeamSelect = async (team) => {
   }
   await store.fetchFavoriteTeam()
   showTeamSelect.value = false
-  await router.push({name: 'my-page'})
 }
 const deleteTeam = async () => {
   if (confirm('정말 응원팀을 삭제하시겠습니까?')) {
@@ -94,6 +92,19 @@ onMounted(async () => {
   await favoriteTeamStore.fetchFavoriteTeam()
 })
 watch(() => route.fullPath, fetchUser)
+
+const currentTeamLogo = computed(() => {
+  const team = favoriteTeamStore.favoriteTeam
+  if (!team || !team.teamCode) {
+    // 기본 로고 경로
+    return new URL('@/assets/images/team-logo-wordmark/default.png', import.meta.url).href
+  }
+  try {
+    return new URL(`/src/assets/images/team-logo-wordmark/${team.teamCode}.png`, import.meta.url).href
+  } catch {
+    return new URL('/src/assets/images/team-logo-wordmark/default.png', import.meta.url).href
+  }
+})
 </script>
 
 <template>
@@ -111,8 +122,12 @@ watch(() => route.fullPath, fetchUser)
           />
         </div>
         <div class="summary-right">
-          <div class="favorite-team">
-            <img class="favorite-team-img" :src=doosan @click="openTeamSelect" />
+          <div class="favorite-team" @click="openTeamSelect">
+            <img
+                :src="currentTeamLogo"
+                :alt="userStore.user?.teamName || '팀 선택'"
+                class="favorite-team-img"
+            >
           </div>
           <div class="summary-text">
             <h2 class="nickname">{{ userStore.user.nickname }}</h2>

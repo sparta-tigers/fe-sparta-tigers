@@ -2,17 +2,24 @@
 import { onMounted } from 'vue'
 import { useAlarmStore } from '@/store/useAlarmStore.js'
 const alarmStore = useAlarmStore()
+const emit = defineEmits(['selectTeam', 'close'])
 
 onMounted(() => {
   alarmStore.fetchTeams()
 })
-const emit = defineEmits(['selectTeam', 'close'])
 
-const selectTeam = (team) => {
-  emit('selectTeam', team)
-  emit('close')
+const getTeamLogo = (teamCode) => {
+  try {
+    return new URL(`/src/assets/images/team-logo-wordmark/${teamCode}.png`, import.meta.url).href
+  } catch {
+    return new URL(`/src/assets/images/team-logo-wordmark/default.png`, import.meta.url).href
+  }
 }
 
+const selectTeam = (team) => {
+  emit('selectTeam', {...team, logoUrl: getTeamLogo(team.teamCode)})
+  emit('close')
+}
 
 </script>
 
@@ -26,7 +33,11 @@ const selectTeam = (team) => {
           class="team-item"
           @click="selectTeam(team)"
       >
-        {{ team.teamName }}
+        <img
+            :src="getTeamLogo(team.teamCode)"
+            :alt="team.teamName"
+            class="team-logo"
+        >
       </li>
     </ul>
 
@@ -45,6 +56,13 @@ const selectTeam = (team) => {
   border-radius: 16px;
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
   text-align: center;
+}
+
+.team-logo {
+  height: 200px;
+  width: auto;
+  margin-bottom: 12px;
+  object-fit: contain;
 }
 
 .team-list-wrapper h3 {

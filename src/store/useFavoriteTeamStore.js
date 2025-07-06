@@ -18,6 +18,7 @@ export const useFavoriteTeamStore = defineStore('favoriteTeam', () => {
         } catch (err) {
             favoriteTeam.value = null;
             const { message } = ApiError(err);
+            alert(message);
         } finally {
             loadingStore.stop("favoriteTeam")
         }
