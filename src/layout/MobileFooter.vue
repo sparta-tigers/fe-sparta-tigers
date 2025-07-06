@@ -1,50 +1,100 @@
-<script setup>
-import { useRouter } from "vue-router";
-const router = useRouter();
-
-function goRoute(name) {
-  router.push({ name });
-}
-</script>
-
 <template>
-  <footer class="mobile-footer">
-    <div class="footer-btn" @click="goRoute('liveboard-match')">라이브보드</div>
-    <div class="footer-btn" @click="goRoute('exchange-main')">교환</div>
-    <div class="footer-btn" @click="goRoute('stadium-main')">구장정보</div>
-    <div class="footer-btn" @click="goRoute('alarm-main')">알림</div>
-    <div class="footer-btn" @click="goRoute('record-main')">직관기록</div>
-  </footer>
+  <nav class="footer-wrapper">
+    <div class="mobile-nav">
+      <router-link to="/" class="nav-item" active-class="active">
+        <i class="fas fa-home"></i>
+        <span>홈</span>
+      </router-link>
+
+      <router-link to="/liveboard/match" class="nav-item" active-class="active">
+        <i class="fas fa-video"></i>
+        <span>라이브보드</span>
+      </router-link>
+
+      <router-link to="/exchange" class="nav-item" active-class="active">
+        <i class="fas fa-users"></i>
+        <span>교환</span>
+      </router-link>
+
+      <router-link to="/stadiuminfo" class="nav-item" active-class="active">
+        <i class="fas fa-users"></i>
+        <span>구장 정보</span>
+      </router-link>
+
+      <router-link to="/alarm" class="nav-item" active-class="active">
+        <i class="fas fa-users"></i>
+        <span>알람</span>
+      </router-link>
+
+      <router-link to="/record" class="nav-item" active-class="active">
+        <i class="fas fa-book"></i>
+        <span>직관기록</span>
+      </router-link>
+    </div>
+  </nav>
 </template>
 
+
 <style scoped>
-.mobile-footer {
+.footer-wrapper {
   position: fixed;
   bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 700px;
-  z-index: 99;
-  background-color: #fff;
-  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+  left: 0;
+  right: 0;
   display: flex;
+  justify-content: center;
+  background-color: white;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.mobile-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
   align-items: center;
-  height: 56px;
-  border-top: 1px solid #e0e0e0
+  background-color: white;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  padding: 10px 0;
+  z-index: 1000;
 }
 
-.footer-btn {
-  flex: 1;
-  text-align: center;
-  cursor: pointer;
-  padding: 8px 0;
-  user-select: none;
-  transition: background-color 02.s ease;
+.nav-item {
+  width: 100%;
+  max-width: 430px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 10px 0;
 }
 
-.footer-btn:hover,
-.footer-btn:focus-visible {
-  background-color: #f7f7f7;
+.nav-item i {
+  font-size: 1.3rem;
+  margin-bottom: 2px;
+}
+
+.nav-item span {
+  font-size: 0.7rem;
+  margin-bottom: 2px;
+}
+
+.nav-item.active {
+  color: #4CAF50; /* 활성화된 메뉴 색상 */
+  font-weight: bold;
+}
+
+.nav-item.active * {
+  color: #4CAF50;
+}
+
+/* 아이폰 하단 안전영역 대응 */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .mobile-nav {
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
+  }
 }
 </style>
