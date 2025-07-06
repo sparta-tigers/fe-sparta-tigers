@@ -1,6 +1,6 @@
 <script setup>
 import {ref, onMounted, onUnmounted} from "vue";
-import {useRoute} from 'vue-router'
+import {useRoute, useRouter} from 'vue-router'
 import {computed} from 'vue'
 
 defineProps({
@@ -9,7 +9,12 @@ defineProps({
 })
 
 const route = useRoute()
-const title = computed(() => route.meta.title || '기본 타이틀')
+const router = useRouter()
+const goHome = () => {
+  router.push('/');
+};
+
+const logoUrl = new URL('@/assets/images/app-logo.png', import.meta.url).href;
 
 const isScrolled = ref(false);
 const handleScroll = () => {
@@ -27,7 +32,12 @@ onUnmounted(() => {
 <template>
   <header :class="['header', { scrolled: isScrolled }]">
     <div class="header-inner">
-      <div class="title">{{ title }}</div>
+      <img
+          class="app-logo"
+          :src="logoUrl"
+          alt="앱 로고"
+          @click="goHome"
+      />
 
       <div class="auth-wrapper">
         <!-- 로그인 상태 -->
@@ -81,9 +91,9 @@ onUnmounted(() => {
   backdrop-filter: blur(6px);
 }
 
-.title {
-  font-weight: bold;
-  display: flex;
+.app-logo {
+  height: 100px;
+  cursor: pointer;
 }
 
 .auth-wrapper {
@@ -94,7 +104,7 @@ onUnmounted(() => {
 
 .auth-btn {
   padding: 6px 12px;
-  font-size: 14px;
+  font-size: 17px;
   border: none;
   background-color: #007bff;
   color: white;
@@ -108,8 +118,8 @@ onUnmounted(() => {
 }
 
 .profile-img {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid #007bff

@@ -22,13 +22,15 @@ const logout = async () => {
   <div class="mobile-layout-wrapper">
     <div class="mobile-layout-container">
       <!-- 헤더 -->
+      <div class="mobile-header">
+
       <mobile-header
-          class="mobile-header"
           :isToken="isToken"
           :profile-image="store.user?.path"
           @login="goToLogin"
           @logout="logout"
       />
+      </div>
 
       <!-- 메인 -->
       <main class="content">
@@ -57,66 +59,12 @@ const logout = async () => {
   flex-direction: column;
 }
 
+.mobile-header {
+  margin-bottom: 30px;
+}
+
 .content {
   padding: 56px 16px 80px;
-}
-
-/* 메뉴 오버레이 */
-.menu-overlay {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.3);
-  z-index: 100;
-  display: flex;
-  justify-content: flex-end;
-}
-
-/* 슬라이드 메뉴 */
-.slide-menu {
-  width: 70%;
-  max-width: 300px;
-  background-color: #fff;
-  height: 100%;
-  animation: slideIn 0.3s ease-out forwards;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateX(100%);
-  }
-  to {
-    transform: translateX(0%);
-  }
-}
-
-.menu-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-}
-
-.menu-item {
-  padding: 14px;
-  border-bottom: 1px solid #eee;
-}
-
-.menu-item:hover {
-  cursor: pointer;
-  background: #f2f2f2;
 }
 </style>
 
