@@ -91,12 +91,11 @@ export const useAlarmStore = defineStore('alarm', () => {
                     withCredentials: true,
                 }
             )
-            console.log('알림 등록 성공:', response.data.data)
             alert('알림이 등록되었습니다!')
             await router.push('/');
         } catch (err) {
-            console.error('알림 등록 실패:', err)
-            alert('알림 등록에 실패했습니다.')
+            const {message} = ApiError(err);
+            alert(message);
         }
     }
 
@@ -119,17 +118,35 @@ export const useAlarmStore = defineStore('alarm', () => {
         eventSource.onerror = (err) => {
             console.error('❌ SSE 에러 발생:', err)
             sseConnected.value = false
+            if (eventSource) {
+                eventSource.close();
+                eventSource = null;
+            }
+            setTimeout(() => {
+                connectSSE();
+            }, 3000);
+
         }
 
         eventSource.addEventListener('connect', (event) => {
             console.log('🔔 서버로부터 초기 메시지:', event.data)
         })
+        eventSource.addEventListener('heartbeat', e => {
+            console.log('heartbeat');
+        });
 
         eventSource.addEventListener('testAlarm', async (event) => {
 
-            const audio = new Audio('/audio/alarm-sound.mp3')
-            audio.play().catch(e => console.warn('오디오 재생 실패:', e))
-            alert('알람이 도착했습니다.')
+            const audio = new Audio('/audio/alarm-sound.mp3');
+
+            try {
+                await audio.play(); // 먼저 오디오 재생 시도
+                console.log('🔊 오디오 재생 성공');
+            } catch (e) {
+                console.warn('⚠️ 오디오 재생 실패:', e);
+            }
+
+            alert('🔔 알람이 도착했습니다!');
 
             await fetchAlarms();
         })
