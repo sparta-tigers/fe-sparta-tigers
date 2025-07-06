@@ -25,6 +25,7 @@ const logout = async () => {
       <mobile-header
           class="mobile-header"
           :isToken="isToken"
+          :profile-image="store.user?.path"
           @login="goToLogin"
           @logout="logout"
       />

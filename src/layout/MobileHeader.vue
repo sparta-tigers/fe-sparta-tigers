@@ -4,7 +4,8 @@ import {useRoute} from 'vue-router'
 import {computed} from 'vue'
 
 defineProps({
-  isToken: Boolean
+  isToken: Boolean,
+  profileImage: String
 })
 
 const route = useRoute()
@@ -27,20 +28,23 @@ onUnmounted(() => {
   <header :class="['header', { scrolled: isScrolled }]">
     <div class="header-inner">
       <div class="title">{{ title }}</div>
-      <button
-          v-if="isToken"
-          class="auth-btn"
-          @click="$emit('logout')"
-      >
-        로그아웃
-      </button>
-      <button
-          v-else
-          class="auth-btn"
-          @click="$emit('login')"
-      >
-        로그인
-      </button>
+
+      <div class="auth-wrapper">
+        <!-- 로그인 상태 -->
+        <template v-if="isToken">
+          <img
+              :src="profileImage"
+              alt="프로필 이미지"
+              class="profile-img"
+          />
+          <button class="auth-btn" @click="$emit('logout')">로그아웃</button>
+        </template>
+
+        <!-- 로그아웃 상태 -->
+        <template v-else>
+          <button class="auth-btn" @click="$emit('login')">로그인</button>
+        </template>
+      </div>
     </div>
   </header>
 </template>
@@ -77,12 +81,22 @@ onUnmounted(() => {
   backdrop-filter: blur(6px);
 }
 
+.title {
+  font-weight: bold;
+  display: flex;
+}
+
+.auth-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .auth-btn {
-  margin-left: auto;
   padding: 6px 12px;
   font-size: 14px;
   border: none;
-  background-color: #007bff; /* 파란색 */
+  background-color: #007bff;
   color: white;
   border-radius: 4px;
   cursor: pointer;
@@ -93,10 +107,11 @@ onUnmounted(() => {
   background-color: #0056b3;
 }
 
-.title {
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.profile-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #007bff
 }
 </style>
