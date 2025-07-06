@@ -1,41 +1,62 @@
 <script setup>
-import {ref, onMounted, watch, computed} from 'vue'
-import { useRoute } from 'vue-router'
-import { useUserStore } from '@/store/useUserStore.js'
+import {ref, onMounted, watch} from 'vue'
+import {useRoute, useRouter} from 'vue-router'
+import {useUserStore} from '@/store/useUserStore.js'
+import {useFavoriteTeamStore} from '@/store/useFavoriteTeamStore.js'
 import CancelBtn from '@/components/btn/CancelBtn.vue'
-import SubBtn from '@/components/btn/SubBtn.vue'
-import SelectBtn from "@/components/btn/SelectBtn.vue";
-import UserTeams from "@/page/mobile/user/Teams.vue";
-import {useFavoriteTeamStore} from "@/store/useFavoriteTeamStore.js";
-import { useRouter } from 'vue-router'
+import SelectBtn from '@/components/btn/SelectBtn.vue'
+import UserTeams from '@/page/mobile/user/Teams.vue'
+import doosan from "@/assets/images/team-logo-wordmark/doosan.png"
 
 const userStore = useUserStore()
+const favoriteTeamStore = useFavoriteTeamStore()
 const route = useRoute()
-const editing = ref(false)
+const router = useRouter()
+
+const showProfileModal = ref(false)
+const showNicknameModal = ref(false)
+const showPasswordModal = ref(false)
+const showTeamSelect = ref(false)
+const fileInput = ref(null)
+
 const newNickname = ref('')
-const showPasswordForm = ref(false)
 const oldPassword = ref('')
 const newPassword = ref('')
 const confirmPassword = ref('')
-const showTeamSelect = ref(false)
-const favoriteTeamStore = useFavoriteTeamStore()
-const router = useRouter()
 
+const openTeamSelect = () => (showTeamSelect.value = true)
 
-const openTeamSelect = () => {
-  showTeamSelect.value = true
-}
 const fetchUser = async () => {
   await userStore.getUser()
   newNickname.value = userStore.user?.nickname || ''
 }
 
+const triggerFileInput = () => fileInput.value?.click()
+const uploadImage = async (event) => {
+  const file = event.target.files[0]
+  if (!file) {
+    return
+  }
+  await userStore.updateProfile(file)
+  closeProfileModal()
+}
+const deleteProfile = async () => {
+  await userStore.deleteProfile()
+  closeProfileModal()
+}
+
+const openProfileModal = () => (showProfileModal.value = true)
+const closeProfileModal = () => (showProfileModal.value = false)
+
 const updateNickname = async () => {
-  if (!newNickname.value.trim()) return
+  if (!newNickname.value.trim()) {
+    return
+  }
   await userStore.updateNickname(newNickname.value)
-  editing.value = false
+  closeNicknameModal()
   await fetchUser()
 }
+const closeNicknameModal = () => (showNicknameModal.value = false)
 
 const updatePassword = async () => {
   await userStore.updatePassword({
@@ -43,64 +64,31 @@ const updatePassword = async () => {
     newPassword: newPassword.value,
     confirmPassword: confirmPassword.value,
   })
-
-  showPasswordForm.value = false
+  closePasswordModal()
   oldPassword.value = ''
   newPassword.value = ''
   confirmPassword.value = ''
 }
+const closePasswordModal = () => (showPasswordModal.value = false)
 
-const deleteUser = async () => {
-  await userStore.deleteUser()
-}
+const deleteUser = async () => await userStore.deleteUser()
 
-const showModal = ref(false)
-const fileInput = ref(null)
-
-const openModal = () => {
-  showModal.value = true
-}
-
-const closeModal = () => {
-  showModal.value = false
-}
-
-const triggerFileInput = () => {
-  fileInput.value?.click()
-}
-const uploadImage = async (event) => {
-  const file = event.target.files[0]
-  if (!file) return
-  await userStore.updateProfile(file)
-  closeModal()
-}
-
-const deleteProfile = async () => {
-  await userStore.deleteProfile()
-  closeModal()
-}
 const handleTeamSelect = async (team) => {
-  if (favoriteTeamStore.favoriteTeam) {
-    await favoriteTeamStore.updateFavoriteTeam(team.id)
+  const store = favoriteTeamStore
+  if (store.favoriteTeam) {
+    await store.updateFavoriteTeam(team.id)
   } else {
-    await favoriteTeamStore.addFavoriteTeam(team.id)
+    await store.addFavoriteTeam(team.id)
   }
-  await favoriteTeamStore.fetchFavoriteTeam()
-
+  await store.fetchFavoriteTeam()
   showTeamSelect.value = false
-
-
   await router.push({name: 'my-page'})
-
 }
-
 const deleteTeam = async () => {
-  if(confirm("정말 응원팀을 삭제하시겠습니까?")) {
+  if (confirm('정말 응원팀을 삭제하시겠습니까?')) {
     await favoriteTeamStore.deleteFavoriteTeam()
   }
 }
-
-
 onMounted(async () => {
   await fetchUser()
   await favoriteTeamStore.fetchFavoriteTeam()
@@ -113,113 +101,72 @@ watch(() => route.fullPath, fetchUser)
     <div v-if="userStore.loading" class="loading">로딩중...</div>
     <div v-else-if="userStore.error" class="error">에러 발생!</div>
     <div v-else-if="userStore.user" class="user-card">
-      <img
-          :src="userStore.user.path"
-          alt="프로필 이미지"
-          class="profile-image"
-          @click="openModal"
-      />
-
-      <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
-        <div class="modal">
+      <div class="profile-header">
+        <div class="summary-left">
           <img
               :src="userStore.user.path"
-              alt="프로필 미리보기"
-              class="modal-image"
+              alt="프로필 이미지"
+              class="profile-image"
+              @click="openProfileModal"
           />
-          <input
-              type="file"
-              ref="fileInput"
-              accept="image/*"
-              @change="uploadImage"
-              hidden
-          />
-          <div class="modal-buttons">
-            <button @click="triggerFileInput">이미지 변경</button>
-            <button @click="deleteProfile">기본 이미지로 변경</button>
-            <button @click="closeModal">닫기</button>
+        </div>
+        <div class="summary-right">
+          <div class="favorite-team">
+            <img class="favorite-team-img" :src=doosan @click="openTeamSelect" />
           </div>
+          <div class="summary-text">
+            <h2 class="nickname">{{ userStore.user.nickname }}</h2>
+            <p class="email">{{ userStore.user.email }}</p>
+          </div>
+          <div class="summary-action">
+            <SelectBtn @click="showNicknameModal = true" label="닉네임 수정"/>
+            <SelectBtn @click="showPasswordModal = true" label="비밀번호 변경"/>
+          </div>
+          <CancelBtn class="withdraw-button" @click="deleteUser" label="회원 탈퇴"/>
         </div>
       </div>
 
-      <section class="info-section nickname-section">
-        <template v-if="editing">
-          <input v-model="newNickname" class="nickname-input" />
-          <SubBtn @click="updateNickname" />
-          <CancelBtn @click="editing = false" />
-        </template>
-        <template v-else>
-          <p class="nickname">
-            <strong>닉네임:</strong> {{ userStore.user.nickname }}
-          </p>
-          <SelectBtn @click="editing = true" label="닉네임 수정" />
-        </template>
-      </section>
+      <UserTeams
+          v-if="showTeamSelect"
+          @selectTeam="handleTeamSelect"
+          @close="showTeamSelect = false"
+      />
+    </div>
 
-      <section class="info-section email-section">
-        <p class="email">
-          <strong>이메일:</strong> {{ userStore.user.email }}
-        </p>
-      </section>
-
-      <section class="info-section password-section">
-        <SelectBtn
-            @click="showPasswordForm = !showPasswordForm"
-            label="비밀번호 변경"
-        />
-
-        <div v-if="showPasswordForm" class="password-form">
-          <input
-              v-model="oldPassword"
-              type="password"
-              placeholder="현재 비밀번호"
-              class="password-input"
-          />
-          <input
-              v-model="newPassword"
-              type="password"
-              placeholder="새 비밀번호"
-              class="password-input"
-          />
-          <input
-              v-model="confirmPassword"
-              type="password"
-              placeholder="새 비밀번호 확인"
-              class="password-input"
-          />
-
-          <div class="password-buttons">
-            <SubBtn @click="updatePassword" />
-            <CancelBtn @click="showPasswordForm = false" />
-          </div>
+    <div v-if="showProfileModal" class="modal-overlay" @click.self="closeProfileModal">
+      <div class="modal">
+        <img :src="userStore.user.path" alt="프로필 미리보기" class="modal-image"/>
+        <input type="file" ref="fileInput" accept="image/*" @change="uploadImage" hidden/>
+        <div class="modal-buttons">
+          <button @click="triggerFileInput">이미지 변경</button>
+          <button @click="deleteProfile">기본 이미지로 변경</button>
+          <button @click="closeProfileModal">닫기</button>
         </div>
-      </section>
+      </div>
+    </div>
 
-      <section class="info-section team-select-section">
-        <button class="select-btn-button" @click="openTeamSelect">
-          팀 선택하기
-        </button>
-
-        <div v-if="favoriteTeamStore.favoriteTeam" class="selected-team">
-          응원하는 팀:
-          <strong>{{ favoriteTeamStore.favoriteTeam.teamName }}</strong>
-          <button @click="deleteTeam" class="delete-team-btn">팀 삭제</button>
+    <div v-if="showNicknameModal" class="modal-overlay" @click.self="closeNicknameModal">
+      <div class="modal">
+        <h3>닉네임 수정</h3>
+        <input v-model="newNickname" class="nickname-input" placeholder="새 닉네임 입력"/>
+        <div class="modal-buttons">
+          <button @click="updateNickname">수정</button>
+          <button @click="closeNicknameModal">취소</button>
         </div>
-        <div v-else>
-          응원팀이 등록되어 있지 않습니다.
+      </div>
+    </div>
+
+    <div v-if="showPasswordModal" class="modal-overlay" @click.self="closePasswordModal">
+      <div class="modal">
+        <h3>비밀번호 변경</h3>
+        <input v-model="oldPassword" type="password" placeholder="현재 비밀번호" class="password-input"/>
+        <input v-model="newPassword" type="password" placeholder="새 비밀번호" class="password-input"/>
+        <input v-model="confirmPassword" type="password" placeholder="새 비밀번호 확인" class="password-input"/>
+        <div class="modal-buttons">
+          <button @click="updatePassword">변경</button>
+          <button @click="closePasswordModal">취소</button>
         </div>
-
-
-        <UserTeams
-            v-if="showTeamSelect"
-            @selectTeam="handleTeamSelect"
-            @close="showTeamSelect = false"
-        />
-      </section>
-
-      <section class="info-section delete-section">
-        <CancelBtn @click="deleteUser" label="회원 탈퇴" />
-      </section>
+      </div>
     </div>
   </div>
 </template>
@@ -241,22 +188,27 @@ watch(() => route.fullPath, fetchUser)
 }
 
 .user-card {
-  padding: 2rem 2.5rem;
-  border: 1px solid #ddd;
-  border-radius: 1.5rem;
-  background-color: #f5f5f5;
-  max-width: 500px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  padding: 2rem;
+  max-width: 600px;
   width: 100%;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 1.8rem;
+  gap: 1.5rem;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
 }
 
 .profile-image {
-  width: 160px;
-  height: 160px;
+  width: 250px;
+  height: 250px;
   border-radius: 50%;
   object-fit: cover;
   margin: 0 auto 1.5rem auto;
@@ -269,23 +221,50 @@ watch(() => route.fullPath, fetchUser)
   box-shadow: 0 0 8px #4a90e2;
 }
 
-.info-section {
-  width: 100%;
-  text-align: left;
+.summary-left {
+  display: flex;
+  flex: 1;
 }
 
-.nickname-section,
-.email-section,
-.password-section,
-.team-select-section,
-.delete-section {
-  margin-bottom: 1rem;
+.summary-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.favorite-team-img{
+  width: 200px;
+  height: 100px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.favorite-team-img:hover {
+  transform: scale(1.05);
+}
+
+.summary-text {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.summary-action {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.withdraw-button {
+  width: 80%;
 }
 
 .nickname {
-  font-size: 1.3rem;
-  margin-bottom: 0.5rem;
-  color: #222;
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 0.2rem;
 }
 
 .nickname-input {
@@ -298,35 +277,17 @@ watch(() => route.fullPath, fetchUser)
 }
 
 .email {
-  font-size: 1.2rem;
-  color: #444;
+  color: #666;
+  font-size: 1rem;
 }
 
-.password-section {
-  position: relative;
-}
-
-.password-form {
-  margin-top: 0.8rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.7rem;
-}
-
+.nickname-input,
 .password-input {
   width: 100%;
-  padding: 0.5rem;
-  font-size: 1rem;
+  padding: 0.7rem;
   border: 1px solid #ccc;
-  border-radius: 0.4rem;
-  box-sizing: border-box;
-}
-
-.password-buttons {
-  display: flex;
-  justify-content: flex-start;
-  gap: 0.5rem;
-  margin-top: 0.6rem;
+  border-radius: 8px;
+  font-size: 1rem;
 }
 
 .select-btn-button {
@@ -343,19 +304,26 @@ watch(() => route.fullPath, fetchUser)
 }
 
 .select-btn-button:hover {
-  background-color: #357ab8;
+  background-color: #0056b3;
 }
 
-.selected-team {
-  font-size: 1.1rem;
-  color: #222;
-  margin-top: 0.3rem;
-  user-select: none;
+.delete-team-btn {
+  margin-left: 10px;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
-.delete-section {
-  margin-top: 1rem;
-  text-align: center;
+.password-input {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.4rem;
+  box-sizing: border-box;
 }
 
 .modal-overlay {
@@ -434,25 +402,6 @@ watch(() => route.fullPath, fetchUser)
     font-size: 1rem;
   }
 }
-
-.delete-team-btn {
-  margin-left :10px;
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  padding: 0.6rem 1.2rem;
-  font-size: 1rem;
-  border-radius: 0.4rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  user-select: none;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-}
-
-.delete-team-btn:hover {
-  background-color: #c0392b;
-}
-
 </style>
 
 
