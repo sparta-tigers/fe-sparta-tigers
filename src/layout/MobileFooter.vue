@@ -12,7 +12,7 @@
       </router-link>
 
       <router-link to="/exchange" class="nav-item" active-class="active">
-        <i class="fas fa-users"></i>
+        <i class="fas fa-right-left"></i>
         <span>교환</span>
       </router-link>
 

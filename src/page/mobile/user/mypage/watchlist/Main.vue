@@ -2,7 +2,7 @@
 import {ref, onMounted, computed} from 'vue'
 import {useWatchListStore } from '@/store/useWatchListStore.js'
 import { useRouter } from 'vue-router'
-import { stripHtml, formatMatchTime, formatStars } from '@/utils'
+import { stripHtml, formatMatchTime, formatStars } from '@/utils/index.js'
 import { useLoadingStore } from '@/store/useLoadingStore.js'
 const loadingStore = useLoadingStore();
 const router = useRouter()

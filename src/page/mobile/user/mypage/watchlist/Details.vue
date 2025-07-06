@@ -52,7 +52,7 @@
 import { ref, onMounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useWatchListStore } from '@/store/useWatchListStore.js'
-import { formatMatchTime, formatStars } from '@/utils'
+import { formatMatchTime, formatStars } from '@/utils/index.js'
 import SubBtn from "@/components/btn/SubBtn.vue"
 import CancelBtn from "@/components/btn/CancelBtn.vue"
 import Quill from 'quill'

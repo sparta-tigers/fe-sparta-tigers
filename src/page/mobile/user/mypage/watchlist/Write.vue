@@ -4,8 +4,8 @@ import Quill from 'quill'
 import 'quill/dist/quill.snow.css'
 import axios from '@/axios.js'
 import {useWatchListStore} from "@/store/useWatchListStore.js";
-import SchedulePopup from '@/page/mobile/watchlist/SchedulePopUp.vue'
-import { formatMatchTime } from '@/utils'
+import SchedulePopup from '@/page/mobile/user/mypage/watchlist/SchedulePopUp.vue'
+import { formatMatchTime } from '@/utils/index.js'
 import router from "@/router/router.js";
 
 const showMatchPopup = ref(false)
