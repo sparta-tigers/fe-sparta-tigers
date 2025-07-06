@@ -2,7 +2,7 @@
   <div class="mypage-layout">
     <!-- 프로필 관리 -->
     <section class="profile-summary-wrapper">
-      <MyPage />
+      <MyPage/>
     </section>
 
     <!-- 메뉴 탭 -->

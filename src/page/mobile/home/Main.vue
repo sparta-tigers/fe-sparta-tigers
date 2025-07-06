@@ -7,7 +7,7 @@
       <button class="cta-btn">지금 시작하기</button>
     </section>
 
-    <!-- 수정된 주요 기능 소개 섹션 -->
+    <!-- 주요 기능 소개 섹션 -->
     <section class="features-section">
       <h2>우리의 주요 기능</h2>
 
@@ -103,18 +103,6 @@
         <li>팀 A vs 팀 B - 18:00</li>
         <li>팀 C vs 팀 D - 20:00</li>
         <li>팀 E vs 팀 F - 22:00</li>
-      </ul>
-    </section>
-
-    <!-- 구단 순위 -->
-    <section class="ranking-section">
-      <h2>구단 순위</h2>
-      <ul class="ranking-list">
-        <li>1. 팀 A</li>
-        <li>2. 팀 B</li>
-        <li>3. 팀 C</li>
-        <li>4. 팀 D</li>
-        <li>5. 팀 E</li>
       </ul>
     </section>
   </section>
@@ -214,6 +202,7 @@
     padding: 20px;
   }
 }
+
 .hero-section {
   text-align: center;
   padding: 50px 20px;
@@ -267,12 +256,14 @@
   color: #007bff;
   cursor: pointer;
 }
+
 h2 {
   font-size: 2rem;
   margin-bottom: 20px;
   color: #343a40;
   font-weight: 600;
 }
+
 .ranking-section, .today-matches-section {
   margin: 20px;
   padding: 20px;
@@ -281,5 +272,3 @@ h2 {
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 </style>
-<script setup lang="ts">
-</script>

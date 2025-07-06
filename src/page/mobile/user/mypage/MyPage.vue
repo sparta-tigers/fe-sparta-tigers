@@ -250,7 +250,7 @@ const currentTeamLogo = computed(() => {
   flex: 1;
 }
 
-.favorite-team-img{
+.favorite-team-img {
   width: 200px;
   height: 100px;
   cursor: pointer;
