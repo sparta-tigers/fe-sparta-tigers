@@ -11,6 +11,11 @@
         <span>라이브보드</span>
       </router-link>
 
+      <router-link to="/stadiuminfo" class="nav-item" active-class="active">
+        <i class="fas fa-baseball"></i>
+        <span>구장 정보</span>
+      </router-link>
+
       <router-link to="/exchange" class="nav-item" active-class="active">
         <i class="fas fa-right-left"></i>
         <span>교환</span>
@@ -81,3 +86,5 @@
   }
 }
 </style>
+<script setup lang="ts">
+</script>

@@ -34,12 +34,6 @@ const goTo = (name) => {
       </button>
 
       <button
-          :class="{ active: isRoute('stadium-main') }"
-          @click="goTo('stadium-main')"
-      >구장정보
-      </button>
-
-      <button
           :class="{ active: isRoute('mypage-profile') }"
           @click="goTo('mypage-profile')"
       >프로필관리

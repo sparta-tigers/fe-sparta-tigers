@@ -128,6 +128,18 @@ const routes = [
         ]
     },
     {
+        path: '/stadiuminfo',
+        component: MainPage,
+        children: [
+            {
+                path: '',
+                name: 'stadium-main',
+                component: stadiumInfoMain,
+                meta: {title: '경기장'}
+            }
+        ]
+    },
+    {
         path: '/mypage',
         component: MyPageLayout,
         children: [
@@ -162,18 +174,6 @@ const routes = [
                         name: 'MatchReservation',
                         component: MatchReservation,
                         meta: {requiresAuth: true, title: '알람'}
-                    }
-                ]
-            },
-            {
-                path: 'stadiuminfo',
-                component: MainPage,
-                children: [
-                    {
-                        path: '',
-                        name: 'stadium-main',
-                        component: stadiumInfoMain,
-                        meta: {title: '경기장'}
                     }
                 ]
             },
