@@ -1,3 +1,32 @@
+<template>
+  <div class="mypage-layout">
+    <!-- 프로필 관리 -->
+    <section class="profile-summary-wrapper">
+      <MyPage />
+    </section>
+
+    <!-- 메뉴 탭 -->
+    <nav class="mypage-menu">
+      <button
+          :class="{ active: isRoute('record') }"
+          @click="goTo('record-main')"
+      >직관기록
+      </button>
+
+      <button
+          :class="{ active: isRoute('alarm-main') }"
+          @click="goTo('alarm-main')"
+      >알림
+      </button>
+    </nav>
+
+    <!-- 하위 라우터 페이지 -->
+    <main class="mypage-content">
+      <router-view/>
+    </main>
+  </div>
+</template>
+
 <script setup>
 import {useRoute, useRouter} from 'vue-router'
 import {useUserStore} from "@/store/useUserStore.js";
@@ -23,32 +52,6 @@ const goTo = (name) => {
 }
 </script>
 
-<template>
-  <div class="mypage-layout">
-    <!-- 프로필 관리 -->
-    <MyPage />
-
-    <!-- 메뉴 탭 -->
-    <nav class="mypage-menu">
-      <button
-          :class="{ active: isRoute('record') }"
-          @click="goTo('record-main')"
-      >직관기록
-      </button>
-
-      <button
-          :class="{ active: isRoute('alarm-main') }"
-          @click="goTo('alarm-main')"
-      >알림
-      </button>
-    </nav>
-
-    <!-- 하위 라우터 페이지 -->
-    <main class="mypage-content">
-      <router-view/>
-    </main>
-  </div>
-</template>
 
 <style scoped>
 .mypage-layout {
