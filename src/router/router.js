@@ -12,7 +12,7 @@ import MatchReservation from "@/page/mobile/user/mypage/alarm/MatchReservation.v
 import stadiumInfoMain from "@/page/mobile/user/mypage/stadium-info/Main.vue";
 import Login from "@/page/mobile/user/Login.vue";
 import OAuth2Redirect from "@/page/mobile/util/OAuth2Redirect.vue";
-import MyPage from "@/page/mobile/user/MyPage.vue";
+import MyPage from "@/page/mobile/user/mypage/MyPage.vue";
 import RecordWrite from "@/page/mobile/user/mypage/watchlist/Write.vue";
 import RecordTeams from "@/page/mobile/user/mypage/watchlist/Teams.vue";
 import RecordSchedule from "@/page/mobile/user/mypage/watchlist/Schedule.vue";
@@ -28,7 +28,7 @@ import ExchangeRequestList from "@/page/mobile/exchange/ExchangeRequestList.vue"
 import ItemDetail from "@/page/mobile/exchange/ItemDetail.vue";
 import NotFound from "@/page/mobile/util/NotFound.vue";
 import Statistics from "@/page/mobile/user/mypage/watchlist/Statistics.vue";
-import MyPageLayout from "@/page/mobile/user/MyPageLayout.vue";
+import MyPageLayout from "@/page/mobile/user/mypage/MyPageLayout.vue";
 
 const routes = [
     {
