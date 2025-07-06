@@ -30,17 +30,34 @@ const roomId = route.params.roomId;
 const message = ref("");
 const chatMessageWrapper = ref(null);
 const chatMessages = ref([]);
+const activeTab = ref('chat');
+const activeInning = ref('1');
 
 // 게임 데이터
 const matchData = ref({
   matchId: null,
-  current: '1회 말',
   players: [],
   matchScore: {
     strike: 0,
     ball: 0,
-    out: 0
-  }
+    out: 0,
+    homeScore: 0,
+    awayScore: 0,
+    pitcherCount: 0
+  },
+  inningTexts: {
+    inningOneTexts: [],
+    inningTwoTexts: [],
+    inningThreeTexts: [],
+    inningFourTexts: [],
+    inningFiveTexts: [],
+    inningSixTexts: [],
+    inningSevenTexts: [],
+    inningEightTexts: [],
+    inningNineTexts: [],
+    inningExtraTexts: []
+  },
+  currentInning: '1회 초'
 });
 
 // 팀 관련 데이터
@@ -127,7 +144,9 @@ const connectWebSocket = () => {
         matchData.value = {
           matchId: data.matchId,
           players: data.players,
-          matchScore: data.matchScore
+          matchScore: data.matchScore,
+          inningTexts: data.inningTexts || matchData.value.inningTexts,
+          currentInning: data.currentInning
         };
       }
     });
@@ -189,6 +208,7 @@ const sendMessage = () => {
         content: message.value,
         senderNickName: store.user.nickname,
         messageType: "CHAT",
+        sentAt: new Date()
       }),
     });
 
@@ -260,20 +280,19 @@ onUnmounted(() => {
               <div class="symbol-wrapper">
                 <img :src="homeTeamSymbol" alt="팀 심볼"/>
               </div>
-              <div class="score home">6</div>
+              <div class="score home">{{ matchData.matchScore.homeScore }}</div>
             </div>
             <div class="team away-team">
               <div class="symbol-wrapper">
                 <img :src="awayTeamSymbol" alt="팀 심볼"/>
               </div>
-              <div class="score away">15</div>
+              <div class="score away">{{ matchData.matchScore.awayScore }}</div>
             </div>
           </div>
 
           <div class="game-info">
             <div class="base-wrapper">
-              <!--              <div class="current-game">{{ matchData.current }}</div>-->
-              <div class="current-game">1회 말</div>
+              <div class="current-game">{{ matchData.currentInning }}</div>
 
               <div class="bases">
                 <div :class="{ active: getPlayerByRole('typing1') }" class="base-one base-indicator"></div>
@@ -307,7 +326,7 @@ onUnmounted(() => {
 
           <div class="pitcher-box">
             <div>{{ getPlayerByRole('pitcher') || '투수' }}</div>
-            <div>투구수 <span class="ball-count">13</span></div>
+            <div>투구수 <span class="ball-count">{{ matchData.matchScore.pitcherCount }}</span></div>
           </div>
         </div>
 
@@ -330,8 +349,14 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <!-- 채팅방은 항상 고정 -->
-    <div class="live-board chat-container">
+    <!-- 탭 버튼들 -->
+    <div class="tab-buttons">
+      <button :class="{ active: activeTab === 'chat' }" @click="activeTab = 'chat'">채팅</button>
+      <button :class="{ active: activeTab === 'live' }" @click="activeTab = 'live'">문자 중계</button>
+    </div>
+
+    <!-- 채팅방 -->
+    <div v-if="activeTab === 'chat'" class="live-board chat-container">
       <div ref="chatMessageWrapper" class="chat-message-wrapper">
         <ChatMessage
             v-for="(msg, index) in chatMessages"
@@ -349,6 +374,117 @@ onUnmounted(() => {
             @keyup.enter="sendMessage"
         />
         <button @click="sendMessage">메시지 전송</button>
+      </div>
+    </div>
+
+    <!-- 문자 중계 -->
+    <div v-if="activeTab === 'live'" class="live-board live-text-container">
+      <!-- 이닝 탭 버튼들 -->
+      <div class="inning-tabs">
+        <button :class="{ active: activeInning === '1' }" @click="activeInning = '1'">1회</button>
+        <button :class="{ active: activeInning === '2' }" @click="activeInning = '2'">2회</button>
+        <button :class="{ active: activeInning === '3' }" @click="activeInning = '3'">3회</button>
+        <button :class="{ active: activeInning === '4' }" @click="activeInning = '4'">4회</button>
+        <button :class="{ active: activeInning === '5' }" @click="activeInning = '5'">5회</button>
+        <button :class="{ active: activeInning === '6' }" @click="activeInning = '6'">6회</button>
+        <button :class="{ active: activeInning === '7' }" @click="activeInning = '7'">7회</button>
+        <button :class="{ active: activeInning === '8' }" @click="activeInning = '8'">8회</button>
+        <button :class="{ active: activeInning === '9' }" @click="activeInning = '9'">9회</button>
+        <button :class="{ active: activeInning === 'extra' }" @click="activeInning = 'extra'">연장</button>
+      </div>
+
+      <!-- 이닝별 중계 내용 -->
+      <div class="live-text-wrapper">
+        <div v-if="activeInning === '1'" class="inning-content">
+          <div
+              v-for="(text, index) in matchData.inningTexts.inningOneTexts"
+              :key="index"
+              class="live-text-item"
+          >
+            {{ text }}
+          </div>
+        </div>
+        <div v-if="activeInning === '2'" class="inning-content">
+          <div
+              v-for="(text, index) in matchData.inningTexts.inningTwoTexts"
+              :key="index"
+              class="live-text-item"
+          >
+            {{ text }}
+          </div>
+        </div>
+        <div v-if="activeInning === '3'" class="inning-content">
+          <div
+              v-for="(text, index) in matchData.inningTexts.inningThreeTexts"
+              :key="index"
+              class="live-text-item"
+          >
+            {{ text }}
+          </div>
+        </div>
+        <div v-if="activeInning === '4'" class="inning-content">
+          <div
+              v-for="(text, index) in matchData.inningTexts.inningFourTexts"
+              :key="index"
+              class="live-text-item"
+          >
+            {{ text }}
+          </div>
+        </div>
+        <div v-if="activeInning === '5'" class="inning-content">
+          <div
+              v-for="(text, index) in matchData.inningTexts.inningFiveTexts"
+              :key="index"
+              class="live-text-item"
+          >
+            {{ text }}
+          </div>
+        </div>
+        <div v-if="activeInning === '6'" class="inning-content">
+          <div
+              v-for="(text, index) in matchData.inningTexts.inningSixTexts"
+              :key="index"
+              class="live-text-item"
+          >
+            {{ text }}
+          </div>
+        </div>
+        <div v-if="activeInning === '7'" class="inning-content">
+          <div
+              v-for="(text, index) in matchData.inningTexts.inningSevenTexts"
+              :key="index"
+              class="live-text-item"
+          >
+            {{ text }}
+          </div>
+        </div>
+        <div v-if="activeInning === '8'" class="inning-content">
+          <div
+              v-for="(text, index) in matchData.inningTexts.inningEightTexts"
+              :key="index"
+              class="live-text-item"
+          >
+            {{ text }}
+          </div>
+        </div>
+        <div v-if="activeInning === '9'" class="inning-content">
+          <div
+              v-for="(text, index) in matchData.inningTexts.inningNineTexts"
+              :key="index"
+              class="live-text-item"
+          >
+            {{ text }}
+          </div>
+        </div>
+        <div v-if="activeInning === 'extra'" class="inning-content">
+          <div
+              v-for="(text, index) in matchData.inningTexts.inningExtraTexts"
+              :key="index"
+              class="live-text-item"
+          >
+            {{ text }}
+          </div>
+        </div>
       </div>
     </div>
 
@@ -709,6 +845,114 @@ onUnmounted(() => {
 .chat-message-input-container button:hover {
   background-color: #5a8278;
   transform: translateY(-1px);
+}
+
+/* 탭 버튼 스타일 */
+.tab-buttons {
+  display: flex;
+  background-color: white;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.tab-buttons button {
+  flex: 1;
+  padding: 16px;
+  background-color: #f8f9fa;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab-buttons button.active {
+  background-color: white;
+  border-bottom-color: #659287;
+  color: #659287;
+}
+
+.tab-buttons button:hover {
+  background-color: #e9ecef;
+}
+
+/* 문자 중계 스타일 */
+.live-text-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.live-text-wrapper {
+  background-color: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  flex: 1;
+  overflow-y: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.live-text-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
+.live-text-item {
+  padding: 4px;
+  font-size: 14px;
+}
+
+/* 이닝 탭 스타일 */
+.inning-tabs {
+  display: flex;
+  background-color: white;
+  border-bottom: 1px solid #e0e0e0;
+  overflow-x: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.inning-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.inning-tabs button {
+  flex: 1;
+  padding: 12px 16px;
+  background-color: #f8f9fa;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  min-width: 50px;
+}
+
+.inning-tabs button.active {
+  background: #393939;
+  color: white;
+}
+
+.inning-tabs button:hover {
+  background: #393939;
+  color: white;
+}
+
+.inning-content {
+  background-color: #FAF6E9;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>
 
