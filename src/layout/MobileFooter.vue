@@ -39,8 +39,10 @@
 .footer-wrapper {
   position: fixed;
   bottom: 0;
-  left: 0;
-  right: 0;
+  left: 50%;
+  width: 100%;
+  transform: translateX(-50%);
+  max-width: 700px;
   display: flex;
   justify-content: center;
   background-color: white;
@@ -49,17 +51,12 @@
 }
 
 .mobile-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
   display: flex;
   justify-content: space-around;
   align-items: center;
   background-color: white;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
   padding: 10px 0;
-  z-index: 1000;
+  width: 100%;
 }
 
 .nav-item {

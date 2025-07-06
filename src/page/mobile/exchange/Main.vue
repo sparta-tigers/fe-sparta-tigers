@@ -45,7 +45,7 @@ const routeChatRoomsPage = () => {
 
 .button-wrapper {
   position: fixed;
-  bottom: 56px; /* Footer 높이만큼 위로 */
+  bottom: calc(56px + 16px + env(safe-area-inset-bottom));
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
