@@ -1,11 +1,48 @@
+<script setup>
+import {ref, onMounted, onUnmounted} from "vue";
+import {useRoute} from 'vue-router'
+import {computed} from 'vue'
+
+defineProps({
+  isToken: Boolean
+})
+
+const route = useRoute()
+const title = computed(() => route.meta.title || '기본 타이틀')
+
+const isScrolled = ref(false);
+const handleScroll = () => {
+  isScrolled.value = window.scrollY > 20;
+}
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll);
+})
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll);
+})
+</script>
+
 <template>
   <header :class="['header', { scrolled: isScrolled }]">
     <div class="header-inner">
       <div class="title">{{ title }}</div>
-      <button class="menu-btn" @click="$emit('toggleMenu')">≡</button>
+      <button
+          v-if="isToken"
+          class="auth-btn"
+          @click="$emit('logout')"
+      >
+        로그아웃
+      </button>
+      <button
+          v-else
+          class="auth-btn"
+          @click="$emit('login')"
+      >
+        로그인
+      </button>
     </div>
   </header>
-
 </template>
 
 <style scoped>
@@ -40,40 +77,26 @@
   backdrop-filter: blur(6px);
 }
 
+.auth-btn {
+  margin-left: auto;
+  padding: 6px 12px;
+  font-size: 14px;
+  border: none;
+  background-color: #007bff; /* 파란색 */
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.auth-btn:hover {
+  background-color: #0056b3;
+}
+
 .title {
   font-weight: bold;
   display: flex;
   align-items: center;
   gap: 10px;
 }
-
-.menu-btn {
-  cursor: pointer;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-}
 </style>
-
-<script setup>
-import {ref, onMounted, onUnmounted} from "vue";
-import {useRoute} from 'vue-router'
-import {computed} from 'vue'
-
-const route = useRoute()
-
-const title = computed(() => route.meta.title || '기본 타이틀')
-
-const isScrolled = ref(false);
-const handleScroll = () => {
-  isScrolled.value = window.scrollY > 20;
-}
-
-onMounted(() => {
-  window.addEventListener('scroll', handleScroll);
-})
-
-onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll);
-})
-</script>
