@@ -1,8 +1,16 @@
 <script setup>
 import {useRoute, useRouter} from 'vue-router'
+import {useUserStore} from "@/store/useUserStore.js";
+import {onMounted} from "vue";
+import MyPage from "@/page/mobile/user/mypage/MyPage.vue";
 
 const route = useRoute()
 const router = useRouter()
+
+const store = useUserStore()
+onMounted(async () => {
+  await store.getUser();
+})
 
 // 현재 경로 이름이 해당 메뉴인지 확인
 const isRoute = (name) => {
@@ -17,7 +25,8 @@ const goTo = (name) => {
 
 <template>
   <div class="mypage-layout">
-    <!-- 상단 프로필 요약 -->
+    <!-- 프로필 관리 -->
+    <MyPage />
 
     <!-- 메뉴 탭 -->
     <nav class="mypage-menu">
@@ -31,12 +40,6 @@ const goTo = (name) => {
           :class="{ active: isRoute('alarm-main') }"
           @click="goTo('alarm-main')"
       >알림
-      </button>
-
-      <button
-          :class="{ active: isRoute('mypage-profile') }"
-          @click="goTo('mypage-profile')"
-      >프로필관리
       </button>
     </nav>
 
