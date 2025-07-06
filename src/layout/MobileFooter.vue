@@ -1,6 +1,6 @@
 <template>
   <nav class="footer-wrapper">
-    <div class="mobile-nav">
+    <div class="nav-list">
       <router-link to="/" class="nav-item" active-class="active">
         <i class="fas fa-home"></i>
         <span>홈</span>
@@ -16,19 +16,9 @@
         <span>교환</span>
       </router-link>
 
-      <router-link to="/stadiuminfo" class="nav-item" active-class="active">
+      <router-link to="/mypage" class="nav-item" active-class="active">
         <i class="fas fa-users"></i>
-        <span>구장 정보</span>
-      </router-link>
-
-      <router-link to="/alarm" class="nav-item" active-class="active">
-        <i class="fas fa-users"></i>
-        <span>알람</span>
-      </router-link>
-
-      <router-link to="/record" class="nav-item" active-class="active">
-        <i class="fas fa-book"></i>
-        <span>직관기록</span>
+        <span>마이페이지</span>
       </router-link>
     </div>
   </nav>
@@ -50,7 +40,7 @@
   z-index: 1000;
 }
 
-.mobile-nav {
+.nav-list {
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -79,18 +69,14 @@
   margin-bottom: 2px;
 }
 
-.nav-item.active {
-  color: #4CAF50; /* 활성화된 메뉴 색상 */
-  font-weight: bold;
-}
-
 .nav-item.active * {
   color: #4CAF50;
+  font-weight: bold;
 }
 
 /* 아이폰 하단 안전영역 대응 */
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
-  .mobile-nav {
+  .nav-list {
     padding-bottom: calc(10px + env(safe-area-inset-bottom));
   }
 }
