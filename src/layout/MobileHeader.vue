@@ -109,12 +109,12 @@ const handleLogout = () => {
 .header-inner {
   width: 100%;
   max-width: 700px;
+  height: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-left: 30px;
-  padding-right: 30px;
-  height: 100px;
+  padding: 0 30px;
+  box-sizing: border-box;
 }
 
 .header.scrolled {
@@ -125,7 +125,8 @@ const handleLogout = () => {
 }
 
 .app-logo {
-  height: 180px;
+  height: 150px;
+  object-fit: contain;
   cursor: pointer;
 }
 
@@ -136,10 +137,10 @@ const handleLogout = () => {
 }
 
 .auth-btn {
-  padding: 6px 12px;
+  padding: 10px 20px;
   font-size: 17px;
   border: none;
-  background-color: #007bff;
+  background-color: #659287;
   color: white;
   border-radius: 4px;
   cursor: pointer;
