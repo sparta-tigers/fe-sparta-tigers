@@ -108,26 +108,34 @@ const submitExchange = async () => {
     <!--  상단 네비게이션 메뉴  -->
     <div class="top-nav-bar">
       <!--  뒤로 가기 버튼    -->
-      <button class="back-button" @click="navigateToMainPage">
-        <svg fill="none" height="39" viewBox="0 0 40 39" width="40" xmlns="http://www.w3.org/2000/svg">
-          <path
-              d="M20.343 39C31.1126 39 39.843 30.2696 39.843 19.5C39.843 8.73045 31.1126 0 20.343 0C9.57347 0 0.843018 8.73045 0.843018 19.5C0.843018 30.2696 9.57347 39 20.343 39Z"
-              fill="#A5A5A5"/>
-          <path d="M23.343 10.5L14.343 19.5L23.343 28.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"
-                stroke-width="4"/>
-        </svg>
-      </button>
-      <!--  체크 박스들    -->
-      <label class="radio-button">
-        <input v-model="category" name="category" type="radio" value="TICKET">
-        <span class="radio-label">티켓 교환</span>
-      </label>
+      <div class="back-button-wrapper">
+        <button class="back-button" @click="navigateToMainPage">
+          <svg fill="none" height="39" viewBox="0 0 40 39" width="40" xmlns="http://www.w3.org/2000/svg">
+            <path
+                d="M20.343 39C31.1126 39 39.843 30.2696 39.843 19.5C39.843 8.73045 31.1126 0 20.343 0C9.57347 0 0.843018 8.73045 0.843018 19.5C0.843018 30.2696 9.57347 39 20.343 39Z"
+                fill="#A5A5A5"/>
+            <path d="M23.343 10.5L14.343 19.5L23.343 28.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"
+                  stroke-width="4"/>
+          </svg>
+        </button>
+      </div>
 
-      <label class="radio-button">
-        <input v-model="category" name="category" type="radio" value="GOODS">
-        <span class="radio-label">굿즈 교환</span>
-      </label>
+      <!-- 교환 카테고리 체크박스 -->
+      <div class="category-wrapper">
+        <!--  체크 박스들    -->
+        <label class="radio-button">
+          <input v-model="category" name="category" type="radio" value="TICKET">
+          <span class="radio-label">티켓 교환</span>
+        </label>
 
+        <label class="radio-button">
+          <input v-model="category" name="category" type="radio" value="GOODS">
+          <span class="radio-label">굿즈 교환</span>
+        </label>
+      </div>
+
+      <!-- 공간 채우기용 -->
+      <div class="right-placeholder"></div>
     </div>
 
     <div class="divider"></div>
@@ -182,10 +190,17 @@ const submitExchange = async () => {
 }
 
 .top-nav-bar {
-  height: 48px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 0 12px;
+  height: auto;
+  flex-wrap: wrap;
+  row-gap: 8px;
+}
+
+.back-button-wrapper {
+  flex: 0 0 auto;
 }
 
 .back-button {
@@ -198,16 +213,34 @@ const submitExchange = async () => {
   cursor: pointer;
 }
 
-.radio-button {
-  width: 160px;
+.category-wrapper {
+  display: flex;
+  gap: 12px;
+  flex: 1 1 auto;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.right-placeholder {
+  width: 40px;
   height: 40px;
+  flex: 0 0 auto;
+}
+
+.radio-button {
+  min-width: 100px;
+  width: auto;
+  height: 36px;
+  padding: 0 12px;
   border-radius: 10px;
-  border: 5px solid #868686;
-  background-color: #d9d9d9;
+  border: 1px solid #ccc;
+  background-color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  font-size: 14px;
+  white-space: nowrap;
 }
 
 .radio-button input {
@@ -215,9 +248,9 @@ const submitExchange = async () => {
 }
 
 .radio-button:has(input:checked) {
-  background-color: #659287;
+  background-color: #4CAF50;
   color: white;
-  border-color: #659287;
+  border-color: #4CAF50;
 }
 
 .radio-button:has(input:checked) .radio-label {
@@ -293,7 +326,7 @@ const submitExchange = async () => {
   width: 100%;
   height: 40px;
   padding: 10px 20px;
-  background-color: #659287;
+  background-color: #4CAF50;
   color: white;
   border-radius: 20px;
   border: none;
@@ -302,4 +335,16 @@ const submitExchange = async () => {
   cursor: pointer;
 }
 
+@media (max-width: 480px) {
+  .category-wrapper {
+    flex-direction: row;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .radio-button {
+    font-size: 13px;
+    padding: 0 10px;
+  }
+}
 </style>

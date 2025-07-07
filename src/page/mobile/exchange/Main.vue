@@ -65,7 +65,7 @@ const routeChatRoomsPage = () => {
 .exchange-button {
   height: 40px;
   padding: 10px 20px;
-  background-color: #659287;
+  background-color: #4CAF50;
   color: white;
   border-radius: 20px;
   border: none;
