@@ -25,7 +25,7 @@ const teamCodeMap = {
 const getTeamLogo = (teamName) => {
   const code = teamCodeMap[teamName] || 'default'
   try {
-    return new URL(`/src/assets/images/team-logo-symbol/${code.toLowerCase()}_symbol.png`, import.meta.url).href
+    return new URL(`/src/assets/images/team-logo-emblem/${code.toLowerCase()}_emblem.png`, import.meta.url).href
   } catch {
     return new URL(`/src/assets/images/team-logo-wordmark/default.png`, import.meta.url).href
   }
@@ -45,9 +45,51 @@ const selectTeam = (team) => {
 <template>
   <div v-if="alarmStore.teams.length" class="team-list-wrapper">
     <h3>응원할 팀을 선택하세요</h3>
-    <ul class="team-list">
+    <ul class="team-list-row">
       <li
-          v-for="team in alarmStore.teams"
+          v-for="team in alarmStore.teams.slice(0, 3)"
+          :key="team.id"
+          class="team-item"
+          @click="selectTeam(team)"
+      >
+        <img
+            :src="getTeamLogo(team.teamName)"
+            :alt="team.teamName"
+            class="team-logo"
+        >
+      </li>
+    </ul>
+    <ul class="team-list-row">
+      <li
+          v-for="team in alarmStore.teams.slice(3, 6)"
+          :key="team.id"
+          class="team-item"
+          @click="selectTeam(team)"
+      >
+        <img
+            :src="getTeamLogo(team.teamName)"
+            :alt="team.teamName"
+            class="team-logo"
+        >
+      </li>
+    </ul>
+    <ul class="team-list-row">
+      <li
+          v-for="team in alarmStore.teams.slice(6, 9)"
+          :key="team.id"
+          class="team-item"
+          @click="selectTeam(team)"
+      >
+        <img
+            :src="getTeamLogo(team.teamName)"
+            :alt="team.teamName"
+            class="team-logo"
+        >
+      </li>
+    </ul>
+    <ul class="team-list-row">
+      <li
+          v-for="team in alarmStore.teams.slice(9, 10)"
           :key="team.id"
           class="team-item"
           @click="selectTeam(team)"
@@ -78,10 +120,19 @@ const selectTeam = (team) => {
   text-align: center;
 }
 
+.team-list-row {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto 1.5rem auto;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
 .team-logo {
-  height: 50px;
+  height: 90px;
   width: auto;
-  margin-bottom: 12px;
   object-fit: contain;
 }
 
@@ -92,18 +143,8 @@ const selectTeam = (team) => {
   font-weight: 700;
 }
 
-.team-list {
-  list-style: none;
-  padding: 0;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 한 줄에 2개씩 */
-  gap: 16px;
-}
-
 .team-item {
-  background: linear-gradient(to right, #4caf50, #66bb6a);
-  color: #fff;
+  background: #F6F1DE;
   padding: 0.8em 1em;
   border-radius: 10px;
   font-size: 1rem;

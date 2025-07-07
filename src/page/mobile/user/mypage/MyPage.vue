@@ -23,7 +23,9 @@ const oldPassword = ref('')
 const newPassword = ref('')
 const confirmPassword = ref('')
 
-const openTeamSelect = () => (showTeamSelect.value = true)
+const toggleTeamSelect = () => {
+  showTeamSelect.value = !showTeamSelect.value
+}
 
 const fetchUser = async () => {
   await userStore.getUser()
@@ -122,7 +124,7 @@ const currentTeamLogo = computed(() => {
           />
         </div>
         <div class="summary-right">
-          <div class="favorite-team" @click="openTeamSelect">
+          <div class="favorite-team" @click="toggleTeamSelect">
             <img
                 :src="currentTeamLogo"
                 :alt="userStore.user?.teamName || '팀 선택'"
