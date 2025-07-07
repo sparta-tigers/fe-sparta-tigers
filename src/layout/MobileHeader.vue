@@ -125,7 +125,7 @@ const handleLogout = () => {
 }
 
 .app-logo {
-  height: 150px;
+  height: 100%;
   object-fit: contain;
   cursor: pointer;
 }
