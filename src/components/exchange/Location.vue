@@ -48,7 +48,7 @@ const connectWebSocket = () => {
   stompClient.value = new Client({
     brokerURL: `${WS_BASE_URL}/ws`,
     connectHeaders: {
-      Authorization: `Bearer ${localStorage.getItem('jwt_token')}`,
+      Authorization: `Bearer ${sessionStorage.getItem('jwt_token')}`,
     },
     webSocketFactory: () => new SockJS(`${HTTP_BASE_URL}/ws`),
   });

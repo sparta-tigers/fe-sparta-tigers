@@ -9,7 +9,7 @@ import {useAlarmStore} from "@/store/useAlarmStore.js";
 export const useUserStore = defineStore('user', () => {
     const user = ref(null)
     const error = ref(null)
-    const jwtToken = ref(localStorage.getItem('jwt_token') || null)
+    const jwtToken = ref(sessionStorage.getItem('jwt_token') || null)
     const loadingStore = useLoadingStore()
     const alarmStore = useAlarmStore()
     const login = async (email, password) => {
@@ -24,7 +24,7 @@ export const useUserStore = defineStore('user', () => {
             }
 
             jwtToken.value = response.data.data.accessToken
-            localStorage.setItem('jwt_token', jwtToken.value)
+            sessionStorage.setItem('jwt_token', jwtToken.value)
 
             const userRes = await axios.get('/users/me')
             user.value = userRes.data.data
@@ -58,7 +58,7 @@ export const useUserStore = defineStore('user', () => {
         loadingStore.start('user')
         try {
             user.value = null
-            localStorage.removeItem('jwt_token')
+            sessionStorage.removeItem('jwt_token')
             alarmStore.disconnectSSE()
             await router.push('/')
 
@@ -120,7 +120,7 @@ export const useUserStore = defineStore('user', () => {
         try {
             const response = await axios.delete(`/users`)
             alert(response.data.data);
-            localStorage.removeItem('jwt_token')
+            sessionStorage.removeItem('jwt_token')
             await router.push('/')
         } catch (err) {
             const {message} = ApiError(err);
