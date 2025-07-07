@@ -66,6 +66,7 @@ const logout = async () => {
 
 .content {
   padding: 56px 16px 80px;
+  background-color: white;
 }
 </style>
 
