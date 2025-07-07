@@ -61,12 +61,12 @@ const logout = async () => {
 }
 
 .mobile-header {
-  margin-bottom: 30px;
-  height: 80px;
+  display: contents;
 }
 
 .content {
   padding: 0 16px 80px;
+  margin-top: 80px;
   background-color: white;
 }
 </style>
