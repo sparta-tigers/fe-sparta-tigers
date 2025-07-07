@@ -1,6 +1,7 @@
 <script setup>
-import { onMounted } from 'vue'
-import { useAlarmStore } from '@/store/useAlarmStore.js'
+import {onMounted} from 'vue'
+import {useAlarmStore} from '@/store/useAlarmStore.js'
+
 const alarmStore = useAlarmStore()
 const emit = defineEmits(['selectTeam', 'close'])
 
@@ -8,16 +9,34 @@ onMounted(() => {
   alarmStore.fetchTeams()
 })
 
-const getTeamLogo = (teamCode) => {
+const teamCodeMap = {
+  'NC': 'NC',
+  '두산': 'OB',
+  '한화': 'HH',
+  'LG': 'LG',
+  'KIA': 'HT',
+  'SSG': 'SK',
+  'KT': 'KT',
+  '삼성': 'SS',
+  '롯데': 'LT',
+  '키움': 'WO'
+}
+
+const getTeamLogo = (teamName) => {
+  const code = teamCodeMap[teamName] || 'default'
   try {
-    return new URL(`/src/assets/images/team-logo-wordmark/${teamCode}.png`, import.meta.url).href
+    return new URL(`/src/assets/images/team-logo-symbol/${code.toLowerCase()}_symbol.png`, import.meta.url).href
   } catch {
     return new URL(`/src/assets/images/team-logo-wordmark/default.png`, import.meta.url).href
   }
 }
 
 const selectTeam = (team) => {
-  emit('selectTeam', {...team, logoUrl: getTeamLogo(team.teamCode)})
+  emit('selectTeam', {
+    ...team,
+    logoUrl: getTeamLogo(team.teamName),
+    teamCode: teamCodeMap[team.teamName] || 'default'
+  })
   emit('close')
 }
 
@@ -34,7 +53,7 @@ const selectTeam = (team) => {
           @click="selectTeam(team)"
       >
         <img
-            :src="getTeamLogo(team.teamCode)"
+            :src="getTeamLogo(team.teamName)"
             :alt="team.teamName"
             class="team-logo"
         >
@@ -48,7 +67,8 @@ const selectTeam = (team) => {
 </template>
 
 
-<style scoped>.team-list-wrapper {
+<style scoped>
+.team-list-wrapper {
   max-width: 500px;
   margin: 3em auto;
   padding: 2em;
@@ -59,7 +79,7 @@ const selectTeam = (team) => {
 }
 
 .team-logo {
-  height: 200px;
+  height: 50px;
   width: auto;
   margin-bottom: 12px;
   object-fit: contain;

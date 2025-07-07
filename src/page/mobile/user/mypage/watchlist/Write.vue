@@ -1,11 +1,11 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import {ref, onMounted, onBeforeUnmount} from 'vue'
 import Quill from 'quill'
 import 'quill/dist/quill.snow.css'
 import axios from '@/axios.js'
 import {useWatchListStore} from "@/store/useWatchListStore.js";
 import SchedulePopup from '@/page/mobile/user/mypage/watchlist/SchedulePopUp.vue'
-import { formatMatchTime } from '@/utils/index.js'
+import {formatMatchTime} from '@/utils/index.js'
 import router from "@/router/router.js";
 
 const showMatchPopup = ref(false)
@@ -34,16 +34,15 @@ onMounted(() => {
   })
 })
 
+async function uploadImage(file) {
+  const resizedFile = await resizeImage(file)
 
-  async function uploadImage(file) {
-    const resizedFile = await resizeImage(file)
-
-    const formData = new FormData()
-    formData.append('file', resizedFile)
+  const formData = new FormData()
+  formData.append('file', resizedFile)
 
   // 예시: S3 업로드 API 호출
   return axios.post('/watchlist/uploads', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
+    headers: {'Content-Type': 'multipart/form-data'},
   }).then(res => {
     return res.data.data.imageUrl
   })
@@ -73,6 +72,7 @@ function imageHandler() {
     }
   }
 }
+
 const submit = async () => {
   const content = quill.root.innerHTML
 
@@ -84,15 +84,15 @@ const submit = async () => {
   }
 
   const payload = {
-    match: { id: selectedMatch.value.matchId },
-    record: { content, rate: rate.value },
+    match: {id: selectedMatch.value.matchId},
+    record: {content, rate: rate.value},
     seat: seat.value,
   }
 
   try {
     await watchListStore.createWatchList(payload)
     alert('등록 완료!')
-    await router.push({ name: 'record-main' })
+    await router.push({name: 'record-main'})
   } catch (err) {
     console.error('등록 실패:', err)
     alert('등록 실패! 다시 시도해주세요.')
@@ -119,6 +119,7 @@ onMounted(() => {
     }
   })
 })
+
 async function resizeImage(file, maxWidth = 800, maxHeight = 800) {
   return new Promise((resolve, reject) => {
     const img = new Image()
@@ -158,7 +159,7 @@ async function resizeImage(file, maxWidth = 800, maxHeight = 800) {
           return
         }
         // 리사이징된 Blob을 File 객체로 변환
-        const resizedFile = new File([blob], file.name, { type: file.type })
+        const resizedFile = new File([blob], file.name, {type: file.type})
         resolve(resizedFile)
       }, file.type, 0.8) // 0.8은 이미지 품질 (JPEG 등)
     }
@@ -177,7 +178,7 @@ onBeforeUnmount(() => {
 <template>
   <div class="form-container">
     <div class="input-group">
-      <input v-model="seat" placeholder="좌석 입력 ex)A12, A13 등" />
+      <input v-model="seat" placeholder="좌석 입력 ex)A12, A13 등"/>
       <button @click="openMatchPopup">경기 선택</button>
 
       <SchedulePopup
@@ -193,7 +194,6 @@ onBeforeUnmount(() => {
         ({{ formatMatchTime(selectedMatch.matchDate) }})
       </div>
     </div>
-
 
 
     <div class="rating-group">
