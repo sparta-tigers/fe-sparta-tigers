@@ -8,7 +8,6 @@ import KakaoLoginIcon from "@/components/shard/KakaoLoginIcon.vue";
 const store = useUserStore()
 const baseURL = import.meta.env.VITE_HTTP_BASE_URL
 
-
 const router = useRouter()
 
 const goToSignup = () => {
@@ -27,15 +26,15 @@ const login = async () => {
 
 <template>
   <div class="login-container">
-    <div class="instruction-div">
-      <div class="instruction-left"></div>
-      <div class="instruction-center">
-        <img alt="main-font" class="main-font-img" src="/images/fe-design/main-font.png">
-      </div>
-      <div class="instruction-right">
-        <img alt="character-1" class="character-img" src="/images/fe-design/character-1.png">
-      </div>
-    </div>
+    <!--    <div class="instruction-div">-->
+    <!--      <div class="instruction-left"></div>-->
+    <!--      <div class="instruction-center">-->
+    <!--        <img alt="main-font" class="main-font-img" src="/images/fe-design/main-font.png">-->
+    <!--      </div>-->
+    <!--      <div class="instruction-right">-->
+    <!--        <img alt="character-1" class="character-img" src="/images/fe-design/character-1.png">-->
+    <!--      </div>-->
+    <!--    </div>-->
 
     <div class="login-form">
       <div class="form-title">
@@ -112,7 +111,8 @@ const login = async () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  align-content: center;
+  justify-content: center;
+  transform: translateY(13vh);
 }
 
 
