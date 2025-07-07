@@ -3,11 +3,7 @@
     <!-- 페이지 제목 -->
     <section class="hero-section">
       <div class="hero-div">
-        <img
-            class="brochure-logo"
-            :src="brochureUrl"
-            alt="브로셔 로고"
-        />
+        <img class="brochure-logo" :src="brochureUrl" alt="브로셔 로고"/>
       </div>
     </section>
 
@@ -32,7 +28,7 @@
           </div>
         </div>
         <div class="feature-image right">
-          <!--        <img src="@/assets/images/placeholder.png" alt="실시간 중계 예시">-->
+          <img class="feature-image" :src="liveboardUrl" alt="실시간 중계 예시">
         </div>
       </div>
 
@@ -53,7 +49,7 @@
           </div>
         </div>
         <div class="feature-image left">
-          <!--        <img src="@/assets/images/placeholder.png" alt="굿즈 교환 예시">-->
+          <img class="feature-image" :src="exchangeUrl" alt="굿즈 교환 예시">
         </div>
       </div>
 
@@ -74,7 +70,7 @@
           </div>
         </div>
         <div class="feature-image right">
-          <!--        <img src="@/assets/images/placeholder.png" alt="알림 예시">-->
+          <img class="feature-image" :src="alarmUrl" alt="알림 예시">
         </div>
       </div>
 
@@ -95,7 +91,7 @@
           </div>
         </div>
         <div class="feature-image left">
-          <!--        <img src="@/assets/images/placeholder.png" alt="직관 기록 예시">-->
+          <img class="feature-image" :src="watchlistUrl" alt="직관 기록 예시">
         </div>
       </div>
     </section>
@@ -114,6 +110,10 @@
 
 <script setup>
 const brochureUrl = new URL('@/assets/images/brochure.svg', import.meta.url).href;
+const liveboardUrl = new URL('@/assets/images/key-feature/liveboard.svg', import.meta.url).href;
+const exchangeUrl = new URL('@/assets/images/key-feature/exchange.svg', import.meta.url).href;
+const alarmUrl = new URL('@/assets/images/key-feature/alarm.svg', import.meta.url).href;
+const watchlistUrl = new URL('@/assets/images/key-feature/watchlist.svg', import.meta.url).href;
 </script>
 
 <style scoped>
@@ -164,15 +164,16 @@ const brochureUrl = new URL('@/assets/images/brochure.svg', import.meta.url).hre
   min-height: 300px;
   position: relative;
   overflow: hidden;
+  justify-content: center;
+  align-items: center;
+  display: flex;
 }
 
 .feature-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  position: absolute;
-  top: 0;
-  left: 0;
+  width: 95%;
+  height: 95%;
+  object-fit: contain;
+  display: block;
 }
 
 .feature-text h3 {
@@ -212,7 +213,7 @@ const brochureUrl = new URL('@/assets/images/brochure.svg', import.meta.url).hre
 }
 
 /* 모바일 반응형 스타일 */
-@media (max-width: 768px) {
+@media (max-width: 480px) {
   .feature-item {
     flex-direction: column-reverse;
   }
@@ -221,12 +222,12 @@ const brochureUrl = new URL('@/assets/images/brochure.svg', import.meta.url).hre
     flex-direction: column-reverse;
   }
 
-  .feature-image {
-    min-height: 200px;
-  }
-
   .feature-content {
     padding: 20px;
+  }
+
+  .feature-image img {
+    height: 60vh !important;
   }
 }
 
