@@ -11,7 +11,7 @@ onMounted(async () => {
   const token = urlParams.get('token')
 
   if (token) {
-    localStorage.setItem('jwt_token', token)
+    sessionStorage.setItem('jwt_token', token)
     await store.getUser()  // 이 부분이 핵심!
     await router.push('/')
   } else {

@@ -288,7 +288,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    const isLoggedIn = !!localStorage.getItem("jwt_token");
+    const isLoggedIn = !!sessionStorage.getItem("jwt_token");
     if (to.meta.requiresAuth && !isLoggedIn) {
         next("/login");
     } else {

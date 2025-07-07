@@ -10,7 +10,7 @@ const instance = axios.create({
 });
 
 instance.interceptors.request.use(config => {
-    const token = localStorage.getItem('jwt_token');
+    const token = sessionStorage.getItem('jwt_token');
     if (token) {
         config.headers['Authorization'] = `Bearer ${token}`;
     }

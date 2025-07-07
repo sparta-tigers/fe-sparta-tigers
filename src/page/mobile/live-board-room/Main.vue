@@ -76,13 +76,13 @@ const getPlayerByRole = (role) => {
 
 // 웹소켓 연결
 const connectWebSocket = () => {
-  const token = localStorage.getItem('jwt_token');
+  const token = sessionStorage.getItem('jwt_token');
   let client = null;
   if (token) {
     client = new Client({
       brokerURL: `${WS_BASE_URL}/ws`,
       connectHeaders: {
-        Authorization: `Bearer ${localStorage.getItem('jwt_token')}`,
+        Authorization: `Bearer ${sessionStorage.getItem('jwt_token')}`,
       },
       webSocketFactory: () => new SockJS(`${HTTP_BASE_URL}/ws`),
     });

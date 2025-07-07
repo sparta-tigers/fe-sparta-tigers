@@ -16,6 +16,7 @@ export const useAlarmStore = defineStore('alarm', () => {
     const matchDetail = ref(null)
     const sseConnected = ref(false)
     let eventSource = null
+
     const userStore = useUserStore()
 
     const fetchAlarms = async () => {
@@ -125,7 +126,6 @@ export const useAlarmStore = defineStore('alarm', () => {
             setTimeout(() => {
                 connectSSE();
             }, 3000);
-
         }
 
         eventSource.addEventListener('connect', (event) => {
@@ -136,7 +136,6 @@ export const useAlarmStore = defineStore('alarm', () => {
         });
 
         eventSource.addEventListener('testAlarm', async (event) => {
-
             const audio = new Audio('/audio/alarm-sound.mp3');
 
             try {
@@ -146,11 +145,33 @@ export const useAlarmStore = defineStore('alarm', () => {
                 console.warn('⚠️ 오디오 재생 실패:', e);
             }
 
+            if ("Notification" in window) {
+                if (Notification.permission === "granted") {
+                    new Notification("🔔 알람 도착!", {
+                        body: "새로운 알림이 도착했습니다.",
+                        silent: false,
+                    });
+                } else if (Notification.permission !== "denied") {
+                    // 권한 요청
+                    const permission = await Notification.requestPermission();
+                    if (permission === "granted") {
+                        new Notification("🔔 알람 도착!", {
+                            body: "새로운 알림이 도착했습니다.",
+                            icon: "/img/notification-icon.png",
+                            silent: false,
+                        });
+                    }
+                }
+            }
+
             alert('🔔 알람이 도착했습니다!');
+
 
             await fetchAlarms();
         })
+
     }
+
 
     const disconnectSSE = () => {
         if (eventSource) {
