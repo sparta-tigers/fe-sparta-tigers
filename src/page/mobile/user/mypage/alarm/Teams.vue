@@ -16,7 +16,7 @@ onMounted(() => {
       <router-link
           v-for="team in alarmStore.teams"
           :key="team.id"
-          :to="`/alarm/teams/${team.id}/schedule`"
+          :to="`/mypage/alarm/teams/${team.id}/schedule`"
           custom
           v-slot="{ navigate }"
       >
