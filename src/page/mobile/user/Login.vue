@@ -36,7 +36,7 @@ const login = async () => {
     <!--      </div>-->
     <!--    </div>-->
 
-    <div class="login-form">
+    <form class="login-form" @submit.prevent="login">
       <div class="form-title">
         <h2>로그인</h2>
       </div>
@@ -44,7 +44,7 @@ const login = async () => {
       <input v-model="email" placeholder="이메일 또는 아이디" type="text"/>
       <input v-model="password" placeholder="비밀번호" type="password"/>
 
-      <button class="login-btn" @click="login">로그인</button>
+      <button class="login-btn" type="submit">로그인</button>
 
       <div class="auth-links">
         <span>계정이 없으신가요?</span>
@@ -62,7 +62,7 @@ const login = async () => {
         </a>
       </div>
 
-    </div>
+    </form>
 
 
   </div>
