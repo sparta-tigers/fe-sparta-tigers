@@ -1,14 +1,14 @@
 <script setup>
 import {ref, onMounted, onUnmounted} from "vue";
 import {useRoute, useRouter} from 'vue-router'
-import {computed} from 'vue'
 
 defineProps({
   isToken: Boolean,
   profileImage: String
 })
 
-const route = useRoute()
+const emit = defineEmits(['logout', 'login'])
+
 const router = useRouter()
 const goHome = () => {
   router.push('/');
@@ -27,9 +27,24 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll);
 })
+
+const showToast = ref(false)
+
+const handleLogout = () => {
+  emit('logout')
+  showToast.value = true
+  setTimeout(() => {
+    showToast.value = false
+  }, 3000)
+}
 </script>
 
 <template>
+  <!-- 토스트 -->
+  <div v-if="showToast" class="custom-toast">
+    로그아웃 되었습니다.
+  </div>
+
   <header :class="['header', { scrolled: isScrolled }]">
     <div class="header-inner">
       <img
@@ -47,7 +62,7 @@ onUnmounted(() => {
               alt="프로필 이미지"
               class="profile-img"
           />
-          <button class="auth-btn" @click="$emit('logout')">로그아웃</button>
+          <button class="auth-btn" @click="handleLogout">로그아웃</button>
         </template>
 
         <!-- 로그아웃 상태 -->
@@ -60,6 +75,21 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+.custom-toast {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #323232;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  z-index: 9999;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  animation: fade-in-out 3s ease forwards;
+}
+
 .header {
   display: flex;
   justify-content: center;
@@ -89,7 +119,6 @@ onUnmounted(() => {
 
 .header.scrolled {
   background-color: rgba(255, 255, 255, 0.9);
-  //background-color: #cbebdb;
   border-bottom: 1px solid rgba(229, 231, 235, 0.8);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(6px);
@@ -127,5 +156,24 @@ onUnmounted(() => {
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid #007bff
+}
+
+@keyframes fade-in-out {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+  10% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  90% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
 }
 </style>
