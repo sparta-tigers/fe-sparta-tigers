@@ -51,10 +51,9 @@ const schedules = computed(() => alarmStore.schedules)
 const scheduleMap = computed(() => {
   const map = new Map()
   schedules.value.forEach(schedule => {
-    const date = schedule.matchTime.slice(0, 10)
+    const date = schedule.reservationOpenTime.slice(0, 10)  // matchTime -> reservationOpenTime 변경
     if (!map.has(date)) map.set(date, [])
     map.get(date).push(schedule)
-
   })
   return map
 })
@@ -76,11 +75,11 @@ const route = useRoute()
 const teamId = route.params.teamId;
 
 onMounted(() => {
-  alarmStore.fetchSchedules(teamId, currentYear.value, currentMonth.value + 1)
+  alarmStore.fetchReservationOpenSchedules(teamId, currentYear.value, currentMonth.value + 1)
 });
 
 watch([currentYear, currentMonth], () => {
-  alarmStore.fetchSchedules(teamId, currentYear.value, currentMonth.value + 1)
+  alarmStore.fetchReservationOpenSchedules(teamId, currentYear.value, currentMonth.value + 1)
 });
 function goToReservation(schedule) {
   const teamId = route.params.teamId
@@ -150,36 +149,7 @@ const getResultLabelForDate = (date) => {
           <img :src="schedule.awayTeamPath" alt="Away Team Logo" class="team-logo" />
 
           <div class="match-text">
-            <div v-if="new Date(schedule.matchTime) < now">
-              {{ schedule.homeScore }}
-              <span v-if="schedule.matchResult && schedule.matchResult !== 'DRAW' && schedule.matchResult !== 'CANCEL'"> : </span>
-              {{ schedule.awayScore }}
-              <span
-                  v-if="schedule.matchResult"
-                  class="result-circle"
-                  :class="{
-      win: schedule.matchResult === 'HOME_WIN',
-      lose: schedule.matchResult === 'AWAY_WIN',
-      draw: schedule.matchResult === 'DRAW',
-      cancel: schedule.matchResult === 'CANCEL'
-    }"
-              >
-    {{
-                  schedule.matchResult === 'HOME_WIN'
-                      ? '승'
-                      : schedule.matchResult === 'AWAY_WIN'
-                          ? '패'
-                          : schedule.matchResult === 'DRAW'
-                              ? '무'
-                              : schedule.matchResult === 'CANCEL'
-                                  ? '취소'
-                                  : ''
-                }}
-  </span>
-            </div>
-            <div v-else>
-              {{ formatTime(schedule.matchTime) }}
-            </div>
+            {{ formatTime(schedule.reservationOpenTime) }}
           </div>
         </div>
 
