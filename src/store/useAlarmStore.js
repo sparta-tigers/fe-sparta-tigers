@@ -63,6 +63,24 @@ export const useAlarmStore = defineStore('alarm', () => {
         }
     }
 
+    const fetchReservationOpenSchedules = async (teamId, year, month) => {
+        loading.value = true
+        error.value = null
+        try {
+            const response = await axios.get(`/alarms/teams/${teamId}/reservation-open-schedules`, {
+                params: { year, month },
+                withCredentials: true
+            })
+            schedules.value = response.data.data
+        } catch (err) {
+            error.value = err
+            console.error('예매 오픈 일정 불러오기 실패:', err)
+        } finally {
+            loading.value = false
+        }
+    }
+
+
     const fetchMatchDetail = async (matchId) => {
         loading.value = true
         error.value = null
@@ -85,12 +103,9 @@ export const useAlarmStore = defineStore('alarm', () => {
                 `/alarms`,
                 {
                     id: matchId,
-                    minutes: preBookingMinute,
-                    preMinutes: bookingMinute,
+                    minutes: bookingMinute,
+                    preMinutes: preBookingMinute,
                 },
-                {
-                    withCredentials: true,
-                }
             )
             alert('알림이 등록되었습니다!')
             await router.push('/');
@@ -200,6 +215,7 @@ export const useAlarmStore = defineStore('alarm', () => {
         fetchMatchDetail,
         createAlarm,
         connectSSE,
-        disconnectSSE
+        disconnectSSE,
+        fetchReservationOpenSchedules
     }
 })
