@@ -47,7 +47,7 @@ onMounted(() => {
 import router from "@/router/router.js";
 
 function goToTeams() {
-  router.push('/alarm/teams')
+  router.push('/mypage/alarm/teams')
 }
 
 
