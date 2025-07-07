@@ -334,8 +334,8 @@ const currentTeamLogo = computed(() => {
   padding: 2rem;
   border-radius: 12px;
   text-align: center;
-  width: 300px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  width: 400px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
 .modal-image {
@@ -348,18 +348,21 @@ const currentTeamLogo = computed(() => {
 
 .modal-buttons {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   gap: 0.4rem;
+  align-items: center;
 }
 
 .modal-buttons button {
   padding: 0.5rem 1rem;
   border: none;
-  background: #4a90e2;
-  color: white;
   border-radius: 8px;
+  background-color: #4CAF50;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: background-color 0.3s ease;
 }
 
 .modal-buttons button:hover {
