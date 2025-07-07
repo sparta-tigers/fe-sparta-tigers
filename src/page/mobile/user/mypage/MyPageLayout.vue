@@ -61,13 +61,6 @@ const goTo = (name) => {
   background-color: white;
 }
 
-.profile-summary-wrapper {
-  background: #f5f5f5;
-  border-radius: 16px;
-  padding: 24px 16px;
-  margin-bottom: 24px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-}
 
 .mypage-menu {
   display: flex;

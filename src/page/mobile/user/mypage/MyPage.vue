@@ -191,6 +191,7 @@ const currentTeamLogo = computed(() => {
   display: flex;
   justify-content: center;
   padding: 2rem 1rem;
+  margin-top: 10px
 }
 
 .loading,
