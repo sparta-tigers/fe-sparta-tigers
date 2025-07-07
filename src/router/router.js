@@ -9,7 +9,7 @@ import alarmMain from "@/page/mobile/user/mypage/alarm/Main.vue";
 import AlarmTeams from "@/page/mobile/user/mypage/alarm/Teams.vue";
 import AlarmSchedule from "@/page/mobile/user/mypage/alarm/Schedule.vue";
 import MatchReservation from "@/page/mobile/user/mypage/alarm/MatchReservation.vue";
-import stadiumInfoMain from "@/page/mobile/user/mypage/stadium-info/Main.vue";
+import stadiumInfoMain from "@/page/mobile/stadium-info/Main.vue";
 import Login from "@/page/mobile/user/Login.vue";
 import OAuth2Redirect from "@/page/mobile/util/OAuth2Redirect.vue";
 import MyPage from "@/page/mobile/user/mypage/MyPage.vue";
