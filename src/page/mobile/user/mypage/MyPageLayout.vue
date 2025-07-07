@@ -82,7 +82,8 @@ const goTo = (name) => {
   background: white;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: bold;
   transition: background-color 0.2s ease;
 }
 

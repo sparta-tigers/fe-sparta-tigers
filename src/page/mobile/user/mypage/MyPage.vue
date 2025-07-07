@@ -274,6 +274,7 @@ const currentTeamLogo = computed(() => {
 
 .withdraw-button {
   width: 80%;
+  background-color: #3E3F5b;
 }
 
 .nickname {
@@ -303,33 +304,6 @@ const currentTeamLogo = computed(() => {
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 1rem;
-}
-
-.select-btn-button {
-  background-color: #4a90e2;
-  color: white;
-  border: none;
-  padding: 0.7rem 1.4rem;
-  font-size: 1rem;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  display: inline-block;
-  margin-bottom: 0.7rem;
-}
-
-.select-btn-button:hover {
-  background-color: #0056b3;
-}
-
-.delete-team-btn {
-  margin-left: 10px;
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
 }
 
 .password-input {
