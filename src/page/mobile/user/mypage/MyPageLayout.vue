@@ -56,8 +56,9 @@ const goTo = (name) => {
 <style scoped>
 .mypage-layout {
   max-width: 700px;
-  margin: 20px auto 0;
+  margin: 0 auto 0;
   padding: 60px 16px 80px;
+  background-color: white;
 }
 
 .profile-summary-wrapper {

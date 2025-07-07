@@ -57,6 +57,7 @@ const logout = async () => {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: white;
 }
 
 .mobile-header {
