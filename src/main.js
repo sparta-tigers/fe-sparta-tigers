@@ -2,6 +2,7 @@ import {createApp} from "vue";
 import App from "./App.vue";
 import router from "./router/router.js";
 import "@/assets/css/public/public.css";
+import './assets/fonts.css'
 import {createPinia} from "pinia";
 import piniaPersist from 'pinia-plugin-persistedstate'
 import {useKakao} from "vue3-kakao-maps";

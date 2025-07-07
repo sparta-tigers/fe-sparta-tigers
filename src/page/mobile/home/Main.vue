@@ -133,6 +133,10 @@ const brochureUrl = new URL('@/assets/images/brochure.svg', import.meta.url).hre
   padding: 0 20px;
 }
 
+.features-section h2 {
+  font-family: KBO-Dia-Gothic_bold, sans-serif;
+}
+
 .feature-item {
   display: flex;
   margin: 40px 0;
@@ -175,6 +179,7 @@ const brochureUrl = new URL('@/assets/images/brochure.svg', import.meta.url).hre
   font-size: 1.5rem;
   color: #2c3e50;
   margin-bottom: 15px;
+  font-family: GongGothicMedium, serif;
 }
 
 .feature-description {
@@ -182,11 +187,14 @@ const brochureUrl = new URL('@/assets/images/brochure.svg', import.meta.url).hre
   line-height: 1.6;
   color: #666;
   margin-bottom: 20px;
+  font-family: GongGothicMedium, serif;
 }
 
 .feature-points {
   list-style: none;
   padding: 0;
+  font-family: "NanumSquare_ac-ExtraBold", Helvetica, sans-serif;
+  font-weight: normal;
 }
 
 .feature-points li {
