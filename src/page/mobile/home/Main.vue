@@ -231,38 +231,19 @@ const watchlistUrl = new URL('@/assets/images/key-feature/watchlist.svg', import
   }
 }
 
-
-.cta-btn {
-  background-color: #f8f9fa;
-  color: #343a40;
-  border: none;
-  padding: 12px 30px;
-  font-size: 1rem;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.cta-btn:hover {
-  background-color: #e2e6ea;
-}
-
-.matches-list,
-.ranking-list {
+.matches-list {
   list-style: none;
   padding: 0;
   font-size: 1.1rem;
 }
 
-.matches-list li,
-.ranking-list li {
+.matches-list li {
   margin-bottom: 10px;
   color: #343a40;
   font-weight: 500;
 }
 
-.matches-list li:hover,
-.ranking-list li:hover {
+.matches-list li:hover {
   color: #007bff;
   cursor: pointer;
 }
@@ -274,7 +255,7 @@ h2 {
   font-weight: 600;
 }
 
-.ranking-section, .today-matches-section {
+.today-matches-section {
   margin: 20px;
   padding: 20px;
   background-color: #f8f9fa;
