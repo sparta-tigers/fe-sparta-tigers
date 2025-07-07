@@ -22,9 +22,11 @@ function checkMobile() {
 
 const visibilityHandler = () => {
   if (document.visibilityState === 'visible') {
-    console.log('탭 활성화됨 - SSE 재연결 시도');
-    alarmStore.connectSSE();
+    if (userStore.user) {
+      alarmStore.connectSSE();
+    }
   }
+
 }
 
 
@@ -37,13 +39,8 @@ onUnmounted(() => {
 onMounted(async () => {
   checkMobile()
   window.addEventListener('resize', checkMobile)
+  document.addEventListener('visibilitychange', visibilityHandler)
 
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') {
-      console.log('탭 활성화됨 - SSE 재연결 시도');
-      alarmStore.connectSSE();
-    }
-  });
 
   const token = sessionStorage.getItem('jwt_token')
   if (route.meta.requiresAuth && !token) {

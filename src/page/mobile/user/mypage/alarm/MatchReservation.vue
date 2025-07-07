@@ -55,6 +55,7 @@ const createAlarm = () => {
       <h2>{{ alarmStore.matchDetail.homeName }} vs {{ alarmStore.matchDetail.awayName }}</h2>
       <p>경기장: <strong>{{ alarmStore.matchDetail.stadiumName }}</strong></p>
       <p>시간: <strong>{{ formatDate(alarmStore.matchDetail.matchTime) }}</strong></p>
+      <p>예약 오픈 시간 : <strong>{{ formatDate(alarmStore.matchDetail.reservationOpenTime) }}</strong></p>
     </div>
 
     <div class="booking-section">
