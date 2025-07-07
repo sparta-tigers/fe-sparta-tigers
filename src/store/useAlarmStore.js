@@ -54,6 +54,7 @@ export const useAlarmStore = defineStore('alarm', () => {
                 params: { year, month },
                 withCredentials: true
             })
+            console.log("schedules: " + response.data.data);
             schedules.value = response.data.data
         } catch (err) {
             error.value = err
@@ -71,6 +72,7 @@ export const useAlarmStore = defineStore('alarm', () => {
                 params: { year, month },
                 withCredentials: true
             })
+            console.log("reservation: " + response.data.data);
             schedules.value = response.data.data
         } catch (err) {
             error.value = err

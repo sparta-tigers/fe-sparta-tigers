@@ -31,4 +31,7 @@ const handleClick = () => {
   transition: background-color 0.2s ease;
 }
 
+.cancel-btn:hover {
+  background-color: red; /* emerald-600 */
+}
 </style>

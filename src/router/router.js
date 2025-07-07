@@ -1,23 +1,23 @@
 import {createRouter, createWebHistory} from "vue-router";
 import MainPage from "@/page/MainPage.vue";
+import HomePage from '@/page/mobile/home/Main.vue'
 import LiveBoardMatch from "@/page/mobile/live-board-match/Main.vue";
 import LiveBoardRoom from "@/page/mobile/live-board-room/Main.vue";
-import recordMain from "@/page/mobile/watchlist/Main.vue";
+import recordMain from "@/page/mobile/user/mypage/watchlist/Main.vue";
 import exchangeMain from "@/page/mobile/exchange/Main.vue";
-import alarmMain from "@/page/mobile/alarm/Main.vue";
-import AlarmTeams from "@/page/mobile/alarm/Teams.vue";
-import AlarmSchedule from "@/page/mobile/alarm/Schedule.vue";
-import MatchReservation from "@/page/mobile/alarm/MatchReservation.vue";
+import alarmMain from "@/page/mobile/user/mypage/alarm/Main.vue";
+import AlarmTeams from "@/page/mobile/user/mypage/alarm/Teams.vue";
+import AlarmSchedule from "@/page/mobile/user/mypage/alarm/Schedule.vue";
+import MatchReservation from "@/page/mobile/user/mypage/alarm/MatchReservation.vue";
 import stadiumInfoMain from "@/page/mobile/stadium-info/Main.vue";
 import Login from "@/page/mobile/user/Login.vue";
 import OAuth2Redirect from "@/page/mobile/util/OAuth2Redirect.vue";
-import MyPage from "@/page/mobile/user/MyPage.vue";
-import RecordWrite from "@/page/mobile/watchlist/Write.vue";
-import RecordTeams from "@/page/mobile/watchlist/Teams.vue";
-import RecordSchedule from "@/page/mobile/watchlist/Schedule.vue";
-import RecordDetails from "@/page/mobile/watchlist/Details.vue";
+import MyPage from "@/page/mobile/user/mypage/MyPage.vue";
+import RecordWrite from "@/page/mobile/user/mypage/watchlist/Write.vue";
+import RecordTeams from "@/page/mobile/user/mypage/watchlist/Teams.vue";
+import RecordSchedule from "@/page/mobile/user/mypage/watchlist/Schedule.vue";
+import RecordDetails from "@/page/mobile/user/mypage/watchlist/Details.vue";
 import Chatroom from "@/page/mobile/exchange/Chatroom.vue";
-import signUp from "@/page/mobile/user/SignUp.vue";
 import SignUp from "@/page/mobile/user/SignUp.vue";
 import FindId from "@/page/mobile/user/FindId.vue";
 import FindPassword from "@/page/mobile/user/FindPassword.vue";
@@ -27,12 +27,21 @@ import CreateExchange from "@/page/mobile/exchange/CreateExchange.vue";
 import ExchangeRequestList from "@/page/mobile/exchange/ExchangeRequestList.vue";
 import ItemDetail from "@/page/mobile/exchange/ItemDetail.vue";
 import NotFound from "@/page/mobile/util/NotFound.vue";
-import Statistics from "@/page/mobile/watchlist/Statistics.vue";
+import Statistics from "@/page/mobile/user/mypage/watchlist/Statistics.vue";
+import MyPageLayout from "@/page/mobile/user/mypage/MyPageLayout.vue";
 
 const routes = [
     {
         path: '/',
-        redirect: '/liveboard/match'
+        component: MainPage,
+        children: [
+            {
+                path: '',
+                name: 'home-page',
+                component: HomePage,
+                meta: { title: '야구대학' }
+            }
+        ]
     },
     {
         path: '/liveboard',
@@ -49,36 +58,6 @@ const routes = [
                 name: 'liveboard-room',
                 component: LiveBoardRoom,
                 meta: {title: '라이브보드'}
-            }
-        ]
-    },
-    {
-        path: '/record',
-        component: MainPage,
-        children: [
-            {
-                path: '',
-                name: 'record-main',
-                component: recordMain,
-                meta: {requiresAuth: true, title: '기록'}
-            },
-            {
-                path: 'write',
-                name: 'record-write',
-                component: RecordWrite,
-                meta: {requiresAuth: true, title: '기록'}
-            },
-            {
-                path: 'details/:id',
-                name: 'record-details',
-                component: RecordDetails,
-                meta: {requiresAuth: true, title: '기록'}
-            },
-            {
-                path: 'statistics',
-                name: 'statistics',
-                component: Statistics,
-                meta: {requiresAuth: true, title: '기록'}
             }
         ]
     },
@@ -137,32 +116,14 @@ const routes = [
         ]
     },
     {
-        path: '/alarm',
+        path: '/login',
         component: MainPage,
         children: [
             {
                 path: '',
-                name: 'alarm-main',
-                component: alarmMain,
-                meta: {requiresAuth: true, title: '알람'}
-            },
-            {
-                path: 'teams',
-                name: 'Teams',
-                component: AlarmTeams,
-                meta: {requiresAuth: true, title: '알람'}
-            },
-            {
-                path: 'teams/:teamId/schedule',
-                name: 'alarm-schedule',
-                component: AlarmSchedule,
-                meta: {requiresAuth: true, title: '알람'}
-            },
-            {
-                path: 'teams/:teamId/reservation/:matchId',
-                name: 'MatchReservation',
-                component: MatchReservation,
-                meta: {requiresAuth: true, title: '알람'}
+                name: 'login',
+                component: Login,
+                meta: {title: '로그인'}
             }
         ]
     },
@@ -179,26 +140,77 @@ const routes = [
         ]
     },
     {
-        path: '/login',
-        component: MainPage,
-        children: [
-            {
-                path: '',
-                name: 'login',
-                component: Login,
-                meta: {title: '로그인'}
-            }
-        ]
-    },
-    {
         path: '/mypage',
-        component: MainPage,
+        component: MyPageLayout,
         children: [
             {
                 path: '',
-                name: 'my-page',
+                redirect: '/mypage/record'
+            },
+            {
+                path: 'alarm',
+                component: MainPage,
+                children: [
+                    {
+                        path: '',
+                        name: 'alarm-main',
+                        component: alarmMain,
+                        meta: {requiresAuth: true, title: '알람'}
+                    },
+                    {
+                        path: 'teams',
+                        name: 'Teams',
+                        component: AlarmTeams,
+                        meta: {requiresAuth: true, title: '알람'}
+                    },
+                    {
+                        path: 'teams/:teamId/schedule',
+                        name: 'alarm-schedule',
+                        component: AlarmSchedule,
+                        meta: {requiresAuth: true, title: '알람'}
+                    },
+                    {
+                        path: 'teams/:teamId/reservation/:matchId',
+                        name: 'MatchReservation',
+                        component: MatchReservation,
+                        meta: {requiresAuth: true, title: '알람'}
+                    }
+                ]
+            },
+            {
+                path: 'record',
+                component: MainPage,
+                children: [
+                    {
+                        path: '',
+                        name: 'record-main',
+                        component: recordMain,
+                        meta: {requiresAuth: true, title: '기록'}
+                    },
+                    {
+                        path: 'write',
+                        name: 'record-write',
+                        component: RecordWrite,
+                        meta: {requiresAuth: true, title: '기록'}
+                    },
+                    {
+                        path: 'details/:id',
+                        name: 'record-details',
+                        component: RecordDetails,
+                        meta: {requiresAuth: true, title: '기록'}
+                    },
+                    {
+                        path: 'statistics',
+                        name: 'statistics',
+                        component: Statistics,
+                        meta: {requiresAuth: true, title: '기록'}
+                    }
+                ]
+            },
+            {
+                path: 'profile',
                 component: MyPage,
-                meta: {requiresAuth: true, title: '마이페이지'}
+                name: 'mypage-profile'
             }
         ]
     },
@@ -268,7 +280,6 @@ const routes = [
             }
         ]
     }
-
 ];
 
 const router = createRouter({

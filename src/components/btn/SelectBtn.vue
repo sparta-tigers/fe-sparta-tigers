@@ -22,12 +22,12 @@ const handleClick = () => {
 <style scoped>
 .select-btn {
   padding: 8px 16px;
-  background-color: #10b981;
+  background-color: #4CAF50;
   color: white;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: bold;
   transition: background-color 0.2s ease;
 }
 

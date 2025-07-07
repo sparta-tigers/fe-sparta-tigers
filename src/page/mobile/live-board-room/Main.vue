@@ -1,14 +1,14 @@
 <script setup>
-import hhSymbol from "@/assets/images/hh_symbol.png";
-import htSymbol from "@/assets/images/ht_symbol.png";
-import ktSymbol from "@/assets/images/kt_symbol.png";
-import lgSymbol from "@/assets/images/lg_symbol.png";
-import ltSymbol from "@/assets/images/lt_symbol.png";
-import ncSymbol from "@/assets/images/nc_symbol.png";
-import obSymbol from "@/assets/images/ob_symbol.png";
-import skSymbol from "@/assets/images/sk_symbol.png";
-import ssSymbol from "@/assets/images/ss_symbol.png";
-import woSymbol from "@/assets/images/wo_symbol.png";
+import hhSymbol from "@/assets/images/team-logo-symbol/hh_symbol.png";
+import htSymbol from "@/assets/images/team-logo-symbol/ht_symbol.png";
+import ktSymbol from "@/assets/images/team-logo-symbol/kt_symbol.png";
+import lgSymbol from "@/assets/images/team-logo-symbol/lg_symbol.png";
+import ltSymbol from "@/assets/images/team-logo-symbol/lt_symbol.png";
+import ncSymbol from "@/assets/images/team-logo-symbol/nc_symbol.png";
+import obSymbol from "@/assets/images/team-logo-symbol/ob_symbol.png";
+import skSymbol from "@/assets/images/team-logo-symbol/sk_symbol.png";
+import ssSymbol from "@/assets/images/team-logo-symbol/ss_symbol.png";
+import woSymbol from "@/assets/images/team-logo-symbol/wo_symbol.png";
 
 import {computed, onMounted, onUnmounted, ref} from "vue";
 import {useRoute} from "vue-router";
