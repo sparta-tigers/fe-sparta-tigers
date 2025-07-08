@@ -2,7 +2,7 @@
 import mobileHeader from "@/layout/MobileHeader.vue";
 import mobileFooter from "@/layout/MobileFooter.vue";
 import "@/assets/css/mobile/mobile-layout.css"
-import {computed, ref} from 'vue'
+import {computed} from 'vue'
 import {useRouter} from 'vue-router';
 import {useUserStore} from "@/store/useUserStore.js";
 
@@ -24,12 +24,12 @@ const logout = async () => {
       <!-- 헤더 -->
       <div class="mobile-header">
 
-      <mobile-header
-          :isToken="isToken"
-          :profile-image="store.user?.path"
-          @login="goToLogin"
-          @logout="logout"
-      />
+        <mobile-header
+            :isToken="isToken"
+            :profile-image="store.user?.path"
+            @login="goToLogin"
+            @logout="logout"
+        />
       </div>
 
       <!-- 메인 -->
@@ -68,6 +68,8 @@ const logout = async () => {
   padding: 0 16px 80px;
   margin-top: 80px;
   background-color: white;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 </style>
 
